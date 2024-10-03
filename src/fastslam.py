@@ -95,7 +95,7 @@ class Fastslam:
 
     def _motion_model(self, particle_pose: Pose, velocity: float, angular_velocity: float, time_step: float) -> Pose:
         """
-        Define a function `motion_model` that predicts the next state (pose) of a particle given its current pose.
+        Predicts the next state (pose) of a particle given its current pose.
 
         :param particle_pose: current position of the particle.
         :param velocity: velocity of the robot.

@@ -1,15 +1,3 @@
-"""Create an articulation (a tree of actors/links connected by joints)
-
-Each actor in the articulation is also called link.
-The robot is an instance of articulation.
-
-Concepts:
-    - Create an articulation
-    - Control the articulation basically (builtin position and velocity controller)
-        sapien.physx.PhysxArticulation.set_qf, sapien.physx.PhysxArticulationJoint.set_drive_velocity_target
-    - sapien.physx.PhysxArticulation.get_qpos, sapien.physx.PhysxArticulation.get_qvel
-"""
-
 import sapien as sapien
 from sapien import Scene, Pose
 from sapien.utils import Viewer

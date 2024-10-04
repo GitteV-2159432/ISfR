@@ -4,6 +4,7 @@ from sapien.utils import Viewer
 
 import numpy as np
 from scipy.spatial.transform import Rotation
+from typing import Tuple
 
 from create_primitive import box
     
@@ -16,6 +17,9 @@ class driver:
         self.turn_speed = 1
         self.eye_left_offset = np.array([size / 2 - .06, size / 2 - .06, size / 2 - .06])
         self.eye_right_offset = np.array([size / 2 - .06, -size / 2 + .06, size / 2 - .06])
+
+        self.velocity = 0.0
+        self.angular_velocity = 0.0
 
         self.body = box(
             scene,
@@ -53,6 +57,9 @@ class driver:
 
         turn_direction = int(self._viewer.window.key_down('u')) - int(self._viewer.window.key_down('o'))
 
+        self.velocity = np.linalg.norm(move_direction_local) * self.move_speed
+        self.angular_velocity = turn_direction * self.turn_speed
+
         pose_global = self.body.get_pose()
         rotation_current = Rotation.from_quat(pose_global.q, scalar_first=True)
         move_direction_global = rotation_current.apply(move_direction_local)
@@ -68,3 +75,10 @@ class driver:
         self.eye_right.set_pose(body_pose * Pose(p=self.eye_right_offset))
         self.eye_left.set_pose(body_pose * Pose(p=self.eye_left_offset))
         
+    def get_odometry(self) -> Tuple[float, float]:
+        """
+        Get the odometry from the robot
+
+        :param return: The odometry in the form (velocity: float, angular_velocity: float)
+        """
+        return self.velocity, self.angular_velocity

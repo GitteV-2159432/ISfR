@@ -1,10 +1,12 @@
 import sapien
 from sapien import Pose
 import numpy as np
+from datetime import datetime
 
 import test_environment
 import test_driver
 import lidar
+from fastslam import Fastslam, Fastslam_config
 
 def main():
     scene = sapien.Scene()
@@ -29,7 +31,21 @@ def main():
     lidar_config.randomize_start_angle = False
     lidar_sensor = lidar.LidarSensor("lidar", scene, lidar_config, mount_entity=driver.body, pose=Pose(p=np.array([0, 0, 0.5])))
 
+    fastslam_config = Fastslam_config()
+    fastslam_config.particle_amount = 0
+    fastslam_config.velocity_standard_deviation = 0
+    fastslam_config.angular_velocity_standard_deviation = 0
+    fastslam_config.mahalanobis_distance_threshold = 0
+    fastslam_config.measurement_covariance = 0
+    fastslam_config.effective_particle_amount_modifier = 0
+
+    fastslam = Fastslam(fastslam_config)
+
+    last_time = datetime.now()
     while not viewer.closed:
+        delta_time = datetime.now() - last_time
+        last_time = datetime.now()
+
         lidar_sensor.simulate()
         driver.update()
 
@@ -37,7 +53,10 @@ def main():
         scene.update_render()
         viewer.render()
 
-        lidar_points = lidar_sensor.get_point_cloud()
+        lidar_points = lidar_sensor.get_points()
+        odometry = driver.get_odometry()
+
+        fastslam.run(lidar_points, odometry[0], odometry[1], delta_time.microseconds * float(1e6))
 
 if __name__ == "__main__":
     main()

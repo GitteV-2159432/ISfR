@@ -1,5 +1,6 @@
 import numpy as np
 from typing import List, Tuple
+import cv2 as cv
 
 """
 Sources:
@@ -131,6 +132,9 @@ class Fastslam:
         self.particles = self._predict(self.particles, velocity, angular_velocity, time_step)
         self.particles = self._update(self.particles, measurements)
         self.particles = self._resample(self.particles)
+        print("loop")
+        print(self.particles[0].pose.x, self.particles[0].pose.y, self.particles[0].pose.heading)
+        self._visualize(self.particles)
 
     def get_estimated_position(self) -> Tuple[float, float]:
         # TODO
@@ -173,9 +177,9 @@ class Fastslam:
         U = np.array([velocity + np.random.normal(0, self._config.velocity_standard_deviation), angular_velocity + np.random.normal(0, self._config.angular_velocity_standard_deviation)]).T  
         
         position_predicted = F @ position_current + B @ U
-        position_predicted[2, 0] = pi2pi(position_predicted[2, 0])
+        position_predicted[2] = pi2pi(position_predicted[2])
 
-        return Pose(position_predicted[0, 0], position_predicted[0, 1], position_predicted[0, 2])
+        return Pose(position_predicted[0], position_predicted[1], position_predicted[2])
 
     def _predict(self, particles: List[Particle], velocity, angular_velocity, time_step) -> List[Particle]:
         """
@@ -247,6 +251,19 @@ class Fastslam:
                 particles[i].w = 1.0 / len(particles)  
 
         return particles
+    
+    def _visualize(self, particles: List[Particle]):
+        height = 600
+        width = 800
+        black_screen = np.zeros((height, width, 3), dtype=np.uint8)
+        
+        for particle in  particles:
+            # Place circles for all particles
+            cv.circle(black_screen, (int(particle.pose.x*10), int(particle.pose.y*10)), 2, (0, 0, 255), -1)
+
+        cv.imshow("FastSLAM", black_screen)
+        cv.waitKey(1)
+        return
 
 def pi2pi(angle):
     return (angle + np.pi) % (2 * np.pi) - np.pi

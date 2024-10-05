@@ -32,12 +32,12 @@ def main():
     lidar_sensor = lidar.LidarSensor("lidar", scene, lidar_config, mount_entity=driver.body, pose=Pose(p=np.array([0, 0, 0.5])))
 
     fastslam_config = Fastslam_config()
-    fastslam_config.particle_amount = 0
-    fastslam_config.velocity_standard_deviation = 0
-    fastslam_config.angular_velocity_standard_deviation = 0
-    fastslam_config.mahalanobis_distance_threshold = 0
-    fastslam_config.measurement_covariance = 0
-    fastslam_config.effective_particle_amount_modifier = 0
+    fastslam_config.particle_amount = 5
+    # fastslam_config.velocity_standard_deviation = 0
+    # fastslam_config.angular_velocity_standard_deviation = 0
+    # fastslam_config.mahalanobis_distance_threshold = 0
+    # fastslam_config.measurement_covariance = 0
+    # fastslam_config.effective_particle_amount_modifier = 0
 
     fastslam = Fastslam(fastslam_config)
 
@@ -54,6 +54,9 @@ def main():
         viewer.render()
 
         lidar_points = lidar_sensor.get_points()
+        # Convert tuple format from LiDAR (horizontal_angle, vertical_angle, distance) -> (distance, angle) FastSLAM
+        lidar_points = [(lp[2], lp[0]) for lp in lidar_points]
+
         odometry = driver.get_odometry()
 
         fastslam.run(lidar_points, odometry[0], odometry[1], delta_time.microseconds * float(1e6))

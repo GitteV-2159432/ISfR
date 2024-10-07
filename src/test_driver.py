@@ -16,7 +16,7 @@ class driver:
 
 
         self._viewer = viewer
-        self.move_speed = .05
+        self.move_speed = 1
         self.turn_speed = 1
         self.eye_left_offset = np.array([size / 2 - .06, size / 2 - .06, size / 2 - .06])
         self.eye_right_offset = np.array([size / 2 - .06, -size / 2 + .06, size / 2 - .06])

@@ -20,10 +20,10 @@ def main():
     driver = test_driver.driver(scene, viewer)
 
     lidar_config = lidar.LidarSensorConfig()
-    lidar_config.detection_range = 10
-    lidar_config.field_of_view = 360
+    lidar_config.detection_range = 2
+    lidar_config.field_of_view = 10
     lidar_config.samples = 10
-    lidar_config.noise_standard_deviation_distance = 0.05
+    lidar_config.noise_standard_deviation_distance = 0
     lidar_config.noise_standard_deviation_angle_horizontal = 0
     lidar_config.noise_standard_deviation_angle_vertical = 0
     lidar_config.noise_outlier_chance = 0
@@ -32,9 +32,9 @@ def main():
 
     fastslam_config = FastSLAM_config()
     fastslam_config.particle_amount = 5
-    # fastslam_config.velocity_standard_deviation = 0
-    # fastslam_config.angular_velocity_standard_deviation = 0
-    # fastslam_config.mahalanobis_distance_threshold = 0
+    fastslam_config.velocity_standard_deviation = 0
+    fastslam_config.angular_velocity_standard_deviation = 0
+    fastslam_config.distance_threshold = 3
     # fastslam_config.measurement_covariance = 0
     # fastslam_config.effective_particle_amount_modifier = 0
 
@@ -57,6 +57,7 @@ def main():
 
         fastslam.run(lidar_measurements, odometry[0], odometry[1])
         fastslam.visualize()
+        # lidar_sensor.visualize()
 
 if __name__ == "__main__":
     main()

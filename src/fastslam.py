@@ -84,9 +84,10 @@ class Landmark:
         return self.x, self.y
 
 class Particle:
-    def __init__(self, pose: Pose, landmarks: List[Landmark] = [], weight: float = 1.0) -> None:
+    def __init__(self, pose: Pose, landmarks: List[Landmark] = None, weight: float = 1.0) -> None:
         self.pose = pose
-        self.landmarks = landmarks
+        if landmarks is None:
+            self.landmarks = []
         self.weight = weight
     
     def match_landmark(self, measurement: Tuple[float, float], distance_threshold: float):
@@ -97,18 +98,18 @@ class Particle:
         :param distance_threshold: The maximum distance to an existing landmark to be considered a match
         :return: Matched Landmark if found, or None if it's a new landmark
         """
-        squared_distance_threshold = distance_threshold**2
         squared_distances = []
         for landmark in self.landmarks:
             expected_position = landmark.get_expected_position()
-            measurement_position = (np.cos(measurement[1]) * measurement[0], np.sin(measurement[1]) * measurement[0]) 
+            measurement_position = (np.cos(measurement[1]) * measurement[0] + self.pose.x, np.sin(measurement[1]) * measurement[0] + self.pose.y) 
+
             squared_distance = (measurement_position[0] - expected_position[0])**2 + (measurement_position[1] - expected_position[1])**2
             squared_distances.append(squared_distance)
 
-        squared_distances.append(squared_distance_threshold)
-        min_squared_distance = min(squared_distances)
+        squared_distances.append(distance_threshold**2)
         
-        if min_squared_distance < squared_distance_threshold:
+        min_squared_distance = min(squared_distances)
+        if np.sqrt(min_squared_distance) < distance_threshold:
             matched_landmark_index = squared_distances.index(min_squared_distance)
             return self.landmarks[matched_landmark_index]
         return None
@@ -133,7 +134,7 @@ class FastSLAM:
         self.last_time = datetime.now()
 
         self.particles = self._predict(self.particles, velocity, angular_velocity, time_step)
-        # self.particles = self._update(self.particles, measurements)
+        self.particles = self._update(self.particles, measurements)
         # self.particles = self._resample(self.particles)
 
     def get_estimated_position(self) -> Tuple[float, float]:
@@ -158,7 +159,7 @@ class FastSLAM:
 
         :param particle_pose: current position of the particle.
         :param velocity: velocity of the robot.
-        :param angular_velocity: angulat velocity of the robot.
+        :param angular_velocity: angular velocity of the robot.
         :param time_step: time since the last calculation.
         :param velocity_standard_deviation: standard deviation of the gaussian noise on the velocity.
         :param angular_velocity_standard_deviation: standard deviation of the gaussian noise on the angular velocity.
@@ -199,19 +200,19 @@ class FastSLAM:
         Updates particle states based on measured landmarks.
         
         :param particles: List of particles
-        :param landmark_measurements: List of measured landmarks (distance, angle)
+        :param landmark_measurements: List of measured landmarks (distance, angle in radians)
         :return: Updated list of particles
         """
         for particle in particles:
             for landmark_measurement in landmark_measurements:
                 matched_landmark = particle.match_landmark(landmark_measurement, self._config.distance_threshold)
-
+            
                 if matched_landmark is None:
                     # Add new landmark
                     distance, angle = landmark_measurement
-                    landmark_x = particle.pose.x + distance * np.cos(particle.pose.heading + angle)
-                    landmark_y = particle.pose.y + distance * np.sin(particle.pose.heading + angle)
-                    particle.landmarks.append(Landmark(landmark_x, landmark_y, sigma_x=1.0, sigma_y=1.0)) # TODO: What should the sigma_x and sigma_y be?
+                    landmark_x = particle.pose.x + distance * np.cos(pi2pi(particle.pose.heading + angle))
+                    landmark_y = particle.pose.y + distance * np.sin(pi2pi(particle.pose.heading + angle))
+                    particle.landmarks.append(Landmark(landmark_x, landmark_y, sigma_x=0.5, sigma_y=1.0)) # TODO: What should the sigma_x and sigma_y be?
 
                 # else:
                 #     particle.weight *= compute_weight(particle, matched_landmark, landmark_measurement, self._config.measurement_covariance)
@@ -252,7 +253,7 @@ class FastSLAM:
     
     def visualize(self):
         size = 800
-        scale = 100
+        scale = 50
         sigma_scale = 10
         image = np.zeros((size, size, 3), dtype=np.uint8)
 
@@ -270,10 +271,9 @@ class FastSLAM:
             cv2.circle(image, particle_point, 5, (0, 0, 255), -1)
 
             for landmark in particle.landmarks:
-                landmark_point = (int(landmark.x * scale + size / 2), 
-                                  int(landmark.y * scale + size / 2))
-                cv2.ellipse(image, landmark_point, (int(landmark.sigma_x * sigma_scale), int(landmark.sigma_y * sigma_scale)), particle.pose.heading, 0, 360, (255, 0, 0), 2)
-
+                landmark_point = (int(landmark.y * scale + size / 2), 
+                                  int(landmark.x * scale + size / 2))
+                cv2.ellipse(image, landmark_point, (5, 5), 0, 0, 360, (255, 0, 0), 2)
 
         cv2.imshow("FastSLAM", image)
         cv2.waitKey(1)

@@ -106,16 +106,19 @@ class LidarSensor(SensorEntity):
             if np.random.rand() < self._config.noise_outlier_chance:
                 distance = np.random.uniform(0, self._config.detection_range)
 
-            results.append((angle_horizontal, angle_vertical, distance))
+            results.append((np.radians(angle_horizontal), np.radians(angle_vertical), distance))
 
         self._results = results
     
-    def get_measurements(self) -> List[Tuple[float, float, float]]:
+    def get_measurements(self, in_degrees=False) -> List[Tuple[float, float, float]]:
         """
         :return: A list of tuples (angle_horizontal, angle_vertical, distance)
         """
         if len(self._results) > 0:
-            return self._results
+            if in_degrees:
+                return [(np.rad2deg(self._results[0]), np.rad2deg(self._results[1]), self._results[3])]
+            else:
+                return self._results
         else:
             raise ValueError("run the simulate function before getting the points")
 
@@ -131,7 +134,7 @@ class LidarSensor(SensorEntity):
         angles_vertical = results_array[:, 1]
         distances = results_array[:, 2]
 
-        ray_directions = self._compute_ray_directions(np.radians(angles_horizontal), np.radians(angles_vertical))
+        ray_directions = self._compute_ray_directions(angles_horizontal, angles_vertical)
         local_hit_positions = ray_directions * distances[:, np.newaxis]
         return local_hit_positions.tolist()
 

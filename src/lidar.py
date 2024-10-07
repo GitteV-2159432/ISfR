@@ -100,7 +100,9 @@ class LidarSensor(SensorEntity):
             ray_direction = self._compute_ray_direction(np.radians(angle_horizontal), np.radians(angle_vertical))
             distance = self._raycast(ray_direction)
 
-            distance += np.random.normal(0, self._config.noise_standard_deviation_distance)
+            if distance < self._config.detection_range:
+                distance += np.random.normal(0, self._config.noise_standard_deviation_distance)
+                
             if np.random.rand() < self._config.noise_outlier_chance:
                 distance = np.random.uniform(0, self._config.detection_range)
 

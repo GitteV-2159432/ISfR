@@ -8,23 +8,6 @@ import test_environment
 import test_driver
 import lidar
 
-def points_to_image(points, img_size=(800, 800), scale=10):
-    """Project 3D points to a 2D plane for visualization."""
-    img = np.zeros(img_size + (3,), dtype=np.uint8)
-
-    for point in points:
-        x, y, z = point
-
-        img_x = int(img_size[0] / 2 + y * scale)
-        img_y = int(img_size[1] / 2 - x * scale)
-
-        if 0 <= img_x < img_size[0] and 0 <= img_y < img_size[1]: 
-            cv2.circle(img, (img_x, img_y), radius=2, color=(0, 255, 0), thickness=-1)
-        else:
-            print("scale to large")
-
-    return img
-
 def main():
     scene = sapien.Scene()
     scene.set_timestep(1 / 100.0)
@@ -60,11 +43,7 @@ def main():
         scene.update_render()
         viewer.render()
 
-        lidar_points = lidar_sensor.get_point_cloud()
-        image = points_to_image(lidar_points, scale=30)
-
-        cv2.imshow('LIDAR Points', image)
-        cv2.waitKey(1)
+        lidar_sensor.visualize()
 
 if __name__ == "__main__":
     main()

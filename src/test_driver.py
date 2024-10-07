@@ -51,13 +51,13 @@ class driver:
     def update(self) -> None:
         move_direction_local = np.array([
             int(self._viewer.window.key_down('i')) - int(self._viewer.window.key_down('k')), 
-            int(self._viewer.window.key_down('j')) - int(self._viewer.window.key_down('l')), 
+            0, 
             0
         ])
 
-        turn_direction = int(self._viewer.window.key_down('u')) - int(self._viewer.window.key_down('o'))
+        turn_direction = int(int(self._viewer.window.key_down('j')) - int(self._viewer.window.key_down('l')))
 
-        self.velocity = np.linalg.norm(move_direction_local) * self.move_speed
+        self.velocity = move_direction_local[0] * self.move_speed
         self.angular_velocity = turn_direction * self.turn_speed
 
         pose_global = self.body.get_pose()

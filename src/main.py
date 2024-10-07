@@ -1,7 +1,6 @@
 import sapien
 from sapien import Pose
 import numpy as np
-from datetime import datetime
 
 import test_environment
 import test_driver
@@ -21,9 +20,9 @@ def main():
     driver = test_driver.driver(scene, viewer)
 
     lidar_config = lidar.LidarSensorConfig() 
-    lidar_config.detection_range = 10
-    lidar_config.field_of_view = 360
-    lidar_config.samples = 200
+    lidar_config.detection_range = 360
+    lidar_config.field_of_view = 10
+    lidar_config.samples = 10
     lidar_config.noise_standard_deviation_distance = 0
     lidar_config.noise_standard_deviation_angle_horizontal = 0
     lidar_config.noise_standard_deviation_angle_vertical = 0 
@@ -41,11 +40,7 @@ def main():
 
     fastslam = Fastslam(fastslam_config)
 
-    last_time = datetime.now()
     while not viewer.closed:
-        delta_time = datetime.now() - last_time
-        last_time = datetime.now()
-
         lidar_sensor.simulate()
         driver.update()
 
@@ -53,13 +48,18 @@ def main():
         scene.update_render()
         viewer.render()
 
-        lidar_points = lidar_sensor.get_points()
+        # lidar_measurement = lidar_sensor.get_measurements()
+        print(lidar_sensor.get_measurements())
+        # lidar_sensor.visualize()
+ 
         # Convert tuple format from LiDAR (horizontal_angle, vertical_angle, distance) -> (distance, angle) FastSLAM
-        lidar_points = [(lp[2], lp[0]) for lp in lidar_points]
+        # lidar_points = [(lp[2], lp[0]) for lp in lidar_points if lp[2] == lidar_config.detection_range]
+        # print(lidar_points)
 
         odometry = driver.get_odometry()
 
-        fastslam.run(lidar_points, odometry[0], odometry[1], delta_time.microseconds * float(1e6))
+        # fastslam.run(lidar_points, odometry[0], odometry[1])
+        # fastslam.visualize()
 
 if __name__ == "__main__":
     main()

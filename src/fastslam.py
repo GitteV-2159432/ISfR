@@ -1,6 +1,7 @@
 import numpy as np
 from typing import List, Tuple
 import cv2 as cv
+from datetime import datetime
 
 """
 Sources:
@@ -90,27 +91,25 @@ class Particle:
     
     def match_landmark(self, measurement: Tuple[float, float], distance_threshold: float):
         """
-        Matches the current measurement with an existing landmark or identifies it as a new one using Mahalanobis distance.
-        Based on implementation of: https://atsushisakai.github.io/PythonRobotics/modules/slam/ekf_slam/ekf_slam.html 
+        Matches the current measurement with an existing landmark or identifies it as a new one.
 
         :param measurement: Tuple of (distance, angle) representing the observed landmark measurement
         :param distance_threshold: The maximum distance to an existing landmark to be considered a match
         :return: Matched Landmark if found, or None if it's a new landmark
         """
-        mahalanobis_distances = []
+        squared_distance_threshold = distance_threshold**2
+        squared_distances = []
         for landmark in self.landmarks:
-            expected_landmark_measurement = landmark.get_relative_measurement(self.pose)
-            innovation = np.array([measurement[0] - expected_landmark_measurement[0], measurement[1] - expected_landmark_measurement[1]]) # (distance, angle)
-            innovation[1] = pi2pi(innovation[1])
+            expected_position = landmark.get_expected_position()
+            measurement_position = np.array(np.cos(measurement[1]), np.sin(measurement[1])) * measurement[0]
+            squared_distance = (measurement_position[0] - expected_position[0])**2 + (measurement_position[1] - expected_position[1])**2
+            squared_distances.append(squared_distance)
 
-            mahalanobis_distance = innovation.T @ np.linalg.inv(landmark.get_covariance_matrix()) @ innovation
-            mahalanobis_distances.append(mahalanobis_distance)
+        squared_distances.append(squared_distance_threshold)
+        min_squared_distance = min(squared_distances)
         
-        mahalanobis_distances.append(distance_threshold)
-        min_distance = min(mahalanobis_distances)
-        
-        if min_distance < distance_threshold:
-            matched_landmark_index = mahalanobis_distances.index(min_distance)
+        if min_squared_distance < squared_distance_threshold:
+            matched_landmark_index = squared_distances.index(min_squared_distance)
             return self.landmarks[matched_landmark_index]
         return None
 
@@ -126,15 +125,16 @@ class Fastslam_config:
 class Fastslam:
     def __init__(self, config: Fastslam_config) -> None:
         self._config = config
-        self.particles = self._init_particles(self._config.particle_amount, (50, 50))
+        self.last_time = datetime.now()
+        self.particles = self._init_particles(self._config.particle_amount, 10)
 
-    def run(self, measurements, velocity, angular_velocity, time_step):
+    def run(self, measurements, velocity, angular_velocity):
+        time_step = (datetime.now() - self.last_time).microseconds * float(1e-6)
+        self.last_time = datetime.now()
+
         self.particles = self._predict(self.particles, velocity, angular_velocity, time_step)
         self.particles = self._update(self.particles, measurements)
-        self.particles = self._resample(self.particles)
-        print("loop")
-        print(self.particles[0].pose.x, self.particles[0].pose.y, self.particles[0].pose.heading)
-        self._visualize(self.particles)
+        # self.particles = self._resample(self.particles)
 
     def get_estimated_position(self) -> Tuple[float, float]:
         # TODO
@@ -144,12 +144,12 @@ class Fastslam:
         # TODO
         pass
 
-    def _init_particles(self, particle_amount: int, area_size: Tuple[int, int]) -> List[Particle]:
+    def _init_particles(self, particle_amount: int, area_size: float) -> List[Particle]:
         particles = []
         for i in range(particle_amount):
-            x, y = [np.random.uniform(area_size[0]), np.random.uniform(area_size[1])]
-            theta = np.random.uniform(0, 2*np.pi)
-            particles.append(Particle(Pose(x, y, theta)))
+            x, y = [np.random.uniform(-area_size / 2, area_size / 2), np.random.uniform(-area_size / 2, area_size / 2)]
+            heading = np.random.uniform(-np.pi, np.pi)
+            particles.append(Particle(Pose(x, y, heading)))
         return particles
 
     def _motion_model(self, particle_pose: Pose, velocity: float, angular_velocity: float, time_step: float) -> Pose:
@@ -162,12 +162,10 @@ class Fastslam:
         :param time_step: time since the last calculation.
         :param velocity_standard_deviation: standard deviation of the gaussian noise on the velocity.
         :param angular_velocity_standard_deviation: standard deviation of the gaussian noise on the angular velocity.
-        """
-        F = np.eye(3)  
-        
+        """       
         # Transforms the control inputs (velocity, angular velocity) into position changes.
-        B = np.array([[time_step * np.cos(angular_velocity), 0],  
-                    [time_step * np.sin(angular_velocity), 0], 
+        B = np.array([[time_step * np.cos(particle_pose.heading), 0],  
+                    [time_step * np.sin(particle_pose.heading), 0], 
                     [0, time_step]])  
         
         # Extract the current position and orientation (x, y, heading) from the given particle_pose object
@@ -176,7 +174,7 @@ class Fastslam:
         # Includes velocity and angular velocity, with Gaussian noise added.
         U = np.array([velocity + np.random.normal(0, self._config.velocity_standard_deviation), angular_velocity + np.random.normal(0, self._config.angular_velocity_standard_deviation)]).T  
         
-        position_predicted = F @ position_current + B @ U
+        position_predicted = np.eye(3) @ position_current + B @ U
         position_predicted[2] = pi2pi(position_predicted[2])
 
         return Pose(position_predicted[0], position_predicted[1], position_predicted[2])
@@ -215,10 +213,10 @@ class Fastslam:
                     landmark_y = particle.pose.y + distance * np.sin(particle.pose.heading + angle)
                     particle.landmarks.append(Landmark(landmark_x, landmark_y, sigma_x=1.0, sigma_y=1.0)) # TODO: What should the sigma_x and sigma_y be?
 
-                else:
-                    particle.weight *= compute_weight(particle, matched_landmark, landmark_measurement, self._config.measurement_covariance)
-                    matched_landmark.update(particle, landmark_measurement, self._config.measurement_covariance)
-                    pass
+                # else:
+                #     particle.weight *= compute_weight(particle, matched_landmark, landmark_measurement, self._config.measurement_covariance)
+                #     matched_landmark.update(particle, landmark_measurement, self._config.measurement_covariance)
+                #     pass
 
         return particles
 
@@ -252,18 +250,33 @@ class Fastslam:
 
         return particles
     
-    def _visualize(self, particles: List[Particle]):
-        height = 600
-        width = 800
-        black_screen = np.zeros((height, width, 3), dtype=np.uint8)
-        
-        for particle in  particles:
-            # Place circles for all particles
-            cv.circle(black_screen, (int(particle.pose.x*10), int(particle.pose.y*10)), 2, (0, 0, 255), -1)
+    def visualize(self):
+        size = 800
+        scale = 100
+        image = np.zeros((size, size, 3), dtype=np.uint8)
 
-        cv.imshow("FastSLAM", black_screen)
+        for particle in self.particles:
+            particle_point = (int(particle.pose.y * scale + size / 2), 
+                              int(particle.pose.x * scale + size / 2))
+
+            heading_vector = (int(np.sin(particle.pose.heading) * 20), 
+                              int(np.cos(particle.pose.heading) * 20))
+
+            particle_heading_point = (particle_point[0] + heading_vector[0],
+                                      particle_point[1] + heading_vector[1])
+
+            cv.line(image, particle_point, particle_heading_point, (0, 255, 0), 2)
+            cv.circle(image, particle_point, 5, (0, 0, 255), -1)
+
+            for landmark in particle.landmarks:
+                landmark_point = (int(landmark.x * scale + size / 2), 
+                                  int(landmark.y * scale + size / 2))
+                cv.circle(image, landmark_point, 5, (255, 0, 0), -1)
+
+        cv.imshow("FastSLAM", image)
         cv.waitKey(1)
         return
+
 
 def pi2pi(angle):
     return (angle + np.pi) % (2 * np.pi) - np.pi

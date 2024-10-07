@@ -107,7 +107,7 @@ class LidarSensor(SensorEntity):
 
         self._results = results
     
-    def get_points(self) -> List[Tuple[float, float, float]]:
+    def get_measurements(self) -> List[Tuple[float, float, float]]:
         """
         :return: A list of tuples (angle_horizontal, angle_vertical, distance)
         """

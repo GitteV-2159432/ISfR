@@ -5,6 +5,7 @@ from typing import Optional, List, Tuple
 from copy import deepcopy as copy
 from scipy.spatial.transform import Rotation
 import numpy as np
+import cv2
 
 class LidarSensorConfig:
     def __init__(self) -> None:
@@ -99,7 +100,9 @@ class LidarSensor(SensorEntity):
             ray_direction = self._compute_ray_direction(np.radians(angle_horizontal), np.radians(angle_vertical))
             distance = self._raycast(ray_direction)
 
-            distance += np.random.normal(0, self._config.noise_standard_deviation_distance)
+            if distance < self._config.detection_range:
+                distance += np.random.normal(0, self._config.noise_standard_deviation_distance)
+                
             if np.random.rand() < self._config.noise_outlier_chance:
                 distance = np.random.uniform(0, self._config.detection_range)
 
@@ -175,3 +178,21 @@ class LidarSensor(SensorEntity):
             return self._config.detection_range
 
         return hit_info.distance
+    
+    def visualize(self, img_size=(800, 800), scale=30) -> None:
+        img = np.zeros(img_size + (3,), dtype=np.uint8)
+        points = self.get_point_cloud()
+
+        for point in points:
+            x, y, z = point
+
+            img_x = int(img_size[0] / 2 + y * scale)
+            img_y = int(img_size[1] / 2 - x * scale)
+
+            if 0 <= img_x < img_size[0] and 0 <= img_y < img_size[1]: 
+                cv2.circle(img, (img_x, img_y), radius=2, color=(0, 255, 0), thickness=-1)
+            else:
+                print("scale to large")
+
+        cv2.imshow('LIDAR Points', img)
+        cv2.waitKey(1)

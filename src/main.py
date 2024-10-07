@@ -5,7 +5,7 @@ import numpy as np
 import test_environment
 import test_driver
 import lidar
-from fastslam import Fastslam, Fastslam_config
+from fastslam import FastSLAM, FastSLAM_config
 
 def main():
     scene = sapien.Scene()
@@ -19,18 +19,18 @@ def main():
     test_environment.load(scene)
     driver = test_driver.driver(scene, viewer)
 
-    lidar_config = lidar.LidarSensorConfig() 
-    lidar_config.detection_range = 360
-    lidar_config.field_of_view = 10
+    lidar_config = lidar.LidarSensorConfig()
+    lidar_config.detection_range = 10
+    lidar_config.field_of_view = 360
     lidar_config.samples = 10
-    lidar_config.noise_standard_deviation_distance = 0
+    lidar_config.noise_standard_deviation_distance = 0.05
     lidar_config.noise_standard_deviation_angle_horizontal = 0
-    lidar_config.noise_standard_deviation_angle_vertical = 0 
+    lidar_config.noise_standard_deviation_angle_vertical = 0
     lidar_config.noise_outlier_chance = 0
     lidar_config.randomize_start_angle = False
     lidar_sensor = lidar.LidarSensor("lidar", scene, lidar_config, mount_entity=driver.body, pose=Pose(p=np.array([0, 0, 0.5])))
 
-    fastslam_config = Fastslam_config()
+    fastslam_config = FastSLAM_config()
     fastslam_config.particle_amount = 5
     # fastslam_config.velocity_standard_deviation = 0
     # fastslam_config.angular_velocity_standard_deviation = 0
@@ -38,7 +38,7 @@ def main():
     # fastslam_config.measurement_covariance = 0
     # fastslam_config.effective_particle_amount_modifier = 0
 
-    fastslam = Fastslam(fastslam_config)
+    fastslam = FastSLAM(fastslam_config)
 
     while not viewer.closed:
         lidar_sensor.simulate()
@@ -48,18 +48,15 @@ def main():
         scene.update_render()
         viewer.render()
 
-        # lidar_measurement = lidar_sensor.get_measurements()
-        print(lidar_sensor.get_measurements())
-        # lidar_sensor.visualize()
+        lidar_measurements = lidar_sensor.get_measurements()
  
         # Convert tuple format from LiDAR (horizontal_angle, vertical_angle, distance) -> (distance, angle) FastSLAM
-        # lidar_points = [(lp[2], lp[0]) for lp in lidar_points if lp[2] == lidar_config.detection_range]
-        # print(lidar_points)
+        lidar_measurements = [(lp[2], lp[0]) for lp in lidar_measurements if lp[2] < lidar_config.detection_range]
 
         odometry = driver.get_odometry()
 
-        # fastslam.run(lidar_points, odometry[0], odometry[1])
-        # fastslam.visualize()
+        fastslam.run(lidar_measurements, odometry[0], odometry[1])
+        fastslam.visualize()
 
 if __name__ == "__main__":
     main()

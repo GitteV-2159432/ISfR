@@ -2,9 +2,8 @@ import sapien
 from sapien import Pose
 import numpy as np
 import cv2
-import test_environment
 import test_driver  
-import lidar
+
 
 def points_to_image(points, img_size=(800, 800), scale=10):
     """Project 3D points to a 2D plane for visualization."""

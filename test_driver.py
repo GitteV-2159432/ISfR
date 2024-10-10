@@ -20,8 +20,7 @@ class Driver:
         self.robot.set_root_pose(Pose([0, 0, 5], [1, 0, 0, 0]))
         loader.set_link_material("caster_wheel", 0.1, 0, 0)
         self.joints = self.get_joints_dict(self.robot)
-        self.dof_count = self.robot.get_dof()
-        print("Number of DOFs:", self.dof_count)
+
         self.pid_left = PID(0, 0, 0, setpoint=self.move_speed)
         self.pid_right = PID(0, 0, 0, setpoint=self.move_speed)
         self.setup_mqtt()
@@ -41,8 +40,11 @@ class Driver:
         self.client.loop_start()
 
     def on_connect(self, client, userdata, flags, rc):
+
         if rc == 0:
             print("Connected to MQTT broker")
+            
+
         else:
             print("Failed to connect to MQTT broker, return code:", rc)
 
@@ -53,7 +55,6 @@ class Driver:
         self.root = tk.Tk()
         self.root.title("PID Controller Settings")
 
-        
         self.add_gui_elements()
 
         
@@ -83,6 +84,7 @@ class Driver:
         self.reset_button.grid(column=0, row=4, columnspan=2)
 
     def update_pid(self):
+        self.target_velocity = self.move_speed
         self.pid_left.Kp = float(self.kp_entry.get())
         self.pid_left.Ki = float(self.ki_entry.get())
         self.pid_left.Kd = float(self.kd_entry.get())
@@ -90,10 +92,9 @@ class Driver:
         self.pid_right.Ki = float(self.ki_entry.get())
         self.pid_right.Kd = float(self.kd_entry.get())
 
-        self.target_velocity = 1
-        print("PID updated and target velocity set to:", self.target_velocity)
-
         
+
+
         self.client.publish("robot/reset", "Robot has been reset")
 
     def reset_robot(self):
@@ -126,17 +127,18 @@ class Driver:
         self.joints['base_left_wheel_joint'].set_drive_velocity_target(control_left)
         self.joints['base_right_wheel_joint'].set_drive_velocity_target(control_right)
 
-        
+        self.client.publish("robot/target_velocity", f"{self.move_speed}")
+
         self.client.publish("robot/wheel_velocities", f"left:{current_left_velocity}, right:{current_right_velocity}")
 
     def calculate_total_velocity(self, link_name: str) -> float:
-        """Calculate the total linear velocity of the specified link."""
+    
         velocity_vector = self.robot.find_link_by_name(link_name).get_linear_velocity()
         v_x, v_y, v_z = velocity_vector
         total_velocity = np.sqrt(v_x**2 + v_y**2 + v_z**2)
         return round(total_velocity, 2)
 
     def get_joints_dict(self, articulation):
-        """Get a dictionary of joint names to joint objects."""
+     
         joints = articulation.get_joints()
         return {joint.get_name(): joint for joint in joints}

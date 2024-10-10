@@ -1,0 +1,60 @@
+#!/home/ubuntu/Desktop/robotics/project/myenv/bin/python3
+
+import subprocess
+import argparse
+import sys
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("command", type=str)
+
+    args, rest = parser.parse_known_args()
+    if args.command == "install":
+        package = rest[0]
+        args = [
+            sys.executable,
+            "-m",
+            "pip",
+            "install",
+            "--user",
+            f"git+https://github.com/sapien-sim/{package}",
+        ]
+
+        subprocess.run(args, check=True)
+
+    elif args.command == "uninstall":
+        package = rest[0]
+        args = [
+            sys.executable,
+            "-m",
+            "pip",
+            "uninstall",
+            f"sapien_{package}",
+        ]
+
+        subprocess.run(args, check=True)
+
+    elif args.command == "show":
+        from sapien.show_anything import show_anything
+
+        show_anything(*rest)
+
+    elif args.command == "info":
+        import warnings
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            import sapien
+            import platform
+
+            sapien.render.set_log_level("critical")
+            info = ""
+            info += "Python: " + platform.python_version() + "\n"
+            info += "Platform: " + platform.platform() + "\n"
+            info += "sapien: " + sapien.__version__ + "\n"
+
+            if "--all" in rest:
+                info += sapien.render.get_device_summary() + "\n"
+
+            print(info)

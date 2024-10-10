@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+<robot name="dif_robot">
+    <material name="black">
+        <color rgba="0 0 0 1"/>
+    </material>
+
+    <material name="green">
+        <color rgba="0.6 0.39 0.45 1"/>
+    </material>
+
+    <material name="white">
+        <color rgba="1 1 1 1"/>
+    </material>
+
+    <link name="base_link">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <mass value="10.0"/> 
+            <inertia ixx="0.5" ixy="0.0" ixz="0.0" iyy="0.5" iyz="0.0" izz="0.5"/> 
+        </inertial>
+        <visual>
+            <geometry>
+                <box size="0.6 0.4 0.2"/>    
+            </geometry>    
+            <origin xyz="0 0 0.1" rpy="0 0 0"/>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="0.6 0.4 0.2"/>    
+            </geometry>    
+            <origin xyz="0 0 0.1" rpy="0 0 0"/>
+            <material name="black"/>
+        </collision>
+    </link>    
+
+    <link name="lidar_link">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <mass value="0.1"/> 
+            <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/> 
+        </inertial>
+        <visual>
+            <geometry>
+                <cylinder radius="0.1" length="0.05"/>
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <material name="white"/>
+        </visual>
+    </link>
+
+    <link name="left_wheel">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <mass value="5"/>
+            <inertia ixx="0.02" ixy="0.0" ixz="0.0" iyy="0.02" iyz="0.0" izz="0.02"/> 
+        </inertial>
+        <visual>
+            <geometry>
+                <cylinder radius="0.1" length="0.05"/>
+            </geometry>
+            <origin xyz="0 0 0" rpy="1.57 0 0"/>
+            <material name="white"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder radius="0.1" length="0.05"/>
+            </geometry>
+            <origin xyz="0 0 0" rpy="1.57 0 0"/>
+        </collision>
+    </link>
+
+    <link name="right_wheel">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <mass value="5"/> 
+            <inertia ixx="0.02" ixy="0.0" ixz="0.0" iyy="0.02" iyz="0.0" izz="0.02"/>
+        </inertial>
+        <visual>
+            <geometry>
+                <cylinder radius="0.1" length="0.05"/>
+            </geometry>
+            <origin xyz="0 0 0" rpy="1.57 0 0"/>
+            <material name="white"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder radius="0.1" length="0.05"/>
+            </geometry>
+            <origin xyz="0 0 0" rpy="1.57 0 0"/>
+        </collision>
+    </link>
+    
+    <link name="caster_wheel">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <mass value="2"/> 
+            <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/> 
+        </inertial>
+        <visual>
+            <geometry>
+                <sphere radius="0.05"/>
+            </geometry>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+            <material name="white"/>
+        </visual>
+        <collision>
+            <geometry>
+                <sphere radius="0.05"/>
+            </geometry>
+
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+        </collision>
+    </link>
+
+    <joint name="base_lidar_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="lidar_link"/>
+        <origin xyz="0 0 0.225"/>
+    </joint>
+
+    <joint name="base_left_wheel_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link="left_wheel"/>
+        <origin xyz="-0.15 0.225 0" rpy="0 0 0"/>
+        <axis xyz="0 1 0"/>
+        <limit lower="-100000000" upper="100000000" effort="500" velocity="500"/>
+        <dynamics damping="0.1" friction="0.1"/>
+    </joint>
+
+    <joint name="base_right_wheel_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link="right_wheel"/>
+        <origin xyz="-0.15 -0.225 0" rpy="0 0 0"/>
+        <axis xyz="0 1 0"/>
+        <limit lower="-100000000" upper="100000000" effort="500" velocity="500"/>
+        <dynamics damping="0.1" friction="0.1"/>
+    </joint>
+
+    <joint name="base_caster_wheel_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link="caster_wheel"/>
+        <origin xyz="0.2 0.0 -0.05" rpy="0.0 0.0 0.0"/>
+        <limit lower="-100000000" upper="100000000" effort="100" velocity="100"/>
+        <axis xyz="0 1 0"/>
+        <dynamics damping="0" friction="0"/>
+    </joint>
+
+
+
+</robot>

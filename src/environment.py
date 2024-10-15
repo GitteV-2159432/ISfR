@@ -11,23 +11,31 @@ class Environment:
         self.wall_height = wall_height
         self.wall_thickness = wall_thickness
         self.wall_length = wall_length
-        self.offset = (grid_size - 1) * spacing / 2.0
-        self.number_of_walls = 4
-        self.walls = []  # Store references to walls for removal
+        self.offset = 5
+        self.number_of_walls = 10
+        self.space_between_walls = 2
+        self.walls = []
+    
+        self.path_coordinates = [
+            # Start point to the first vertical transition
+            (0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0), (8, 0), (9, 0), (10, 0), (11, 0),
+            
+        ]
+
+
+
 
     def create_wall_grid(self) -> None:
         for i in range(self.grid_size + 1):
             x = i * self.spacing - self.offset
             for j in range(self.number_of_walls):
-                self._create_wall(x, -self.offset + j * 5, rotation_z=0)
-                self._create_wall(x, self.offset + j * 5, rotation_z=0) 
-        
+                self._create_wall(x, -self.offset + j * self.space_between_walls, rotation_z=0)
+                    
         for i in range(self.grid_size + 1):
             y = i * self.spacing - self.offset
             for j in range(self.number_of_walls):
-                self._create_wall(x=-self.offset + j * 5, y=y, rotation_x=90)
-                self._create_wall(x=self.offset + j * 5, y=y, rotation_x=90)
-        
+                self._create_wall(x=-self.offset + j * self.space_between_walls, y=y, rotation_x=90)
+                
         self.create_path()  # Call create_path after creating walls
 
     def _create_wall(self, x: float, y: float, rotation_x: float = 0, rotation_y: float = 0, rotation_z: float = 0) -> None:
@@ -46,22 +54,22 @@ class Environment:
             name="wall",
             is_kinematic=True,
         )
-        self.walls.append(wall)  # Add wall to list for future reference
+        self.walls.append(wall)
 
     def create_path(self) -> None:
-        path_positions = [
-            (0, 0), (0, 1), (1, 1), (1, 2), (2, 2), (3, 2),
-            (3, 3), (3, 4), (4, 4), (5, 4), (5, 5)
-        ]
-        
-        for (i, j) in path_positions:
-            x = i * self.spacing - self.offset
-            y = j * self.spacing - self.offset
-            self._remove_wall(x, y)
+        # Use predefined coordinates to remove walls and create a path
+        for (i, j) in self.path_coordinates:
+            # Make path wider by removing walls around the main path
+            for dx in [-1, 0, 1]:  # Offset to create a wider path
+                for dy in [-1, 0, 1]:
+                    x = (i + dx) * self.spacing - self.offset
+                    y = (j + dy) * self.spacing - self.offset
+                    self._remove_wall(x, y)
 
     def _remove_wall(self, x: float, y: float) -> None:
+        # Remove walls matching the position (x, y) regardless of orientation
         for wall in self.walls:
-            if wall.pose.p[0] == x and wall.pose.p[1] == y:
+            if abs(wall.pose.p[0] - x) < 0.1 and abs(wall.pose.p[1] - y) < 0.1:
                 self.scene.remove_actor(wall)  # Remove the wall from the scene
                 self.walls.remove(wall)  # Remove from list to avoid future checks
                 break

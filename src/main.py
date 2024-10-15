@@ -21,7 +21,7 @@ def main():
     viewer.set_camera_rpy(r=0, p=-np.arctan2(2, 2), y=0)
     viewer.window.set_camera_parameters(near=0.05, far=100, fovy=1)
 
-    environment = Environment(scene, grid_size=10, spacing=1, wall_height=2.0, wall_thickness=0.2, wall_length=2.0)
+    environment = Environment(scene, grid_size=20, spacing=1, wall_height=2.0, wall_thickness=0.2, wall_length=2.0)
     environment.load_scene()
 
     driver = test_driver.driver(scene, viewer)

@@ -1,131 +1,131 @@
 import paho.mqtt.client as mqtt
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-from matplotlib.widgets import Button
+from matplotlib.widgets import Button, Slider
+import numpy as np
+import threading
 
 # MQTT broker details
 BROKER = "localhost"
 PORT = 1883
-TOPIC = "robot/wheel_velocities"
+VELOCITY_TOPIC = "robot/wheel_velocities"
 RESET_TOPIC = "robot/reset"
-DESIRED_VELOCITY_TOPIC = "robot/target_velocity"
+PID_TOPIC = "robot/pid"  # Topic for PID parameters
 
 # Data lists
 left_velocities = []
 right_velocities = []
-velocity_differences = []
-desired_velocities = []
 
 # MQTT Callbacks
 def on_connect(client, userdata, flags, rc):
     print(f"Connected to MQTT broker with result code: {rc}")
-    client.subscribe(TOPIC)
-    client.subscribe(RESET_TOPIC)
-    client.subscribe(DESIRED_VELOCITY_TOPIC)
+    client.subscribe(VELOCITY_TOPIC)
 
 def on_message(client, userdata, msg):
-    if msg.topic == TOPIC:
+    if msg.topic == VELOCITY_TOPIC:
         message = msg.payload.decode()
         try:
-            left_velocity = round(float(message.split(",")[0].split(":")[1].strip()), 2)
-            right_velocity = round(float(message.split(",")[1].split(":")[1].strip()), 2)
+            left_velocity = float(message.split(",")[0].split(":")[1].strip())
+            right_velocity = float(message.split(",")[1].split(":")[1].strip())
             print(f"Left Velocity: {left_velocity:.2f}, Right Velocity: {right_velocity:.2f}")
             left_velocities.append(left_velocity)
             right_velocities.append(right_velocity)
-            velocity_differences.append(abs(left_velocity - right_velocity))
         except (IndexError, ValueError) as e:
             print(f"Error parsing message: {e}")
 
-    elif msg.topic == RESET_TOPIC:
-        print("Reset command received.")
-        reset_plot()
-
-    elif msg.topic == DESIRED_VELOCITY_TOPIC:
-        message = msg.payload.decode()
-        try:
-           
-            desired_velocity = float(message)
-            desired_velocities.append(desired_velocity)
-        except (IndexError, ValueError) as e:
-            print(f"Error parsing desired velocity message: {e}")
-
 def reset_plot():
-    global left_velocities, right_velocities, velocity_differences, desired_velocities
+    global left_velocities, right_velocities
     left_velocities.clear()
     right_velocities.clear()
-    velocity_differences.clear()
-    desired_velocities.clear()
     line_left.set_data([], [])
     line_right.set_data([], [])
-    line_diff.set_data([], [])
-    text_desired.set_text('')
     ax.set_xlim(0, 100)
-    ax.set_ylim(0, 5)
+
     plt.draw()
+
+def reset(event):
+    Kp = 0
+    Ki = 0
+    Kd = 0
+    # Publish the new PID values
+    client.publish(PID_TOPIC, f"{Kp},{Ki},{Kd}")
+    print(f"Updated PID Parameters - Kp: {Kp}, Ki: {Ki}, Kd: {Kd}")
+    reset_plot()
+    client.publish(RESET_TOPIC, "reset")  # Publish reset command to the broker
+    print("Published reset command")
+
+def update_pid_params(event):
+    Kp = kp_slider.val
+    Ki = ki_slider.val
+    Kd = kd_slider.val
+    # Publish the new PID values
+    client.publish(PID_TOPIC, f"{Kp},{Ki},{Kd}")
+    print(f"Updated PID Parameters - Kp: {Kp}, Ki: {Ki}, Kd: {Kd}")
 
 # MQTT Client Setup
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
-client.connect(BROKER, PORT, 60)
+
+# Start the MQTT client loop in a separate thread
+def start_mqtt():
+    client.connect(BROKER, PORT, 60)
+    client.loop_forever()
+
+# Start MQTT in a thread
+mqtt_thread = threading.Thread(target=start_mqtt, daemon=True)
+mqtt_thread.start()
 
 # Matplotlib Setup
 plt.style.use('fivethirtyeight')
-fig, ax = plt.subplots()
-plt.subplots_adjust(bottom=0.2)
+fig, (ax, control_ax) = plt.subplots(nrows=2, sharex=False, figsize=(10, 10)) 
 
 line_left, = ax.plot([], [], label='Left Velocity', color='blue')
 line_right, = ax.plot([], [], label='Right Velocity', color='red')
-line_diff, = ax.plot([], [], label='Velocity Difference', color='green')
-text_desired = ax.text(0.05, 0.95, '', transform=ax.transAxes, fontsize=12, verticalalignment='top')
 
 ax.set_xlim(0, 100)
-ax.set_ylim(0, 5)
+ax.set_ylim(0, 5)  # Adjust based on expected velocity range
 ax.set_xlabel('Messages Received')
 ax.set_ylabel('Wheel Velocity')
 ax.set_title('Live Wheel Velocities')
 ax.legend()
 
+control_ax.axis('off')
+
+# Create sliders for PID parameters
+axcolor = 'lightgoldenrodyellow'
+ax_kp = plt.axes([0.1, 0.35, 0.65, 0.03], facecolor=axcolor)
+ax_ki = plt.axes([0.1, 0.3, 0.65, 0.03], facecolor=axcolor)
+ax_kd = plt.axes([0.1, 0.25, 0.65, 0.03], facecolor=axcolor)
+
+kp_slider = Slider(ax_kp, 'Kp', 0.0, 100, valinit=0.0)
+ki_slider = Slider(ax_ki, 'Ki', 0.0, 100, valinit=0.0)
+kd_slider = Slider(ax_kd, 'Kd', 0.0, 100, valinit=0.0)
+
+# Button for updating PID parameters
+update_ax = plt.axes([0.8, 0.35, 0.15, 0.075])
+update_button = Button(update_ax, 'Update PID')
+update_button.on_clicked(update_pid_params)
+
 def update(frame):
-    rounded_left_velocities = [round(v, 2) for v in left_velocities]
-    rounded_right_velocities = [round(v, 2) for v in right_velocities]
-    rounded_velocity_differences = [round(v, 2) for v in velocity_differences]
-    
-    if desired_velocities:
-        latest_desired_velocity = desired_velocities[0]
-        print(latest_desired_velocity)
-        text_desired.set_text(f'Desired Velocity: {latest_desired_velocity:.2f}')
-    else:
-        text_desired.set_text('Desired Velocity: N/A')
+    if left_velocities or right_velocities:
+        line_left.set_data(range(len(left_velocities)), left_velocities)
+        line_right.set_data(range(len(right_velocities)), right_velocities)
 
-    line_left.set_data(range(len(rounded_left_velocities)), rounded_left_velocities)
-    line_right.set_data(range(len(rounded_right_velocities)), rounded_right_velocities)
-    line_diff.set_data(range(len(rounded_velocity_differences)), rounded_velocity_differences)
+        # Adjust x-axis limits dynamically
+        ax.set_xlim(0, max(len(left_velocities), len(right_velocities), 100))
 
-    ax.set_xlim(0, max(len(rounded_left_velocities), len(rounded_right_velocities), len(rounded_velocity_differences), 100))
+        # Adjust y-axis limits based on data
+        ax.set_ylim(min(min(left_velocities, default=0), min(right_velocities, default=0)),
+                    max(max(left_velocities, default=0), max(right_velocities, default=0)) + 1)
 
-    if rounded_left_velocities or rounded_right_velocities or rounded_velocity_differences:
-        ax.set_ylim(0, max(max(rounded_left_velocities, default=0),
-                           max(rounded_right_velocities, default=0),
-                           max(rounded_velocity_differences, default=0),
-                           5))
+    return line_left, line_right
 
-    return line_left, line_right, line_diff, text_desired
-
-def reset(event):
-    reset_plot()
-
-# Button for resetting the plot
-reset_ax = plt.axes([0.8, 0.05, 0.1, 0.075])
+# Button for resetting the plot and robot
+reset_ax = plt.axes([0.8, 0.2, 0.15, 0.075])
 reset_button = Button(reset_ax, 'Reset')
 reset_button.on_clicked(reset)
 
-client.loop_start()
-ani = animation.FuncAnimation(fig, update, interval=1000, cache_frame_data=False, blit=False)
-plt.show()
+ani = animation.FuncAnimation(fig, update, interval=1000, blit=False)
 
-try:
-    client.loop_forever()
-except KeyboardInterrupt:
-    print("Exiting...")
-client.loop_stop()
+plt.show()

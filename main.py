@@ -32,7 +32,7 @@ def main():
     scene.add_directional_light([0, 1, -1], [0.5, 0.5, 0.5], shadow=True)
 
     viewer = scene.create_viewer()
-    ground_material = scene.create_physical_material(0.4, 0.2, 0)
+    ground_material = scene.create_physical_material(0.4, 0.3, 0)
     ground = scene.add_ground(0, True, ground_material)
 
     viewer.set_camera_xyz(x=0, y=0, z=0)

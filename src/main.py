@@ -4,7 +4,7 @@ from sapien import Pose
 import numpy as np
 import cv2
 
-import test_environment
+from environment import Environment
 import test_driver
 import lidar
 
@@ -21,7 +21,9 @@ def main():
     viewer.set_camera_rpy(r=0, p=-np.arctan2(2, 2), y=0)
     viewer.window.set_camera_parameters(near=0.05, far=100, fovy=1)
 
-    test_environment.load(scene)
+    environment = Environment(scene, grid_size=10, spacing=1, wall_height=2.0, wall_thickness=0.2, wall_length=2.0)
+    environment.load_scene()
+
     driver = test_driver.driver(scene, viewer)
 
     lidar_config = lidar.LidarSensorConfig()

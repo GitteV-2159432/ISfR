@@ -44,3 +44,8 @@ def create_wall_grid(scene: sapien.Scene, grid_size, spacing, wall_height=2.0, w
             name="horizontal_wall",
             is_kinematic=True,
         )
+def load(scene: sapien.Scene) -> None:
+    scene.set_ambient_light([0.5, 0.5, 0.5])
+    scene.add_directional_light([0, 1, -1], [0.5, 0.5, 0.5])
+    scene.add_ground(altitude=0)
+    create_wall_grid(scene, 6, 5)

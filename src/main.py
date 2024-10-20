@@ -24,15 +24,7 @@ def main():
     test_environment.load(scene)
     driver = test_driver.driver(scene, viewer)
 
-    lidar_config = lidar.LidarSensorConfig()
-    lidar_config.detection_range = 10
-    lidar_config.field_of_view = 360
-    lidar_config.samples = 200
-    lidar_config.noise_standard_deviation_distance = 0.05
-    lidar_config.noise_standard_deviation_angle_horizontal = 0
-    lidar_config.noise_standard_deviation_angle_vertical = 0
-    lidar_config.noise_outlier_chance = 0
-    lidar_config.randomize_start_angle = False
+    lidar_config = lidar.LidarSensorConfig('src/sensor_configs/Hokuyo_UTM-30LX.json')
     lidar_sensor = lidar.LidarSensor("lidar", scene, lidar_config, mount_entity=driver.body, pose=Pose(p=np.array([0, 0, 0.5])))
 
     while not viewer.closed:

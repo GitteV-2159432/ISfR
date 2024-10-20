@@ -1,0 +1,16 @@
+{
+    "sensor_name": "Hokuyo_UTM-30LX",
+    "type": "LiDAR",
+    "specifications": {
+      "detection_range": {
+        "min": 0.1,
+        "max": 30.0
+      },
+      "accuracy": {
+        "range_0_10m_(mm)": 30,
+        "range_10_30m_(mm)": 50
+      },
+      "angular_resolution": 0.25,
+      "fov": 270.0
+    }
+}

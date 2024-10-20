@@ -7,6 +7,7 @@ import cv2
 import test_environment
 import test_driver
 import lidar
+from infraCommunication import infraCommunication
 
 def main():
     scene = sapien.Scene()
@@ -33,7 +34,13 @@ def main():
     lidar_config.noise_standard_deviation_angle_vertical = 0
     lidar_config.noise_outlier_chance = 0
     lidar_config.randomize_start_angle = False
-    lidar_sensor = lidar.LidarSensor("lidar", scene, lidar_config, mount_entity=driver.body, pose=Pose(p=np.array([0, 0, 0.5])))
+    
+    
+    infra_communication = infraCommunication("broker/cluster url", 8883, "username", "password", "topic")
+    infra_communication.connect()
+    infra_communication.set_lidar_context()
+    
+    lidar_sensor = lidar.LidarSensor("lidar", scene, lidar_config, infra_communication, mount_entity=driver.body, pose=Pose(p=np.array([0, 0, 0.5])))
 
     while not viewer.closed:
         lidar_sensor.simulate()
@@ -44,6 +51,7 @@ def main():
         viewer.render()
 
         lidar_sensor.visualize()
+    infra_communication.disconnect()
 
 if __name__ == "__main__":
     main()

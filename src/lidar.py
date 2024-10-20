@@ -6,6 +6,7 @@ from copy import deepcopy as copy
 from scipy.spatial.transform import Rotation
 import numpy as np
 import cv2
+from infraCommunication import infraCommunication
 
 class LidarSensorConfig:
     def __init__(self) -> None:
@@ -43,7 +44,7 @@ class LidarSensor(SensorEntity):
     This class simulates a lidar sensor. Refer to LidarSensorConfig for configurable parameters.
     """
         
-    def __init__(self, sensor_name: str, scene: Scene, config: LidarSensorConfig, mount_entity: Optional[Entity] = None, pose: Optional[Pose] = None) -> None:
+    def __init__(self, sensor_name: str, scene: Scene, config: LidarSensorConfig, infra_comm : infraCommunication,mount_entity: Optional[Entity] = None, pose: Optional[Pose] = None) -> None:
         """
         :param sensor_name: name of the sensor.
         :param scene: scene that the sensor is attached to.
@@ -60,6 +61,7 @@ class LidarSensor(SensorEntity):
         self._config = config
         self._results: List[Tuple[float, float, float]] = []
         self.temp = 0
+        self.infra_comm = infra_comm
 
         # self._pose is global if not mounted and local if mounted
         self._mount = mount_entity
@@ -178,10 +180,13 @@ class LidarSensor(SensorEntity):
             return self._config.detection_range
 
         return hit_info.distance
-    
+
     def visualize(self, img_size=(800, 800), scale=30) -> None:
         img = np.zeros(img_size + (3,), dtype=np.uint8)
         points = self.get_point_cloud()
+        
+        self.infra_comm.publish_message(points)
+        #print(points)
 
         for point in points:
             x, y, z = point

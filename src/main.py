@@ -6,6 +6,7 @@ import test_environment
 import test_driver
 import lidar
 from fastslam import FastSLAM, FastSLAM_config
+from time import sleep
 
 def main():
     scene = sapien.Scene()
@@ -58,6 +59,7 @@ def main():
         fastslam.run(lidar_measurements, odometry[0], odometry[1])
         fastslam.visualize()
         # lidar_sensor.visualize()
+        # sleep(0.1)
 
 if __name__ == "__main__":
     main()

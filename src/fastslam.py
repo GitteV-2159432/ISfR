@@ -2,6 +2,7 @@ import numpy as np
 from typing import List, Tuple
 import cv2
 from datetime import datetime
+from sklearn.neighbors import KDTree
 
 """
 Sources:
@@ -88,7 +89,11 @@ class Particle:
         self.pose = pose
         if landmarks is None:
             self.landmarks = []
+            self.landmark_tree = None
+        else:
+            self.landmark_tree = KDTree([np.array(landmark.get_expected_position()) for landmark in self.landmarks])
         self.weight = weight
+        
     
     def match_landmark(self, measurement: Tuple[float, float], distance_threshold: float):
         """
@@ -98,21 +103,20 @@ class Particle:
         :param distance_threshold: The maximum distance to an existing landmark to be considered a match
         :return: Matched Landmark if found, or None if it's a new landmark
         """
-        squared_distances = []
-        for landmark in self.landmarks:
-            expected_position = landmark.get_expected_position()
-            measurement_position = (np.cos(measurement[1]) * measurement[0] + self.pose.x, np.sin(measurement[1]) * measurement[0] + self.pose.y) 
-
-            squared_distance = (measurement_position[0] - expected_position[0])**2 + (measurement_position[1] - expected_position[1])**2
-            squared_distances.append(squared_distance)
-
-        squared_distances.append(distance_threshold**2)
+        if (self.landmark_tree is not None):
+            dist, ind = self.landmark_tree.query([measurement], k=1)
+            nearsest_index = ind[0][0] # Gets the index from the original list
+            print(dist)
+            if dist < distance_threshold:
+                return self.landmarks[nearsest_index]
         
-        min_squared_distance = min(squared_distances)
-        if np.sqrt(min_squared_distance) < distance_threshold:
-            matched_landmark_index = squared_distances.index(min_squared_distance)
-            return self.landmarks[matched_landmark_index]
-        return None
+        distance, angle = measurement
+        landmark_x = self.pose.x + distance * np.cos(pi2pi(self.pose.heading + angle))
+        landmark_y = self.pose.y + distance * np.sin(pi2pi(self.pose.heading + angle))
+        new_landmark = Landmark(landmark_x, landmark_y, sigma_x=0.5, sigma_y=1.0) # TODO: What should the sigma_x and sigma_y be?
+        self.landmarks.append(new_landmark)
+        self.landmark_tree = KDTree([np.array(landmark.get_expected_position()) for landmark in self.landmarks])
+        return new_landmark
 
 class FastSLAM_config:
     def __init__(self) -> None:
@@ -203,22 +207,18 @@ class FastSLAM:
         :param landmark_measurements: List of measured landmarks (distance, angle in radians)
         :return: Updated list of particles
         """
+        counter = 0
         for particle in particles:
             for landmark_measurement in landmark_measurements:
                 matched_landmark = particle.match_landmark(landmark_measurement, self._config.distance_threshold)
+                
             
-                if matched_landmark is None:
-                    # Add new landmark
-                    distance, angle = landmark_measurement
-                    landmark_x = particle.pose.x + distance * np.cos(pi2pi(particle.pose.heading + angle))
-                    landmark_y = particle.pose.y + distance * np.sin(pi2pi(particle.pose.heading + angle))
-                    particle.landmarks.append(Landmark(landmark_x, landmark_y, sigma_x=0.5, sigma_y=1.0)) # TODO: What should the sigma_x and sigma_y be?
-
+              
                 # else:
                 #     particle.weight *= compute_weight(particle, matched_landmark, landmark_measurement, self._config.measurement_covariance)
                 #     matched_landmark.update(particle, landmark_measurement, self._config.measurement_covariance)
                 #     pass
-
+        
         return particles
 
     def _resample(self, particles: List[Particle]) -> List[Particle]:

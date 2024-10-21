@@ -6,7 +6,6 @@ import test_environment
 import test_driver
 import lidar
 from fastslam import FastSLAM, FastSLAM_config
-from time import sleep
 
 def main():
     scene = sapien.Scene()

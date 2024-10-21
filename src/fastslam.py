@@ -103,17 +103,17 @@ class Particle:
         :param distance_threshold: The maximum distance to an existing landmark to be considered a match
         :return: Matched Landmark if found, or None if it's a new landmark
         """
-        if (self.landmark_tree is not None):
-            dist, ind = self.landmark_tree.query([measurement], k=1)
-            nearsest_index = ind[0][0] # Gets the index from the original list
-            print(dist)
-            if dist < distance_threshold:
-                return self.landmarks[nearsest_index]
-        
         distance, angle = measurement
-        landmark_x = self.pose.x + distance * np.cos(pi2pi(self.pose.heading + angle))
-        landmark_y = self.pose.y + distance * np.sin(pi2pi(self.pose.heading + angle))
-        new_landmark = Landmark(landmark_x, landmark_y, sigma_x=0.5, sigma_y=1.0) # TODO: What should the sigma_x and sigma_y be?
+        measurement_x = self.pose.x + distance * np.cos(pi2pi(self.pose.heading + angle))
+        measurement_y = self.pose.y + distance * np.sin(pi2pi(self.pose.heading + angle))
+        
+        if (self.landmark_tree is not None):
+            distance, index = self.landmark_tree.query([(measurement_x, measurement_y)], k=1)
+            nearest_index = index[0][0] # Gets the index from the original list
+            if distance < distance_threshold:
+                return self.landmarks[nearest_index]
+        
+        new_landmark = Landmark(measurement_x, measurement_y, sigma_x=0.5, sigma_y=1.0) # TODO: What should the sigma_x and sigma_y be?
         self.landmarks.append(new_landmark)
         self.landmark_tree = KDTree([np.array(landmark.get_expected_position()) for landmark in self.landmarks])
         return new_landmark
@@ -212,8 +212,6 @@ class FastSLAM:
             for landmark_measurement in landmark_measurements:
                 matched_landmark = particle.match_landmark(landmark_measurement, self._config.distance_threshold)
                 
-            
-              
                 # else:
                 #     particle.weight *= compute_weight(particle, matched_landmark, landmark_measurement, self._config.measurement_covariance)
                 #     matched_landmark.update(particle, landmark_measurement, self._config.measurement_covariance)

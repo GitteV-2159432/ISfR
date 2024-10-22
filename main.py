@@ -27,15 +27,15 @@ mqtt_client.loop_start()
 def main():
     scene = sapien.Scene()
     scene.set_timestep(0.1)
-    
+
     scene.set_ambient_light([0.5, 0.5, 0.5])
     scene.add_directional_light([0, 1, -1], [0.5, 0.5, 0.5], shadow=True)
 
     viewer = scene.create_viewer()
-    ground_material = scene.create_physical_material(0.4, 0.3, 0)
+    ground_material = scene.create_physical_material(0.2, 0.2, 0)
     ground = scene.add_ground(0, True, ground_material)
 
-    viewer.set_camera_xyz(x=0, y=0, z=0)
+    viewer.set_camera_xyz(x=-10, y=0, z=10)
     viewer.set_camera_rpy(r=0, p=-np.arctan2(2, 2), y=0)
     viewer.window.set_camera_parameters(near=0.05, far=100, fovy=1)
     scene_config = sapien.SceneConfig()

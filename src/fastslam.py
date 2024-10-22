@@ -142,12 +142,54 @@ class FastSLAM:
         # self.particles = self._resample(self.particles)
 
     def get_estimated_position(self) -> Tuple[float, float]:
-        # TODO
-        pass
+        """
+        Returns the estimated position of the robot as the weighted average of the particle positions.
+
+        :return: Tuple representing the estimated (x, y) position of the robot.
+        """
+        total_weight = sum(particle.weight for particle in self.particles)
+
+        if total_weight == 0:
+            # If all weights are zero, return the position of the first particle (or default to some position)
+            return self.particles[0].pose.x, self.particles[0].pose.y
+
+        # Compute weighted average for x and y positions
+        estimated_x = sum(particle.pose.x * particle.weight for particle in self.particles) / total_weight
+        estimated_y = sum(particle.pose.y * particle.weight for particle in self.particles) / total_weight
+
+        return estimated_x, estimated_y
     
-    def get_estimated_map(self) -> None:
-        # TODO
-        pass
+    def get_estimated_map(self) -> List[Tuple[float, float]]:
+        """
+        Returns the estimated positions of landmarks based on the particles.
+        This function computes a weighted average of landmark positions across all particles.
+
+        :return: List of estimated landmark positions as (x, y) tuples.
+        """
+        landmark_positions = {}
+
+        for particle in self.particles:
+            for landmark in particle.landmarks:
+                landmark_position = (landmark.x, landmark.y)
+                if landmark_position in landmark_positions:
+                    # If landmark already exists, add the weighted position
+                    landmark_positions[landmark_position].append((landmark.x, landmark.y, particle.weight))
+                else:
+                    # Initialize with the current landmark and its particle weight
+                    landmark_positions[landmark_position] = [(landmark.x, landmark.y, particle.weight)]
+
+        # Average positions of landmarks across all particles
+        estimated_landmarks = []
+        for landmark_position, positions in landmark_positions.items():
+            total_weight = sum(weight for _, _, weight in positions)
+            if total_weight == 0:
+                continue
+
+            avg_x = sum(x * weight for x, _, weight in positions) / total_weight
+            avg_y = sum(y * weight for _, y, weight in positions) / total_weight
+            estimated_landmarks.append((avg_x, avg_y))
+
+        return estimated_landmarks
 
     def _init_particles(self, particle_amount: int, area_size: float) -> List[Particle]:
         particles = []

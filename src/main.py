@@ -56,6 +56,8 @@ def main():
         odometry = driver.get_odometry()
 
         fastslam.run(lidar_measurements, odometry[0], odometry[1])
+        estimated_position = fastslam.get_estimated_position()
+        print(f"Estimated Robot Position: {estimated_position}")
         fastslam.visualize()
         # lidar_sensor.visualize()
         # sleep(0.1)

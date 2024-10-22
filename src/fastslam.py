@@ -21,11 +21,11 @@ class Pose:
         self.heading = heading
 
 class Landmark:
-    def __init__(self, x, y, sigma_x, sigma_y) -> None:
-        self.x = x
-        self.y = y
-        self.sigma_x = sigma_x
-        self.sigma_y = sigma_y
+    def __init__(self, x: float, y: float, sigma_x: float, sigma_y: float) -> None:
+        self.x: float = x
+        self.y: float = y
+        self.sigma_x: float = sigma_x
+        self.sigma_y: float = sigma_y
 
     def update(self, particle, measurement: Tuple[float, float], measurement_covariance: np.ndarray):
         """
@@ -35,18 +35,18 @@ class Landmark:
 
         h_robot_pose, h_landmark_pose = compute_jacobians(particle, self)
         expected_measurement = self.get_relative_measurement(particle.pose)
-        innovation_covariance = h_landmark_pose @ Landmark.get_covariance_matrix() @ h_landmark_pose.T + measurement_covariance
+        innovation_covariance = h_landmark_pose @ self.get_covariance_matrix() @ h_landmark_pose.T + measurement_covariance
         innovation_covariance = (innovation_covariance + innovation_covariance.T) * 0.5
 
         delta = np.array([measurement[0] - expected_measurement[0], pi2pi(measurement[1] - expected_measurement[1])]) # (distance, angle)
 
         SChol = np.linalg.cholesky(innovation_covariance).T
-        SCholInv = np.linalg.inv(SChol)
+        SCholInv = np.linalg.pinv(SChol)
 
-        kalman_gain = Landmark.get_covariance_matrix() @ h_landmark_pose.T @ SCholInv
+        kalman_gain = self.get_covariance_matrix() @ h_landmark_pose.T @ SCholInv
 
         updated_position = np.array(expected_measurement).reshape(2, 1) + kalman_gain @ SCholInv.T @ delta
-        updated_covariance = Landmark.get_covariance_matrix() - kalman_gain @ (kalman_gain @ SCholInv.T).T
+        updated_covariance = self.get_covariance_matrix() - kalman_gain @ (kalman_gain @ SCholInv.T).T
 
         self.x = updated_position[0, 0]
         self.y = updated_position[1, 0]
@@ -88,20 +88,20 @@ class Particle:
     def __init__(self, pose: Pose, landmarks: List[Landmark] = None, weight: float = 1.0) -> None:
         self.pose = pose
         if landmarks is None:
-            self.landmarks = []
+            self.landmarks: List[Landmark] = []
             self.landmark_tree = None
         else:
             self.landmark_tree = KDTree([np.array(landmark.get_expected_position()) for landmark in self.landmarks])
         self.weight = weight
         
     
-    def match_landmark(self, measurement: Tuple[float, float], distance_threshold: float):
+    def match_landmark(self, measurement: Tuple[float, float], distance_threshold: float) -> Tuple[Landmark, bool]:
         """
         Matches the current measurement with an existing landmark or identifies it as a new one.
 
         :param measurement: Tuple of (distance, angle) representing the observed landmark measurement
         :param distance_threshold: The maximum distance to an existing landmark to be considered a match
-        :return: Matched Landmark if found, or None if it's a new landmark
+        :return: Tuple[matched_landmark: Landmark, is_new_landmark: bool]
         """
         distance, angle = measurement
         measurement_x = self.pose.x + distance * np.cos(pi2pi(self.pose.heading + angle))
@@ -111,12 +111,12 @@ class Particle:
             distance, index = self.landmark_tree.query([(measurement_x, measurement_y)], k=1)
             nearest_index = index[0][0] # Gets the index from the original list
             if distance < distance_threshold:
-                return self.landmarks[nearest_index]
+                return self.landmarks[nearest_index], False
         
         new_landmark = Landmark(measurement_x, measurement_y, sigma_x=0.5, sigma_y=1.0) # TODO: What should the sigma_x and sigma_y be?
         self.landmarks.append(new_landmark)
         self.landmark_tree = KDTree([np.array(landmark.get_expected_position()) for landmark in self.landmarks])
-        return new_landmark
+        return new_landmark, True
 
 class FastSLAM_config:
     def __init__(self) -> None:
@@ -124,7 +124,7 @@ class FastSLAM_config:
         self.velocity_standard_deviation: float = 0
         self.angular_velocity_standard_deviation: float = 0
         self.distance_threshold: float = 0
-        self.measurement_covariance = np.array([[0, 0], [0, 0]])
+        self.measurement_covariance = np.array([[1, 0], [1, 0]])
         self.effective_particle_amount_modifier = .666666
 
 class FastSLAM:
@@ -150,13 +150,8 @@ class FastSLAM:
         pass
 
     def _init_particles(self, particle_amount: int, area_size: float) -> List[Particle]:
-        particles = []
-        for i in range(particle_amount):
-            x, y = [np.random.uniform(-area_size / 2, area_size / 2), np.random.uniform(-area_size / 2, area_size / 2)]
-            heading = np.random.uniform(-np.pi, np.pi)
-            particles.append(Particle(Pose(x, y, heading)))
-        return particles
-
+        return [Particle(Pose(0, 0, 0)) for i in range(particle_amount)]
+       
     def _motion_model(self, particle_pose: Pose, velocity: float, angular_velocity: float, time_step: float) -> Pose:
         """
         Predicts the next state (pose) of a particle given its current pose.
@@ -207,15 +202,13 @@ class FastSLAM:
         :param landmark_measurements: List of measured landmarks (distance, angle in radians)
         :return: Updated list of particles
         """
-        counter = 0
         for particle in particles:
             for landmark_measurement in landmark_measurements:
-                matched_landmark = particle.match_landmark(landmark_measurement, self._config.distance_threshold)
+                matched_landmark, is_new_landmark = particle.match_landmark(landmark_measurement, self._config.distance_threshold)
                 
-                # else:
-                #     particle.weight *= compute_weight(particle, matched_landmark, landmark_measurement, self._config.measurement_covariance)
-                #     matched_landmark.update(particle, landmark_measurement, self._config.measurement_covariance)
-                #     pass
+                if not is_new_landmark:
+                    # particle.weight *= compute_weight(particle, matched_landmark, landmark_measurement, self._config.measurement_covariance)
+                    matched_landmark.update(particle, landmark_measurement, self._config.measurement_covariance)
         
         return particles
 
@@ -252,7 +245,7 @@ class FastSLAM:
     def visualize(self):
         size = 800
         scale = 50
-        sigma_scale = 10
+        sigma_scale = 10.0
         image = np.zeros((size, size, 3), dtype=np.uint8)
 
         for particle in self.particles:
@@ -271,7 +264,19 @@ class FastSLAM:
             for landmark in particle.landmarks:
                 landmark_point = (int(landmark.y * scale + size / 2), 
                                   int(landmark.x * scale + size / 2))
-                cv2.ellipse(image, landmark_point, (5, 5), 0, 0, 360, (255, 0, 0), 2)
+                
+                cv2.circle(image, landmark_point, 2, (255, 255, 255), -1)
+                if (landmark.sigma_x >= 0.0 and landmark.sigma_y >= 0.0):
+                    cv2.ellipse(
+                        img = image, 
+                        center = landmark_point, 
+                        axes = (round(landmark.sigma_x * sigma_scale), round(landmark.sigma_y * sigma_scale)), 
+                        angle = 0, 
+                        startAngle = 0, 
+                        endAngle = 360, 
+                        color = (255, 0, 0), 
+                        thickness = 2
+                    )
 
         cv2.imshow("FastSLAM", image)
         cv2.waitKey(1)
@@ -321,7 +326,7 @@ def compute_weight(particle: Particle, matched_landmark: Landmark, measurement: 
     """
     h_robot_pose, h_landmark_pose = compute_jacobians(particle, matched_landmark)
     expected_measurement = matched_landmark.get_relative_measurement(particle.pose)
-    innovation_covariance = h_landmark_pose @ Landmark.get_covariance_matrix() @ h_landmark_pose.T + measurement_covariance
+    innovation_covariance = h_landmark_pose @ matched_landmark.get_covariance_matrix() @ h_landmark_pose.T + measurement_covariance
     inverse_innovation_covariance = np.linalg.inv(innovation_covariance)
 
     delta = np.array([measurement[0] - expected_measurement[0], pi2pi(measurement[1] - expected_measurement[1])]) # (distance, angle)

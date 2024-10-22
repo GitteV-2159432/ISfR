@@ -23,8 +23,8 @@ def main():
     lidar_config.detection_range = 2
     lidar_config.field_of_view = 10
     lidar_config.samples = 10
-    lidar_config.noise_standard_deviation_distance = 0
-    lidar_config.noise_standard_deviation_angle_horizontal = 0
+    lidar_config.noise_standard_deviation_distance = 0.02
+    lidar_config.noise_standard_deviation_angle_horizontal = 0.02
     lidar_config.noise_standard_deviation_angle_vertical = 0
     lidar_config.noise_outlier_chance = 0
     lidar_config.randomize_start_angle = False
@@ -32,8 +32,8 @@ def main():
 
     fastslam_config = FastSLAM_config()
     fastslam_config.particle_amount = 5
-    fastslam_config.velocity_standard_deviation = 0
-    fastslam_config.angular_velocity_standard_deviation = 0
+    fastslam_config.velocity_standard_deviation = 0.1
+    fastslam_config.angular_velocity_standard_deviation = 0.1
     fastslam_config.distance_threshold = 3
     # fastslam_config.measurement_covariance = 0
     # fastslam_config.effective_particle_amount_modifier = 0

@@ -5,21 +5,25 @@ from typing import Optional, List, Tuple
 from copy import deepcopy as copy
 from scipy.spatial.transform import Rotation
 import numpy as np
+import json
 import cv2
 
 class LidarSensorConfig:
-    def __init__(self) -> None:
+    def __init__(self, config_file_name: Optional[str] = None) -> None:
         """
         An instance of this class is required to initialize LidarSensor.
         """
         
-        self.detection_range: float = 10
+        self.detection_range_max: float = 10.0
         """Maximum range from where the lidar can detect an object in meters"""
 
-        self.field_of_view: float = 360
+        self.detection_range_min: float = 0.1
+        """Maximum range from where the lidar can detect an object in meters"""
+
+        self.field_of_view: float = 360.0
         """Field of view in the horizontal plane in degrees"""
 
-        self.samples: int = 100
+        self.samples: int = 200
         """Number of rays around the horizontal plane"""
                 
         self.noise_standard_deviation_distance: float = 0.01
@@ -28,15 +32,25 @@ class LidarSensorConfig:
         self.noise_standard_deviation_angle_horizontal: float = 0.01
         """Standard deviation for the added normal distributed noise on the horizontal angle of the ray"""
         
-        self.noise_standard_deviation_angle_vertical: float = 0
+        self.noise_standard_deviation_angle_vertical: float = 0.0
         """Standard deviation for the added normal distributed noise on the vertical angle of the ray"""
         
-        self.noise_outlier_chance: float = 0.001
+        self.noise_outlier_chance: float = 0.0
         """Chance for a random outlier to occur"""
 
-        self.randomize_start_angle: bool = True
+        self.randomize_start_angle: bool = False
         """Chance for a random outlier to occur"""
 
+        if config_file_name:
+            with open(config_file_name, 'r') as file:
+                config = json.load(file)
+
+            self.detection_range_max = config['specifications']['detection_range']['max']
+            self.detection_range_min = config['specifications']['detection_range']['min']
+            self.field_of_view = config['specifications']['fov']
+            # TODO self.angular_resolution = config['specifications']['angular_resolution']
+            self.noise_standard_deviation_distance = config['specifications']['accuracy']['range_0_10m_(mm)'] * 1e-3
+            self.noise_standard_deviation_angle_horizontal = config['specifications']['accuracy']['range_0_10m_(mm)'] * 1e-3
 
 class LidarSensor(SensorEntity):
     """
@@ -100,11 +114,11 @@ class LidarSensor(SensorEntity):
             ray_direction = self._compute_ray_direction(np.radians(angle_horizontal), np.radians(angle_vertical))
             distance = self._raycast(ray_direction)
 
-            if distance < self._config.detection_range:
+            if distance < self._config.detection_range_max:
                 distance += np.random.normal(0, self._config.noise_standard_deviation_distance)
                 
             if np.random.rand() < self._config.noise_outlier_chance:
-                distance = np.random.uniform(0, self._config.detection_range)
+                distance = np.random.uniform(0, self._config.detection_range_max)
 
             results.append((angle_horizontal, angle_vertical, distance))
 
@@ -169,13 +183,16 @@ class LidarSensor(SensorEntity):
         :param ray_direction: The direction of the ray in local coordinates.
         :return: The distance to the first detected object, or the maximum detection range if no object is detected.
         """
+
+        # TODO: Add minimum distance
+
         pose_global = self.get_pose()
         direction_global = Rotation.from_quat(pose_global.q, scalar_first=True).apply(direction_local) # sapien uses wxyz for quaternions
 
-        hit_info = self._scene.physx_system.raycast(pose_global.p, direction_global, self._config.detection_range)
+        hit_info = self._scene.physx_system.raycast(pose_global.p, direction_global, self._config.detection_range_max)
 
         if hit_info is None:
-            return self._config.detection_range
+            return self._config.detection_range_max
 
         return hit_info.distance
     
@@ -191,8 +208,6 @@ class LidarSensor(SensorEntity):
 
             if 0 <= img_x < img_size[0] and 0 <= img_y < img_size[1]: 
                 cv2.circle(img, (img_x, img_y), radius=2, color=(0, 255, 0), thickness=-1)
-            else:
-                print("scale to large")
 
         cv2.imshow('LIDAR Points', img)
         cv2.waitKey(1)

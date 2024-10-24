@@ -14,7 +14,6 @@ class driver:
         size = .5
         self.last_time = datetime.now()
 
-
         self._viewer = viewer
         self.move_speed = 1
         self.turn_speed = 1

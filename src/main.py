@@ -6,6 +6,7 @@ import test_environment
 import test_driver
 import lidar
 from fastslam import FastSLAM, FastSLAM_config
+from scipy.spatial.transform import Rotation
 
 def main():
     scene = sapien.Scene()
@@ -23,17 +24,17 @@ def main():
     lidar_config.detection_range = 2
     lidar_config.field_of_view = 10
     lidar_config.samples = 10
-    lidar_config.noise_standard_deviation_distance = 0.02
-    lidar_config.noise_standard_deviation_angle_horizontal = 0.02
+    lidar_config.noise_standard_deviation_distance = 0.2
+    lidar_config.noise_standard_deviation_angle_horizontal = 0.2
     lidar_config.noise_standard_deviation_angle_vertical = 0
     lidar_config.noise_outlier_chance = 0
     lidar_config.randomize_start_angle = False
     lidar_sensor = lidar.LidarSensor("lidar", scene, lidar_config, mount_entity=driver.body, pose=Pose(p=np.array([0, 0, 0.5])))
 
     fastslam_config = FastSLAM_config()
-    fastslam_config.particle_amount = 5
-    fastslam_config.velocity_standard_deviation = 0.1
-    fastslam_config.angular_velocity_standard_deviation = 0.1
+    fastslam_config.particle_amount = 50
+    fastslam_config.velocity_standard_deviation = 0.5
+    fastslam_config.angular_velocity_standard_deviation = 0.5
     fastslam_config.distance_threshold = 3
     # fastslam_config.measurement_covariance = 0
     # fastslam_config.effective_particle_amount_modifier = 0
@@ -56,9 +57,10 @@ def main():
         odometry = driver.get_odometry()
 
         fastslam.run(lidar_measurements, odometry[0], odometry[1])
-        fastslam.visualize()
-        # lidar_sensor.visualize()
-        # sleep(0.1)
+
+        # For testing
+        driver_ground_truth = (driver.body.get_pose().p[0], driver.body.get_pose().get_p()[1], Rotation.from_quat(driver.body.get_pose().q, scalar_first=True).as_euler('xyz', degrees=False)[2])
+        fastslam.visualize(driver_ground_truth)
 
 if __name__ == "__main__":
     main()

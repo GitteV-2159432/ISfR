@@ -30,28 +30,35 @@ class Landmark:
     def update(self, particle, measurement: Tuple[float, float], measurement_covariance: np.ndarray):
         """
         Updates the landmarks position and covariance based on the new measurement.
-        Based on the implementation of: https://atsushisakai.github.io/PythonRobotics/modules/slam/FastSLAM1/FastSLAM1.html
         """
-
+        # Compute the Jacobians
         h_robot_pose, h_landmark_pose = compute_jacobians(particle, self)
+
+        # Predicted measurement in the robot's local frame
         expected_measurement = self.get_relative_measurement(particle.pose)
+
+        delta_polar = np.array([measurement[0] - expected_measurement[0], pi2pi(measurement[1] - expected_measurement[1])])
+        delta_cartesian = np.array([delta_polar[0] * np.cos(particle.pose.heading + delta_polar[1]), delta_polar[0] * np.sin(particle.pose.heading + delta_polar[1])])
+
+        # Innovation covariance
         innovation_covariance = h_landmark_pose @ self.get_covariance_matrix() @ h_landmark_pose.T + measurement_covariance
         innovation_covariance = (innovation_covariance + innovation_covariance.T) * 0.5
 
-        delta = np.array([measurement[0] - expected_measurement[0], pi2pi(measurement[1] - expected_measurement[1])]) # (distance, angle)
+        # Kalman gain
+        kalman_gain = self.get_covariance_matrix() @ h_landmark_pose.T @ np.linalg.inv(innovation_covariance)
 
-        SChol = np.linalg.cholesky(innovation_covariance).T
-        SCholInv = np.linalg.pinv(SChol)
+        # Update landmark position in global frame
+        updated_position = np.array([self.x, self.y]) + kalman_gain @ delta_cartesian
+        self.x = updated_position[0]
+        self.y = updated_position[1]
 
-        kalman_gain = self.get_covariance_matrix() @ h_landmark_pose.T @ SCholInv
+        # Update landmark covariance
+        updated_covariance = (np.eye(2) - kalman_gain @ h_landmark_pose) @ self.get_covariance_matrix()
 
-        updated_position = np.array(expected_measurement).reshape(2, 1) + kalman_gain @ SCholInv.T @ delta
-        updated_covariance = self.get_covariance_matrix() - kalman_gain @ (kalman_gain @ SCholInv.T).T
-
-        self.x = updated_position[0, 0]
-        self.y = updated_position[1, 0]
+        # Update covariance values
         self.sigma_x = updated_covariance[0, 0]
         self.sigma_y = updated_covariance[1, 1]
+
 
     def get_covariance_matrix(self) -> np.ndarray:
         """
@@ -124,14 +131,14 @@ class FastSLAM_config:
         self.velocity_standard_deviation: float = 0
         self.angular_velocity_standard_deviation: float = 0
         self.distance_threshold: float = 0
-        self.measurement_covariance = np.array([[1, 0], [1, 0]])
-        self.effective_particle_amount_modifier = .666666
+        self.measurement_covariance = np.array([[100, 0], [0, 100]])
+        self.effective_particle_amount_modifier = .6
 
 class FastSLAM:
     def __init__(self, config: FastSLAM_config) -> None:
         self._config = config
         self.last_time = datetime.now()
-        self.particles = self._init_particles(self._config.particle_amount, 10)
+        self.particles = self._init_particles(self._config.particle_amount)
 
     def run(self, measurements, velocity, angular_velocity):
         time_step = (datetime.now() - self.last_time).microseconds * float(1e-6)
@@ -139,7 +146,7 @@ class FastSLAM:
 
         self.particles = self._predict(self.particles, velocity, angular_velocity, time_step)
         self.particles = self._update(self.particles, measurements)
-        # self.particles = self._resample(self.particles)
+        self.particles = self._resample(self.particles)
 
     def get_estimated_position(self) -> Tuple[float, float]:
         # TODO
@@ -149,8 +156,8 @@ class FastSLAM:
         # TODO
         pass
 
-    def _init_particles(self, particle_amount: int, area_size: float) -> List[Particle]:
-        return [Particle(Pose(0, 0, 0)) for i in range(particle_amount)]
+    def _init_particles(self, particle_amount: int) -> List[Particle]:
+        return [Particle(Pose(0, 0, 0), weight = 1.0 / particle_amount) for i in range(particle_amount)]
        
     def _motion_model(self, particle_pose: Pose, velocity: float, angular_velocity: float, time_step: float) -> Pose:
         """
@@ -207,7 +214,7 @@ class FastSLAM:
                 matched_landmark, is_new_landmark = particle.match_landmark(landmark_measurement, self._config.distance_threshold)
                 
                 if not is_new_landmark:
-                    # particle.weight *= compute_weight(particle, matched_landmark, landmark_measurement, self._config.measurement_covariance)
+                    particle.weight *= compute_weight(particle, matched_landmark, landmark_measurement, self._config.measurement_covariance)
                     matched_landmark.update(particle, landmark_measurement, self._config.measurement_covariance)
         
         return particles
@@ -222,6 +229,7 @@ class FastSLAM:
 
         effective_particle_amount = 1.0 / (weights @ weights.T)
         if effective_particle_amount < self._config.effective_particle_amount_modifier * len(particles):
+            print("Resampled, effective particle amount:", effective_particle_amount)
             weight_cumulative = np.cumsum(weights)
             resample_base = np.cumsum(weights * 0.0 + 1 / len(particles)) - 1 / len(particles)
             resample_ids = resample_base + np.random.rand(resample_base.shape[0]) / len(particles)
@@ -242,24 +250,24 @@ class FastSLAM:
 
         return particles
     
-    def visualize(self):
+    def visualize(self, ground_truth: Tuple[float, float, float] = None):
         size = 800
         scale = 50
         sigma_scale = 10.0
         image = np.zeros((size, size, 3), dtype=np.uint8)
 
+        total_weight = 0
         for particle in self.particles:
-            particle_point = (int(particle.pose.y * scale + size / 2), 
-                              int(particle.pose.x * scale + size / 2))
+            total_weight += particle.weight
 
-            heading_vector = (int(np.sin(particle.pose.heading) * 20), 
-                              int(np.cos(particle.pose.heading) * 20))
+        for particle in self.particles:
+            particle_point = (int(particle.pose.y * scale + size / 2), int(particle.pose.x * scale + size / 2))
+            heading_vector = (int(np.sin(particle.pose.heading) * 20), int(np.cos(particle.pose.heading) * 20))
+            particle_heading_point = (particle_point[0] + heading_vector[0], particle_point[1] + heading_vector[1])
 
-            particle_heading_point = (particle_point[0] + heading_vector[0],
-                                      particle_point[1] + heading_vector[1])
-
-            cv2.line(image, particle_point, particle_heading_point, (0, 255, 0), 2)
-            cv2.circle(image, particle_point, 5, (0, 0, 255), -1)
+            grayscale = max(50, int((particle.weight / (0.001 if total_weight == 0 else total_weight)) * 255))
+            cv2.line(image, particle_point, particle_heading_point, [grayscale] * 3, 2)
+            cv2.circle(image, particle_point, 5, [grayscale] * 3, -1)
 
             for landmark in particle.landmarks:
                 landmark_point = (int(landmark.y * scale + size / 2), 
@@ -277,6 +285,15 @@ class FastSLAM:
                         color = (255, 0, 0), 
                         thickness = 2
                     )
+
+        if ground_truth:
+            x, y, heading = ground_truth
+            ground_truth_point = (int(y * scale + size / 2), int(x * scale + size / 2))
+            ground_truth_vector = (int(np.sin(heading) * 10), int(np.cos(heading) * 10))
+            ground_truth_heading_point = (ground_truth_point[0] + ground_truth_vector[0], ground_truth_point[1] + ground_truth_vector[1])
+            
+            cv2.line(image, ground_truth_point, ground_truth_heading_point, (255, 0, 0), 1)
+            cv2.circle(image, ground_truth_point, 3, (255, 0, 0), -1)
 
         cv2.imshow("FastSLAM", image)
         cv2.waitKey(1)

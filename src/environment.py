@@ -14,8 +14,7 @@ class Environment:
         self.spacing = spacing
         self.wall_height = wall_height
         self.wall_thickness = wall_thickness
-        self.wall_length = wall_length
-        self.offset = grid_size // 2
+        self.offset = grid_size / 2.0
         self.walls = []
         self.generate_rdf = generate_rdf
         self.rdf_file = rdf_file
@@ -27,6 +26,27 @@ class Environment:
             self.rdf_manager = None
 
         self.grid_matrix = [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+            [0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0],
+            [0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0],
+            [0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0],
+            [0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+            [0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+            [0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+            [0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0],
+            [0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        ]
                 [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
                 [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
                 [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
@@ -49,6 +69,40 @@ class Environment:
             ]
 
     def create_wall_grid(self) -> None:
+        for x in range(self.grid_size):
+            for y in range(self.grid_size):
+                if self.grid_matrix[x][y] == 0:
+                    self._create_wall( # Center piece
+                        x = x * self.spacing - self.offset, 
+                        y = y * self.spacing - self.offset, 
+                        height = self.wall_height, 
+                        width = self.wall_thickness, 
+                        length = self.wall_thickness
+                    )
+
+        for x in range(self.grid_size - 1):
+            for y in range(self.grid_size):
+                if self.grid_matrix[x][y] == 0 and self.grid_matrix[x + 1][y] == 0:
+                    self._create_wall( # Top piece
+                        x = x * self.spacing - self.offset + self.spacing / 2.0, 
+                        y = y * self.spacing - self.offset, 
+                        height = self.wall_height, 
+                        width = self.wall_thickness, 
+                        length = self.spacing / 2.0 - self.wall_thickness
+                    )
+                
+        for x in range(self.grid_size):
+            for y in range(self.grid_size - 1):
+                if self.grid_matrix[x][y] == 0 and self.grid_matrix[x][y + 1] == 0:
+                    self._create_wall( # Right piece
+                        x = x * self.spacing - self.offset, 
+                        y = y * self.spacing - self.offset + self.spacing / 2.0, 
+                        height = self.wall_height, 
+                        width = self.spacing / 2.0 - self.wall_thickness, 
+                        length = self.wall_thickness
+                    )
+                
+    def _create_wall(self, x: float, y: float, height: float, width: float, length: float) -> None:
         for i in range(self.grid_size + 1):
             x = i * self.spacing - self.offset
             for j in range(self.grid_size + 1):
@@ -75,15 +129,8 @@ class Environment:
         # Create the wall in the SAPIEN scene
         wall = create_primitive.box(
             self.scene,
-            sapien.Pose(
-                p=[x, y, self.wall_height / 2],
-                q=Rotation.from_euler('xyz', [rotation_x, rotation_y, rotation_z], degrees=True).as_quat()
-            ),
-            half_size=[
-                self.wall_length / 2 if rotation_z == 90 else self.wall_thickness / 2,
-                self.wall_thickness / 2 if rotation_z == 90 else self.wall_length / 2,
-                self.wall_height / 2
-            ],
+            sapien.Pose(p=[x, y, self.wall_height / 2]),
+            half_size=[length, width, height],
             color=[0.7, 0.7, 0.7],
             name="wall",
             is_kinematic=True,
@@ -113,7 +160,7 @@ class Environment:
     def load_scene(self) -> None:
         self.scene.set_ambient_light([0.5, 0.5, 0.5])
         self.scene.add_directional_light([0, 1, -1], [0.5, 0.5, 0.5])
-        self.scene.add_ground(altitude=0)
+        self.scene.add_ground(altitude=0, render_half_size=[(self.grid_size / 2.0)] * 2)
         self.create_wall_grid()
 
         if self.generate_rdf:

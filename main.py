@@ -5,6 +5,8 @@ import cv2
 import test_driver  # Assuming this contains the Driver class and related code
 import paho.mqtt.client as mqtt
 import lidar  # Assuming the LidarSensor and LidarSensorConfig are in this module
+import test_environment
+
 
 BROKER = "localhost"  
 PORT = 1883
@@ -12,7 +14,22 @@ VELOCITY_TOPIC = "robot/desired_velocity"
 
 # MQTT client setup
 mqtt_client = mqtt.Client()
+def points_to_image(points, img_size=(800, 800), scale=10):
+    """Project 3D points to a 2D plane for visualization."""
+    img = np.zeros(img_size + (3,), dtype=np.uint8)
 
+    for point in points:
+        x, y, z = point
+
+        img_x = int(img_size[0] / 2 + y * scale)
+        img_y = int(img_size[1] / 2 - x * scale)
+
+        if 0 <= img_x < img_size[0] and 0 <= img_y < img_size[1]: 
+            cv2.circle(img, (img_x, img_y), radius=2, color=(0, 255, 0), thickness=-1)
+        else:
+            print("scale to large")
+
+    return img
 def on_connect(client, userdata, flags, rc):
     print(f"Connected to MQTT broker with result code: {rc}")
 
@@ -29,7 +46,7 @@ def main():
 
     # Viewer setup
     viewer = scene.create_viewer()
-    ground_material = scene.create_physical_material(0.2, 0.2, 0)
+    ground_material = scene.create_physical_material(0.3, 0.2, 0)
     ground = scene.add_ground(0, True, ground_material)
 
     # Camera settings
@@ -55,21 +72,29 @@ def main():
     lidar_config.randomize_start_angle = True
 
     # Attach lidar to the robot
-    lidar_sensor = lidar.LidarSensor("lidar", scene, lidar_config, mount_entity=driver.robot, pose=Pose(p=np.array([0, 0, 0.5])))
-
+    lidar_sensor = lidar.LidarSensor("lidar", scene, lidar_config, mount_entity=driver.robot.find_link_by_name("hokuyo"), pose=Pose(p=np.array([0, 1, 0.5])))
+    test_environment.load(scene)
     # Simulation loop
+
     while not viewer.closed:
-        # Simulate lidar and retrieve the point cloud data
-        lidar_sensor.simulate()
-        lidar_points = lidar_sensor.get_point_cloud()
-        
+     
+        # Simulate lidar and retrieve the point cloud data  
+       
+
         # Step the scene and render
         scene.step()
         scene.update_render()
         viewer.render()
-
-        # Update the driver with lidar points for obstacle avoidance or navigation
+        lidar_sensor.simulate()
+        lidar_points = lidar_sensor.get_point_cloud()
         driver.update(lidar_points)
+        image = points_to_image(lidar_points, scale=30)
+        cv2.imshow('LIDAR Points', image)
+        cv2.waitKey(1)
+        
+        # Update the driver with lidar points for obstacle avoidance or navigation
+        
+ 
 
 if __name__ == "__main__":
     main()

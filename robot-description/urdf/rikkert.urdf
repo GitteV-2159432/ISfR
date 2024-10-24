@@ -115,7 +115,7 @@
     <visual>
       <origin rpy="3.141592653589793 0 3.141592653589793" xyz="0 0 0"/>
       <geometry>
-        <sphere radius="0.05"/>        </geometry>
+        <sphere radius="0.08"/>        </geometry>
       <material name="Blue">
         <color rgba="0.0 0.0 1.0 1.0"/>
       </material>
@@ -123,20 +123,20 @@
     <collision>
       <origin rpy="3.141592653589793 0 3.141592653589793" xyz="0 0 0"/>
       <geometry>
-<sphere radius="0.05"/>      </geometry>
+<sphere radius="0.08"/>      </geometry>
     </collision>
     <inertial>
       <mass value="0.0105"/>
-      <inertia ixx="0.11617800000000003" ixy="0.0" ixz="0.0" iyy="0.11617800000000003" iyz="0.0" izz="0.11617800000000003"/>
-    </inertial>
+      <inertia ixx="0.000003528" ixy="0.0" ixz="0.0" iyy="0.000003528" iyz="0.0" izz="0.000003528" />
+        </inertial>
   </link>
-  <joint name="caster_joint" type="continuous">
+  <joint name="caster_joint" type="revolute">
     <parent link="base_link"/>
     <child link="rear_caster"/>
     <origin rpy="0 0 0" xyz="-0.28500000000000003 0 -0.03"/>
-    <limit lower="-100000000" upper="100000000" effort="1000" velocity="100000000"/>
-    <axis xyz="0 1 0"/>
-
+    <limit lower="-100000000" upper="100000000" effort="1000" velocity="100000000" />
+    <axis xyz="1 1 0"/>
+    
 
   </joint>
   <!-- ********************** SENSORS **************************** -->

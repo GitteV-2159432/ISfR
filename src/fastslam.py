@@ -127,10 +127,10 @@ class Particle:
 
 class FastSLAM_config:
     def __init__(self) -> None:
-        self.particle_amount = 100
-        self.velocity_standard_deviation: float = 0
-        self.angular_velocity_standard_deviation: float = 0
-        self.distance_threshold: float = 0
+        self.particle_amount = 50
+        self.velocity_standard_deviation: float = 0.5
+        self.angular_velocity_standard_deviation: float = 0.5
+        self.distance_threshold: float = .1
         self.measurement_covariance = np.array([[100, 0], [0, 100]])
         self.effective_particle_amount_modifier = .6
 
@@ -140,7 +140,7 @@ class FastSLAM:
         self.last_time = datetime.now()
         self.particles = self._init_particles(self._config.particle_amount)
 
-    def run(self, measurements, velocity, angular_velocity):
+    def run(self, measurements: List[Tuple[float, float, float]], velocity: float, angular_velocity: float):
         time_step = (datetime.now() - self.last_time).microseconds * float(1e-6)
         self.last_time = datetime.now()
 
@@ -229,7 +229,6 @@ class FastSLAM:
 
         effective_particle_amount = 1.0 / (weights @ weights.T)
         if effective_particle_amount < self._config.effective_particle_amount_modifier * len(particles):
-            print("Resampled, effective particle amount:", effective_particle_amount)
             weight_cumulative = np.cumsum(weights)
             resample_base = np.cumsum(weights * 0.0 + 1 / len(particles)) - 1 / len(particles)
             resample_ids = resample_base + np.random.rand(resample_base.shape[0]) / len(particles)
@@ -250,7 +249,7 @@ class FastSLAM:
 
         return particles
     
-    def visualize(self, ground_truth: Tuple[float, float, float] = None):
+    def visualize(self, ground_truth: Tuple[float, float, float] = None, draw_landmarks: bool = True):
         size = 800
         scale = 50
         sigma_scale = 10.0
@@ -269,22 +268,14 @@ class FastSLAM:
             cv2.line(image, particle_point, particle_heading_point, [grayscale] * 3, 2)
             cv2.circle(image, particle_point, 5, [grayscale] * 3, -1)
 
-            for landmark in particle.landmarks:
-                landmark_point = (int(landmark.y * scale + size / 2), 
-                                  int(landmark.x * scale + size / 2))
-                
-                cv2.circle(image, landmark_point, 2, (255, 255, 255), -1)
-                if (landmark.sigma_x >= 0.0 and landmark.sigma_y >= 0.0):
-                    cv2.ellipse(
-                        img = image, 
-                        center = landmark_point, 
-                        axes = (round(landmark.sigma_x * sigma_scale), round(landmark.sigma_y * sigma_scale)), 
-                        angle = 0, 
-                        startAngle = 0, 
-                        endAngle = 360, 
-                        color = (255, 0, 0), 
-                        thickness = 2
-                    )
+            if draw_landmarks:
+                for landmark in particle.landmarks:
+                    landmark_point = (int(landmark.y * scale + size / 2), 
+                                    int(landmark.x * scale + size / 2))
+                    
+                    cv2.circle(image, landmark_point, 2, (255, 255, 255), -1)
+                    if (landmark.sigma_x >= 0.0 and landmark.sigma_y >= 0.0):
+                        cv2.ellipse(img = image, center = landmark_point, axes = (round(landmark.sigma_x * sigma_scale), round(landmark.sigma_y * sigma_scale)), angle = 0, startAngle = 0, endAngle = 360, color = (255, 0, 0), thickness = 2)
 
         if ground_truth:
             x, y, heading = ground_truth

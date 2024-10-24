@@ -21,6 +21,8 @@ def create_grid(scene: sapien.Scene, grid_size, spacing) -> None:
             )
 
 def load(scene: sapien.Scene) -> None:
+    scene.set_ambient_light([0.5, 0.5, 0.5])
+    scene.add_directional_light([0, 1, -1], [0.5, 0.5, 0.5])
     scene.add_ground(altitude=0)
     create_grid(scene, 6, 5)
     

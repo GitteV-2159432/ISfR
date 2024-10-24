@@ -1,0 +1,16 @@
+{
+    "sensor_name": "Default LiDAR",
+    "type": "LiDAR",
+    "specifications": {
+      "detection_range": {
+        "min": 0.0,
+        "max": 30.0
+      },
+      "accuracy": {
+        "range_0_10m_(mm)": 50,
+        "range_10_30m_(mm)": 50
+      },
+      "angular_resolution": 0.0,
+      "fov": 360.0
+    }
+}

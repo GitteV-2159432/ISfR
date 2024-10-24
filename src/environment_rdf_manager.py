@@ -1,4 +1,4 @@
-from rdflib import Graph, Literal, Namespace, RDF, URIRef
+from rdflib import Graph, Literal, Namespace, RDF
 from rdflib.namespace import XSD
 
 class EnvironmentRDFManager:
@@ -9,8 +9,8 @@ class EnvironmentRDFManager:
         self.g.bind("ex", self.EX)
         self.g.bind("geom", self.GEOM)
 
-    # Create: Add new wall with a pose
-    def create_wall(self, wall_id, x, y, z, rot_x, rot_y, rot_z, length, height, thickness):
+    # Create: Add new wall with a pose (without rotation)
+    def create_wall(self, wall_id, x, y, z, length, height, thickness):
         wall = self.EX[wall_id]
         pose = self.EX[f"Pose_{wall_id}"]
 
@@ -18,47 +18,44 @@ class EnvironmentRDFManager:
         self.g.add((wall, RDF.type, self.GEOM.Wall))
         self.g.add((wall, self.GEOM.hasPose, pose))
 
+        # Position
         self.g.add((pose, self.GEOM.positionX, Literal(x, datatype=XSD.float)))
         self.g.add((pose, self.GEOM.positionY, Literal(y, datatype=XSD.float)))
         self.g.add((pose, self.GEOM.positionZ, Literal(z, datatype=XSD.float)))
-        self.g.add((pose, self.GEOM.rotationX, Literal(rot_x, datatype=XSD.float)))
-        self.g.add((pose, self.GEOM.rotationY, Literal(rot_y, datatype=XSD.float)))
-        self.g.add((pose, self.GEOM.rotationZ, Literal(rot_z, datatype=XSD.float)))
 
+        # Wall dimensions
         self.g.add((wall, self.GEOM.length, Literal(length, datatype=XSD.float)))
         self.g.add((wall, self.GEOM.height, Literal(height, datatype=XSD.float)))
         self.g.add((wall, self.GEOM.thickness, Literal(thickness, datatype=XSD.float)))
 
-    # Read: Query wall pose by wall ID
+    # Read: Query wall pose by wall ID (position only)
     def read_wall_pose(self, wall_id):
         query = f"""
         PREFIX geom: <http://isfr.be/geometry#>
         PREFIX ex: <http://isfr.be/scene#>
 
-        SELECT ?positionX ?positionY ?positionZ ?rotationX ?rotationY ?rotationZ
+        SELECT ?positionX ?positionY ?positionZ
         WHERE {{
             ex:{wall_id} geom:hasPose ?pose .
             ?pose geom:positionX ?positionX ;
                   geom:positionY ?positionY ;
-                  geom:positionZ ?positionZ ;
-                  geom:rotationX ?rotationX ;
-                  geom:rotationY ?rotationY ;
-                  geom:rotationZ ?rotationZ .
+                  geom:positionZ ?positionZ .
         }}
         """
         result = self.g.query(query)
         for row in result:
-            print(f"Wall Pose for {wall_id}: X={row.positionX}, Y={row.positionY}, Z={row.positionZ}, "
-                  f"RotationX={row.rotationX}, RotationY={row.rotationY}, RotationZ={row.rotationZ}")
+            print(f"Wall Pose for {wall_id}: X={row.positionX}, Y={row.positionY}, Z={row.positionZ}")
 
-    # Update: Update the position of a wall's pose
+    # Update: Update the position of a wall's pose (no rotation)
     def update_wall_pose(self, wall_id, new_x, new_y, new_z):
         pose = self.EX[f"Pose_{wall_id}"]
 
+        # Remove old position data
         self.g.remove((pose, self.GEOM.positionX, None))
         self.g.remove((pose, self.GEOM.positionY, None))
         self.g.remove((pose, self.GEOM.positionZ, None))
 
+        # Add new position data
         self.g.add((pose, self.GEOM.positionX, Literal(new_x, datatype=XSD.float)))
         self.g.add((pose, self.GEOM.positionY, Literal(new_y, datatype=XSD.float)))
         self.g.add((pose, self.GEOM.positionZ, Literal(new_z, datatype=XSD.float)))
@@ -68,9 +65,9 @@ class EnvironmentRDFManager:
         wall = self.EX[wall_id]
         pose = self.EX[f"Pose_{wall_id}"]
 
+        # Remove all triples associated with the wall and its pose
         self.g.remove((wall, None, None))
         self.g.remove((pose, None, None))
-
 
     # Export the updated RDF data to a file
     def export_rdf(self, file_name: str) -> None:

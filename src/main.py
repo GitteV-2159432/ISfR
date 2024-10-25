@@ -66,7 +66,7 @@ def main():
 
  
     traj = DiscreteTrajectory()
-    visualization = SLAMPlotter(multi_res_mapping[nb_resolution-1], traj, lidar, **kwargs_spline)
+    visualization = SLAMPlotter(multi_res_mapping[nb_resolution-1], traj, lidar_sensor, **kwargs_spline)
     visualization.start()
 
 

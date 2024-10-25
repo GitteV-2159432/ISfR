@@ -214,3 +214,14 @@ class LidarSensor(SensorEntity):
 
         cv2.imshow('LIDAR Points', img)
         cv2.waitKey(1)
+
+
+    def get_occupied_pts(self) -> np.ndarray:
+        """
+        Returns the coordinates of occupied points detected by the LiDAR sensor.
+        :return: A numpy array containing occupied points in the form (x, y, z).
+        """
+        if not self._results:
+            raise ValueError("Run the simulate function before getting occupied points.")
+        
+        return np.array(self.get_point_cloud()).T  # Transpose to match (x, y, z) format

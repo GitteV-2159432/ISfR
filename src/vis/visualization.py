@@ -75,8 +75,9 @@ class SLAMPlotter(threading.Thread):
         self.traj_marker.set_xdata(traj_points[0,:])
         self.traj_marker.set_ydata(traj_points[1,:])
         # current position
-        self.position_est_marker.set_xdata(traj_points[0,-1])
-        self.position_est_marker.set_ydata(traj_points[1,-1])        
+        self.position_est_marker.set_xdata([traj_points[0, -1]])
+        self.position_est_marker.set_ydata([traj_points[1, -1]])
+     
         # Laser scan 
         pts_occ_local = self.sensor.get_occupied_pts()
         pts_occ = self.slam_map.local_to_global_frame(traj_points[:,-1], pts_occ_local)

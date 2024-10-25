@@ -27,9 +27,18 @@ class Mapping:
         Input: pose np.array<float(3,1)> describes (x,y,theta)'
     """
     def local_to_global_frame(self, pose, local):
+        # Calculate rotation matrix R based on pose angle
         c, s = np.cos(pose[2]), np.sin(pose[2])
-        R = np.array([[c, -s],[s, c]])
-        return np.matmul(R, local) + pose[0:2].reshape(2,1) 
+        R = np.array([[c, -s], [s, c]])
+
+        # Select only the x and y rows from 'local' for 2D transformation
+        local_2d = local[:2, :]  
+
+        # Apply rotation and translation to transform to the global frame
+        transformed = np.matmul(R, local_2d) + pose[0:2].reshape(2, 1)
+
+        return transformed
+
 
     """"Update the control points of the spline map"""
     def update_spline_map(self, pts_occ, pts_free, pose):

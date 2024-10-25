@@ -1,3 +1,4 @@
+from time import sleep
 import sapien
 from sapien import Pose
 
@@ -31,6 +32,12 @@ def main():
     fastslam = FastSLAM(fastslam_config)
 
     while not viewer.closed:
+        scene.step()
+        scene.update_render()
+        viewer.render()
+        if int(viewer.window.key_down('space')) != 1:
+            continue
+
         driver.update()
         lidar_sensor.simulate()
 
@@ -38,14 +45,11 @@ def main():
         lidar_measurements = [(lp[2], lp[0]) for lp in lidar_sensor.get_measurements(in_degrees=False) if lp[2] < lidar_config.detection_range_max]
         fastslam.run(lidar_measurements, driver.get_odometry()[0], driver.get_odometry()[1])
 
-        scene.step()
-        scene.update_render()
-        viewer.render()
-
         # For testing
         driver_ground_truth = (driver.body.get_pose().p[0], driver.body.get_pose().get_p()[1], Rotation.from_quat(driver.body.get_pose().q, scalar_first=True).as_euler('xyz', degrees=False)[2])
-        fastslam.visualize(driver_ground_truth, False)
+        fastslam.visualize(driver_ground_truth)
         lidar_sensor.visualize()
+        # sleep(2)
 
 if __name__ == "__main__":
     main()

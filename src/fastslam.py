@@ -56,8 +56,8 @@ class Landmark:
         updated_covariance = (np.eye(2) - kalman_gain @ h_landmark_pose) @ self.get_covariance_matrix()
 
         # Update covariance values
-        self.sigma_x = updated_covariance[0, 0]
-        self.sigma_y = updated_covariance[1, 1]
+        self.sigma_x = np.sqrt(updated_covariance[0, 0])
+        self.sigma_y = np.sqrt(updated_covariance[1, 1])
 
 
     def get_covariance_matrix(self) -> np.ndarray:
@@ -120,18 +120,18 @@ class Particle:
             if distance < distance_threshold:
                 return self.landmarks[nearest_index], False
         
-        new_landmark = Landmark(measurement_x, measurement_y, sigma_x=0.5, sigma_y=1.0) # TODO: What should the sigma_x and sigma_y be?
+        new_landmark = Landmark(measurement_x, measurement_y, sigma_x=1.0, sigma_y=1.0) # TODO: What should the sigma_x and sigma_y be?
         self.landmarks.append(new_landmark)
         self.landmark_tree = KDTree([np.array(landmark.get_expected_position()) for landmark in self.landmarks])
         return new_landmark, True
 
 class FastSLAM_config:
     def __init__(self) -> None:
-        self.particle_amount = 50
-        self.velocity_standard_deviation: float = 0.5
-        self.angular_velocity_standard_deviation: float = 0.5
-        self.distance_threshold: float = .1
-        self.measurement_covariance = np.array([[100, 0], [0, 100]])
+        self.particle_amount = 5
+        self.velocity_standard_deviation: float = 0.01
+        self.angular_velocity_standard_deviation: float = 0.01
+        self.distance_threshold: float = .5
+        self.measurement_covariance = np.array([[5, 0], [0, 5]])
         self.effective_particle_amount_modifier = .6
 
 class FastSLAM:
@@ -172,8 +172,8 @@ class FastSLAM:
         """       
         # Transforms the control inputs (velocity, angular velocity) into position changes.
         B = np.array([[time_step * np.cos(particle_pose.heading), 0],  
-                    [time_step * np.sin(particle_pose.heading), 0], 
-                    [0, time_step]])  
+                      [time_step * np.sin(particle_pose.heading), 0], 
+                      [0, time_step]])  
         
         # Extract the current position and orientation (x, y, heading) from the given particle_pose object
         position_current = np.array([particle_pose.x, particle_pose.y, particle_pose.heading]).T
@@ -242,22 +242,25 @@ class FastSLAM:
 
             particles_temp = particles[:]
             for i in range(len(indices)):
-                particles[i].pose.x = particles_temp[indices[i]].pose.x
-                particles[i].pose.y = particles_temp[indices[i]].pose.y
+                particles[i].pose.x = particles_temp[indices[i]].pose.x + np.random.uniform(-.05, .05)
+                particles[i].pose.y = particles_temp[indices[i]].pose.y + np.random.uniform(-.05, .05)
                 particles[i].pose.heading = particles_temp[indices[i]].pose.heading
                 particles[i].w = 1.0 / len(particles)  
 
         return particles
     
-    def visualize(self, ground_truth: Tuple[float, float, float] = None, draw_landmarks: bool = True):
+    def visualize(self, ground_truth: Tuple[float, float, float] = None):
         size = 800
         scale = 50
         sigma_scale = 10.0
         image = np.zeros((size, size, 3), dtype=np.uint8)
 
         total_weight = 0
+        highest_weight_particle = None
         for particle in self.particles:
             total_weight += particle.weight
+            if highest_weight_particle is None or highest_weight_particle.weight < particle.weight:
+                highest_weight_particle = particle
 
         for particle in self.particles:
             particle_point = (int(particle.pose.y * scale + size / 2), int(particle.pose.x * scale + size / 2))
@@ -268,14 +271,13 @@ class FastSLAM:
             cv2.line(image, particle_point, particle_heading_point, [grayscale] * 3, 2)
             cv2.circle(image, particle_point, 5, [grayscale] * 3, -1)
 
-            if draw_landmarks:
-                for landmark in particle.landmarks:
-                    landmark_point = (int(landmark.y * scale + size / 2), 
-                                    int(landmark.x * scale + size / 2))
-                    
-                    cv2.circle(image, landmark_point, 2, (255, 255, 255), -1)
-                    if (landmark.sigma_x >= 0.0 and landmark.sigma_y >= 0.0):
-                        cv2.ellipse(img = image, center = landmark_point, axes = (round(landmark.sigma_x * sigma_scale), round(landmark.sigma_y * sigma_scale)), angle = 0, startAngle = 0, endAngle = 360, color = (255, 0, 0), thickness = 2)
+
+        for landmark in highest_weight_particle.landmarks:
+            landmark_point = (int(landmark.y * scale + size / 2), 
+                              int(landmark.x * scale + size / 2))
+            
+            cv2.ellipse(img = image, center = landmark_point, axes = (round(landmark.sigma_x * sigma_scale), round(landmark.sigma_y * sigma_scale)), angle = 0, startAngle = 0, endAngle = 360, color = (0, 255, 0), thickness = 2)
+            cv2.circle(image, landmark_point, 2, (255, 255, 255), -1)
 
         if ground_truth:
             x, y, heading = ground_truth

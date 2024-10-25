@@ -23,7 +23,7 @@ class LidarSensorConfig:
         self.field_of_view: float = 360.0
         """Field of view in the horizontal plane in degrees"""
 
-        self.samples: int = 50
+        self.samples: int = 150
         """Number of rays around the horizontal plane"""
                 
         self.noise_standard_deviation_distance: float = 0.01

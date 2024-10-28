@@ -35,9 +35,7 @@ def main():
         scene.step()
         scene.update_render()
         viewer.render()
-        if int(viewer.window.key_down('space')) != 1:
-            continue
-
+        
         driver.update()
         lidar_sensor.simulate()
 
@@ -49,7 +47,6 @@ def main():
         driver_ground_truth = (driver.body.get_pose().p[0], driver.body.get_pose().get_p()[1], Rotation.from_quat(driver.body.get_pose().q, scalar_first=True).as_euler('xyz', degrees=False)[2])
         fastslam.visualize(driver_ground_truth)
         lidar_sensor.visualize()
-        # sleep(2)
 
 if __name__ == "__main__":
     main()

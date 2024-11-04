@@ -2,7 +2,7 @@ import numpy as np
 from typing import List, Tuple
 import cv2
 from datetime import datetime
-from sklearn.neighbors import KDTree
+from sklearn.neighbors import KDTree, NearestNeighbors
 
 """
 Sources:
@@ -127,6 +127,7 @@ class FastSLAM:
         self._config = config
         self.last_time = datetime.now()
         self.particles = self._init_particles(self._config.particle_amount)
+        self.global_map_points = []
 
     def run(self, measurements: List[Tuple[float, float, float]], velocity: float, angular_velocity: float):
         time_step = (datetime.now() - self.last_time).microseconds * float(1e-6)
@@ -135,6 +136,15 @@ class FastSLAM:
         self.particles = self._predict(self.particles, velocity, angular_velocity, time_step)
         self.particles = self._update(self.particles, measurements)
         self.particles = self._resample(self.particles)
+
+        # get the estimated position to transform LiDAR points to the global frame
+        estimated_pose = Pose(*self.get_estimated_position(), self.particles[0].pose.heading)
+        
+        # transform measurements to global coordinates and add to the map
+        for distance, angle in measurements:
+            global_x = estimated_pose.x + distance * np.cos(estimated_pose.heading + angle)
+            global_y = estimated_pose.y + distance * np.sin(estimated_pose.heading + angle)
+            self.global_map_points.append((global_x, global_y))
 
     def _get_corners(self, measurements: List[Tuple[float, float]]) -> List[Tuple[float, float]]:
         """
@@ -158,8 +168,22 @@ class FastSLAM:
         return data[corners]
 
     def get_estimated_position(self) -> Tuple[float, float]:
-        # TODO
-        pass
+        """
+        Returns the estimated position of the robot as the weighted average of the particle positions.
+
+        :return: Tuple representing the estimated (x, y) position of the robot.
+        """
+        total_weight = sum(particle.weight for particle in self.particles)
+
+        if total_weight == 0:
+            # If all weights are zero, return the position of the first particle (or default to some position)
+            return self.particles[0].pose.x, self.particles[0].pose.y
+
+        # Compute weighted average for x and y positions
+        estimated_x = sum(particle.pose.x * particle.weight for particle in self.particles) / total_weight
+        estimated_y = sum(particle.pose.y * particle.weight for particle in self.particles) / total_weight
+
+        return estimated_x, estimated_y
     
     def get_estimated_map(self) -> None:
         # TODO
@@ -265,46 +289,50 @@ class FastSLAM:
         scale = 50
         sigma_scale = 10.0
         image = np.zeros((size, size, 3), dtype=np.uint8)
+         # Plot the global map points
+        for x, y in self.global_map_points:
+            point = (int(y * scale + size / 2), int(x * scale + size / 2))
+            cv2.circle(image, point, 1, (255, 255, 0), -1)
 
-        total_weight = 0
-        highest_weight_particle = None
-        for particle in self.particles:
-            total_weight += particle.weight
-            if highest_weight_particle is None or highest_weight_particle.weight < particle.weight:
-                highest_weight_particle = particle
+        # total_weight = 0
+        # highest_weight_particle = None
+        # for particle in self.particles:
+        #     total_weight += particle.weight
+        #     if highest_weight_particle is None or highest_weight_particle.weight < particle.weight:
+        #         highest_weight_particle = particle
 
-        for particle in self.particles:
-            particle_point = (int(particle.pose.y * scale + size / 2), int(particle.pose.x * scale + size / 2))
-            heading_vector = (int(np.sin(particle.pose.heading) * 20), int(np.cos(particle.pose.heading) * 20))
-            particle_heading_point = (particle_point[0] + heading_vector[0], particle_point[1] + heading_vector[1])
+        # for particle in self.particles:
+        #     particle_point = (int(particle.pose.y * scale + size / 2), int(particle.pose.x * scale + size / 2))
+        #     heading_vector = (int(np.sin(particle.pose.heading) * 20), int(np.cos(particle.pose.heading) * 20))
+        #     particle_heading_point = (particle_point[0] + heading_vector[0], particle_point[1] + heading_vector[1])
 
-            grayscale = max(50, int((particle.weight / (0.001 if total_weight == 0 else total_weight)) * 255))
-            cv2.line(image, particle_point, particle_heading_point, [grayscale] * 3, 2)
-            cv2.circle(image, particle_point, 5, [grayscale] * 3, -1)
+        #     grayscale = max(50, int((particle.weight / (0.001 if total_weight == 0 else total_weight)) * 255))
+        #     cv2.line(image, particle_point, particle_heading_point, [grayscale] * 3, 2)
+        #     cv2.circle(image, particle_point, 5, [grayscale] * 3, -1)
 
 
-        for landmark in highest_weight_particle.landmarks:
-            landmark_point = (int(landmark.y * scale + size / 2), int(landmark.x * scale + size / 2))
+        # for landmark in highest_weight_particle.landmarks:
+        #     landmark_point = (int(landmark.y * scale + size / 2), int(landmark.x * scale + size / 2))
 
-            eigenvalues, eigenvectors = np.linalg.eig(landmark.covariance)
-            largest_index = np.argmax(eigenvalues)
-            largest_eigenvalue = eigenvalues[largest_index]
-            largest_eigenvector = eigenvectors[:, largest_index]
-            angle = np.arctan2(largest_eigenvector[1], largest_eigenvector[0]) * (180 / np.pi)
-            axis_major = 2 * np.sqrt(largest_eigenvalue)
-            axis_minor = 2 * np.sqrt(eigenvalues[1 - largest_index])
+        #     eigenvalues, eigenvectors = np.linalg.eig(landmark.covariance)
+        #     largest_index = np.argmax(eigenvalues)
+        #     largest_eigenvalue = eigenvalues[largest_index]
+        #     largest_eigenvector = eigenvectors[:, largest_index]
+        #     angle = np.arctan2(largest_eigenvector[1], largest_eigenvector[0]) * (180 / np.pi)
+        #     axis_major = 2 * np.sqrt(largest_eigenvalue)
+        #     axis_minor = 2 * np.sqrt(eigenvalues[1 - largest_index])
             
-            cv2.ellipse(image, landmark_point, (int(axis_major * sigma_scale), int(axis_minor * sigma_scale)), angle, 0, 360, (0, 255, 0), 1)
-            cv2.circle(image, landmark_point, 2, (255, 255, 255), -1)
+        #     cv2.ellipse(image, landmark_point, (int(axis_major * sigma_scale), int(axis_minor * sigma_scale)), angle, 0, 360, (0, 255, 0), 1)
+        #     cv2.circle(image, landmark_point, 2, (255, 255, 255), -1)
 
-        if ground_truth:
-            x, y, heading = ground_truth
-            ground_truth_point = (int(y * scale + size / 2), int(x * scale + size / 2))
-            ground_truth_vector = (int(np.sin(heading) * 10), int(np.cos(heading) * 10))
-            ground_truth_heading_point = (ground_truth_point[0] + ground_truth_vector[0], ground_truth_point[1] + ground_truth_vector[1])
+        # if ground_truth:
+        #     x, y, heading = ground_truth
+        #     ground_truth_point = (int(y * scale + size / 2), int(x * scale + size / 2))
+        #     ground_truth_vector = (int(np.sin(heading) * 10), int(np.cos(heading) * 10))
+        #     ground_truth_heading_point = (ground_truth_point[0] + ground_truth_vector[0], ground_truth_point[1] + ground_truth_vector[1])
             
-            cv2.line(image, ground_truth_point, ground_truth_heading_point, (255, 0, 0), 1)
-            cv2.circle(image, ground_truth_point, 3, (255, 0, 0), -1)
+        #     cv2.line(image, ground_truth_point, ground_truth_heading_point, (255, 0, 0), 1)
+        #     cv2.circle(image, ground_truth_point, 3, (255, 0, 0), -1)
 
         cv2.imshow("FastSLAM", image)
         cv2.waitKey(1)

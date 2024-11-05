@@ -18,8 +18,21 @@ def main():
     viewer.set_camera_rpy(r=0, p=-np.arctan2(2, 2), y=0)
     viewer.window.set_camera_parameters(near=0.05, far=100, fovy=1)
 
-    environment = Environment(scene, grid_size=20, spacing=1, wall_height=2.0, wall_thickness=0.2)
+    environment = Environment(scene, grid_size=20, spacing=1, wall_height=2.0, wall_thickness=0.2, generate_rdf=True, rdf_file="src/environment.ttl")
     environment.load_scene()
+
+
+    driver = test_driver.driver(scene, viewer)
+
+    lidar_config = lidar.LidarSensorConfig()
+    lidar_config.detection_range = 10
+    lidar_config.field_of_view = 360
+    lidar_config.samples = 200
+    lidar_config.noise_standard_deviation_distance = 0.05
+    lidar_config.noise_standard_deviation_angle_horizontal = 0
+    lidar_config.noise_standard_deviation_angle_vertical = 0
+    lidar_config.noise_outlier_chance = 0
+    lidar_config.randomize_start_angle = False
 
     driver = test_driver.driver(scene, viewer)
 

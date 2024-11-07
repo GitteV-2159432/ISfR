@@ -1,7 +1,7 @@
 #! Implementation based on https://github.com/ClayFlannigan/icp/blob/master/icp.py
 
 import numpy as np
-from scipy.spatial import KDTree
+from scipy.spatial import cKDTree
 
 def icp(source_points, target_points, max_iterations=50, tolerance=1e-6):
     """
@@ -13,9 +13,10 @@ def icp(source_points, target_points, max_iterations=50, tolerance=1e-6):
         max_iterations (int): Maximum number of iterations to perform.
         tolerance (float): Convergence tolerance.
 
-    Returns:
+    Return:
         np.ndarray: Transformed source points, aligned to target points.
         np.ndarray: Final transformation matrix (4x4).
+        float: Final transformation matrix (4x4).
     """
 
     transformation_matrix = np.eye(4)  
@@ -49,7 +50,7 @@ def icp(source_points, target_points, max_iterations=50, tolerance=1e-6):
 
     for _ in range(max_iterations):
         # Find the nearest neighbors in the target point cloud
-        tree = KDTree(target_points)
+        tree = cKDTree(target_points)
         distances, indices = tree.query(source_points)
 
         # Transformation between matched points
@@ -69,4 +70,4 @@ def icp(source_points, target_points, max_iterations=50, tolerance=1e-6):
         source_points = source_points_transformed
         transformation_matrix = np.dot(transformation, transformation_matrix)
 
-    return source_points, transformation_matrix
+    return source_points, transformation_matrix, mean_error

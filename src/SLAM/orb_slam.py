@@ -46,7 +46,8 @@ def calculate_transformation_matrix(points_3D, current_points, camera_matrix=np.
 
 def calculate_camera_position(prev_position, transformation_matrix):
     prev_position_hom = cv.convertPointsToHomogeneous(prev_position)
-    current_position = prev_position_hom @ transformation_matrix.T
+    current_position_hom = prev_position_hom @ transformation_matrix.T
+    current_position = cv.convertPointsFromHomogeneous(current_position_hom)
     return current_position
 
 def add_new_to_global_data(flann_matcher, points_3D, current_des, global_points_3D, global_des, global_weights):
@@ -93,12 +94,11 @@ def main():
     camera_position = [0, 0, 0]
 
     cap = cv.VideoCapture(0)
+
     while (True):
         _, img = cap.read()
 
-        img_gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-
-        current_kp, current_des = detect_orb(img_gray, orb_detector)
+        current_kp, current_des = detect_orb(img, orb_detector)
         matches = match_des(flann_matcher, prev_des, current_des)
 
         prev_points, current_points = get_points_from_matches(prev_kp, current_kp, matches)

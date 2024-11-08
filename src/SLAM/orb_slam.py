@@ -18,6 +18,7 @@ def init_flann():
 
 def match_des(flann_matcher, prev_des, current_des):
     matches = flann_matcher.knnMatch(prev_des, current_des)
+    matches = [m for m in matches if m.distance < 30] # 30 is a threshold value to filter out really bad matches
     return matches
 
 def get_points_from_matches(prev_kp, current_kp, matches):
@@ -25,24 +26,14 @@ def get_points_from_matches(prev_kp, current_kp, matches):
     current_points = [current_kp[m.trainIdx].pt for m in matches]
     return prev_points, current_points
 
-def calculate_3D_points(prev_points, current_points):
-    projMatr = np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 0]])
-    points_4D = cv.triangulatePoints(projMatr, projMatr, prev_points, current_points)
+def calculate_3D_points(prev_points, current_points, transformation_matrix, camera_matrix=np.eye(3)):
+    projMatr1 = np.hstack((camera_matrix, np.zeros((3, 1))))  # Identiteitsmatrix voor vorige frame
+    projMatr2 = np.hstack((camera_matrix @ transformation_matrix[:3, :3], camera_matrix @ transformation_matrix[:3, 3].reshape(-1, 1)))
+
+    points_4D = cv.triangulatePoints(projMatr1, projMatr2, prev_points, current_points)
     points_3D = cv.convertPointsFromHomogeneous(points_4D)
+
     return points_3D
-
-def calculate_transformation_matrix(points_3D, current_points, camera_matrix=np.eye(3), dist_coeffs=np.zeros(5)):
-    succes, rvec, tvec = cv.solvePnP(points_3D, current_points, camera_matrix, dist_coeffs)
-
-    if not succes:
-        return None
-    
-    rotation_matrix, _ = cv.Rodrigues(rvec)
-    transformation_matrix = np.stack((rotation_matrix, tvec), 2)
-
-    print(transformation_matrix)
-
-    return transformation_matrix
 
 def calculate_camera_position(prev_position, transformation_matrix):
     prev_position_hom = cv.convertPointsToHomogeneous(prev_position)
@@ -50,6 +41,17 @@ def calculate_camera_position(prev_position, transformation_matrix):
     current_position = cv.convertPointsFromHomogeneous(current_position_hom)
     return current_position
 
+def calculate_transformation_matrix(prev_points, current_points, camera_matrix=np.eye(3), dist_coeffs=np.zeros(5)):
+    E, _ = cv.findEssentialMat(prev_points, current_points, camera_matrix)
+    _, R, t, _ = cv.recoverPose(E, prev_points, current_points, camera_matrix)
+
+    transformation_matrix = np.eye(4)
+    transformation_matrix[:3, :3] = R
+    transformation_matrix[:3, 3] = t.flatten()
+
+    return transformation_matrix, R, t
+
+# Graph algo -> not used, Lars made a better version
 def add_new_to_global_data(flann_matcher, points_3D, current_des, global_points_3D, global_des, global_weights):
     matches = flann_matcher.knnMatch(points_3D, global_points_3D)
     matches = [m for m in matches if m.distance < 20] # 20 is a threshold value to filter out really bad matches
@@ -86,12 +88,12 @@ def main():
     orb_detector = init_orb()
     flann_matcher = init_flann()
 
-    global_points_3D = []
-    global_des = []
-    global_weights = []
+    # global_points_3D = []
+    # global_des = []
+    # global_weights = []
 
     prev_kp, prev_des = None
-    camera_position = [0, 0, 0]
+    camera_position = [.0, .0, .0]
 
     cap = cv.VideoCapture(0)
 
@@ -99,17 +101,31 @@ def main():
         _, img = cap.read()
 
         current_kp, current_des = detect_orb(img, orb_detector)
+        
+        # When first time loop is running -> set prev kp, des and skip to next iteration
+        if (prev_kp is None or prev_des is None):
+            # Set current to prev for next loop
+            prev_kp = current_kp
+            prev_des = current_des
+            continue
+
         matches = match_des(flann_matcher, prev_des, current_des)
 
         prev_points, current_points = get_points_from_matches(prev_kp, current_kp, matches)
-        points_3D = calculate_3D_points(prev_points, current_points)
 
-        transformation_matrix = calculate_transformation_matrix(points_3D, current_points)
+        transformation_matrix, _ = calculate_transformation_matrix(prev_points, current_points)
         camera_position = calculate_camera_position(camera_position, transformation_matrix)
 
-        add_new_to_global_data(flann_matcher, points_3D, current_des, global_points_3D, global_des, global_weights)
+        points_3D = calculate_3D_points(prev_points, current_points, transformation_matrix)
+
+        # TODO send points_3D to Lars Graph algo
+        # add_new_to_global_data(flann_matcher, points_3D, current_des, global_points_3D, global_des, global_weights)
 
         visualize(img, current_kp)
+
+        # Set current to prev for next loop
+        prev_kp = current_kp
+        prev_des = current_des
 
 if __name__ == "__main__":
     main()

@@ -6,7 +6,6 @@ from copy import deepcopy as copy
 from scipy.spatial.transform import Rotation
 import numpy as np
 import json
-import cv2
 
 class LidarSensorConfig:
     def __init__(self, config_file_name: Optional[str] = None) -> None:
@@ -23,7 +22,7 @@ class LidarSensorConfig:
         self.field_of_view: float = 360.0
         """Field of view in the horizontal plane in degrees"""
 
-        self.samples: int = 200
+        self.samples: int = 150
         """Number of rays around the horizontal plane"""
                 
         self.noise_standard_deviation_distance: float = 0.01
@@ -120,16 +119,19 @@ class LidarSensor(SensorEntity):
             if np.random.rand() < self._config.noise_outlier_chance:
                 distance = np.random.uniform(0, self._config.detection_range_max)
 
-            results.append((angle_horizontal, angle_vertical, distance))
+            results.append((np.radians(angle_horizontal), np.radians(angle_vertical), distance))
 
         self._results = results
     
-    def get_measurements(self) -> List[Tuple[float, float, float]]:
+    def get_measurements(self, in_degrees=False) -> List[Tuple[float, float, float]]:
         """
         :return: A list of tuples (angle_horizontal, angle_vertical, distance)
         """
         if len(self._results) > 0:
-            return self._results
+            if in_degrees:
+                return [(np.rad2deg(self._results[0]), np.rad2deg(self._results[1]), self._results[3])]
+            else:
+                return self._results
         else:
             raise ValueError("run the simulate function before getting the points")
 
@@ -145,7 +147,7 @@ class LidarSensor(SensorEntity):
         angles_vertical = results_array[:, 1]
         distances = results_array[:, 2]
 
-        ray_directions = self._compute_ray_directions(np.radians(angles_horizontal), np.radians(angles_vertical))
+        ray_directions = self._compute_ray_directions(angles_horizontal, angles_vertical)
         local_hit_positions = ray_directions * distances[:, np.newaxis]
         return local_hit_positions.tolist()
 
@@ -187,7 +189,7 @@ class LidarSensor(SensorEntity):
         # TODO: Add minimum distance
 
         pose_global = self.get_pose()
-        direction_global = Rotation.from_quat(pose_global.q, scalar_first=True).apply(direction_local) # sapien uses wxyz for quaternions
+        direction_global = Rotation.from_quat(pose_global.q, scalar_first=True).apply(direction_local) # sapien uses w, x, y, z for quaternions
 
         hit_info = self._scene.physx_system.raycast(pose_global.p, direction_global, self._config.detection_range_max)
 
@@ -195,19 +197,3 @@ class LidarSensor(SensorEntity):
             return self._config.detection_range_max
 
         return hit_info.distance
-    
-    def visualize(self, img_size=(800, 800), scale=30) -> None:
-        img = np.zeros(img_size + (3,), dtype=np.uint8)
-        points = self.get_point_cloud()
-
-        for point in points:
-            x, y, z = point
-
-            img_x = int(img_size[0] / 2 + y * scale)
-            img_y = int(img_size[1] / 2 - x * scale)
-
-            if 0 <= img_x < img_size[0] and 0 <= img_y < img_size[1]: 
-                cv2.circle(img, (img_x, img_y), radius=2, color=(0, 255, 0), thickness=-1)
-
-        cv2.imshow('LIDAR Points', img)
-        cv2.waitKey(1)

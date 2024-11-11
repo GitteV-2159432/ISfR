@@ -2,18 +2,19 @@ import sapien
 from sapien import Pose
 
 import numpy as np
-import cv2
 
 from environment import Environment
 import test_driver
 import lidar
+import slam.graph_slam as graph_slam
+
+import visualization.test as test
 
 def main():
     scene = sapien.Scene()
     scene.set_timestep(1 / 100.0)
 
     viewer = scene.create_viewer()
-
     viewer.set_camera_xyz(x=-12, y=0, z=15)
     viewer.set_camera_rpy(r=0, p=-np.arctan2(2, 2), y=0)
     viewer.window.set_camera_parameters(near=0.05, far=100, fovy=1)
@@ -23,30 +24,29 @@ def main():
 
     driver = test_driver.driver(scene, viewer)
 
-    lidar_config = lidar.LidarSensorConfig()
-    lidar_config.detection_range = 10
-    lidar_config.field_of_view = 360
-    lidar_config.samples = 200
-    lidar_config.noise_standard_deviation_distance = 0.05
-    lidar_config.noise_standard_deviation_angle_horizontal = 0
-    lidar_config.noise_standard_deviation_angle_vertical = 0
-    lidar_config.noise_outlier_chance = 0
-    lidar_config.randomize_start_angle = False
-
-    driver = test_driver.driver(scene, viewer)
-
-    lidar_config = lidar.LidarSensorConfig('src/sensor_configs/Hokuyo_UTM-30LX.json')
+    lidar_config = lidar.LidarSensorConfig('src/sensor_configs/Default.json')
     lidar_sensor = lidar.LidarSensor("lidar", scene, lidar_config, mount_entity=driver.body, pose=Pose(p=np.array([0, 0, 0.5])))
 
+    slam = graph_slam.GraphSlam()
+
+    travel_distance = 0.0
+    anderDing = np.eye(4)
     while not viewer.closed:
         lidar_sensor.simulate()
         driver.update()
 
+        ding = driver.get_odometry_transformation_matrix(0.01, 0.01)
+        anderDing = anderDing @ ding
+        travel_distance += np.linalg.norm(graph_slam._matrix2translation(ding))
+        if travel_distance > 0.1:
+            slam.update(anderDing)
+            test.update(slam.graph)
+            travel_distance = 0
+            anderDing = np.eye(4)
+
         scene.step()
         scene.update_render()
         viewer.render()
-
-        lidar_sensor.visualize()
 
 if __name__ == "__main__":
     main()

@@ -1,59 +1,77 @@
-import pyvista as pv
 import numpy as np
-import point_cloud_helper as pch
-import icp as icp
+from scipy.spatial.transform import Rotation
 
-bunny_target1 = np.load("src/slam/test_data/bunny.npy")
-bunny_target2 = np.load("src/slam/test_data/bunny.npy")
-bunny = np.load("src/slam/test_data/bunny.npy")
-dog = np.load("src/slam/test_data/dog.npy")
-
-bunny_target1 = pch.downsample_point_cloud(bunny_target1, 0.15)
-bunny_target2 = pch.downsample_point_cloud(bunny_target2, 0.15)
-bunny = pch.downsample_point_cloud(bunny, 0.15)
-dog = pch.downsample_point_cloud(dog, 0.03)
-
-dog = pch.apply_scale(dog, .0025)
-
-bunny_target2 = pch.apply_translation(bunny_target2, [.3, 0, 0])
-bunny = pch.apply_translation(bunny, [0, .3, 0])
-dog = pch.apply_translation(dog, [.3, .5, 0])
-
-pd_bunny_target1 = pv.PolyData(bunny_target1)
-pd_bunny_target2 = pv.PolyData(bunny_target2)
-pd_bunny = pv.PolyData(bunny)
-pd_dog = pv.PolyData(dog)
-
-exit = False
-def quit(): 
-    global exit
-    exit = True
-
-running = False
-def run():
-    global running
-    running = True
+class PoseVertex():
+    def __init__(self, matrix4x4=None, position=(0, 0, 0), rotation=(0, 0, 0)) -> None:
+        if matrix4x4 is None:
+            self.matrix = np.eye(4)
+            self.matrix[:3, :3] = Rotation.from_euler("xyz", rotation).as_matrix()
+            self.matrix[:3, 3] = np.array(position)
+        else:
+            self.matrix = matrix4x4
     
-plotter = pv.Plotter()
-plotter.add_points(pd_bunny_target1, color="blue")
-plotter.add_points(pd_bunny_target2, color="blue")
-plotter.add_points(pd_bunny, color="red")
-plotter.add_points(pd_dog, color="red")
-plotter.add_key_event("q", quit)
-plotter.add_key_event("r", run)
-text_error1 = plotter.add_text("Total error (bunny):", position="upper_left", color="black", font_size=9)
-text_error2 = plotter.add_text("\nTotal error (dog):", position="upper_left", color="black", font_size=9)
-plotter.show(interactive=False, interactive_update=True, before_close_callback=quit)
+    def get_position(self): return _matrix2translation(self.matrix)
+    def get_rotation(self): return _matrix2rotation(self.matrix)
+    def get_homogeneous_matrix(self): return self.matrix
 
-while exit is False:
-    if running:
-        bunny, transformation_matrix, mean_error = icp.icp(bunny, bunny_target1, 1)
-        pd_bunny.points = bunny
-        text_error1.set_text(text=f"mean Error (bunny): {round(mean_error, 6)}", position="upper_left")
+class EdgeConstraint():
+    def __init__(self, transformation, information, from_pose_vertex, to_pose_vertex) -> None:
+        self.transformation = transformation
+        self.information = information
+        self.from_pose_vertex: PoseVertex = from_pose_vertex
+        self.to_pose_vertex: PoseVertex = to_pose_vertex
 
-        dog, transformation_matrix, mean_error = icp.icp(dog, bunny_target2, 1)
-        pd_dog.points = dog
-        text_error2.set_text(text=f"\nmean Error (dog): {round(mean_error, 6)}", position="upper_left")
-        pass
+class PoseGraph():
+    def __init__(self, voxel_size = 0.5) -> None:
+        self.adjacency_list = {}
+        self.voxel_grid = {}
+        self.voxel_size = voxel_size
 
-    plotter.update()
+    def add_pose(self, pose_vertex: PoseVertex) -> None:
+        self.adjacency_list[pose_vertex] = []
+
+        voxel_key = self._get_voxel_key(pose_vertex.get_position())
+        if voxel_key not in self.voxel_grid:
+            self.voxel_grid[voxel_key] = []
+        self.voxel_grid[voxel_key].append(pose_vertex)
+
+    def add_constraint(self, from_pose_vertex: PoseVertex, to_pose_vertex: PoseVertex, transformation, information) -> None:
+        edge_constraint = EdgeConstraint(transformation, information, from_pose_vertex, to_pose_vertex)
+        self.adjacency_list[from_pose_vertex].append(edge_constraint)
+        self.adjacency_list[to_pose_vertex].append(edge_constraint)     
+
+    def get_nearby_poses(self, position, voxel_radius: int = 1):
+        nearby_poses = []
+        voxel_key = self._get_voxel_key(position)
+        for dx in range(-voxel_radius, voxel_radius + 1):
+            for dy in range(-voxel_radius, voxel_radius + 1):
+                for dz in range(-voxel_radius, voxel_radius + 1):
+                    neighbor_voxel_key = (voxel_key[0] + dx, voxel_key[1] + dy, voxel_key[2] + dz)
+                    if neighbor_voxel_key in self.voxel_grid:
+                        nearby_poses.extend(self.voxel_grid[neighbor_voxel_key])
+
+        return nearby_poses
+
+    def _get_voxel_key(self, position):
+        x, y, z = position
+        voxel_x = int(np.floor(x / self.voxel_size))
+        voxel_y = int(np.floor(y / self.voxel_size))
+        # voxel_z = int(np.floor(z / self.voxel_size))
+        return (voxel_x, voxel_y, 0)   
+
+class GraphSlam():
+    def __init__(self) -> None:
+        self.graph = PoseGraph()
+        self.last_pose_vertex = PoseVertex()
+
+        self.graph.add_pose(self.last_pose_vertex)
+
+    def update(self, transformation_matrix):
+        new_pose_vertex = PoseVertex(self.last_pose_vertex.get_homogeneous_matrix() @ transformation_matrix)
+        self.graph.add_pose(new_pose_vertex)
+        self.graph.add_constraint(self.last_pose_vertex, new_pose_vertex, transformation_matrix, 0.0)
+        self.last_pose_vertex = new_pose_vertex
+
+def _matrix2translation(transformation_matrix): return transformation_matrix[:3, 3]
+def _matrix2rotation(transformation_matrix): return Rotation.from_matrix(transformation_matrix[:3, :3]).as_euler("xyz")
+

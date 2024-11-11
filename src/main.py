@@ -31,16 +31,17 @@ def main():
 
     travel_distance = 0.0
     anderDing = np.eye(4)
+    test.create(slam.graph)
     while not viewer.closed:
         lidar_sensor.simulate()
         driver.update()
 
-        ding = driver.get_odometry_transformation_matrix(0.01, 0.01)
+        ding = driver.get_odometry_transformation_matrix(0.001, 0.01)
         anderDing = anderDing @ ding
         travel_distance += np.linalg.norm(graph_slam._matrix2translation(ding))
         if travel_distance > 0.1:
-            slam.update(anderDing)
-            test.update(slam.graph)
+            slam.update(anderDing, lidar_sensor.get_point_cloud())
+            test.update(slam.last_pose_vertex)
             travel_distance = 0
             anderDing = np.eye(4)
 

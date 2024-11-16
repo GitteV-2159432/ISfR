@@ -55,7 +55,7 @@ def main():
     viewer.window.set_camera_parameters(near=0.05, far=100, fovy=1)
 
     # Define goal position for the robot
-    goal_position = np.array([5.0, 5.0, 0.0])  # Example goal at (x=5, y=5, z=0)
+    goal_position = np.array([-5.0, -5.0, 0.0])  # Example goal at (x=5, y=5, z=0)
 
     # Initialize driver (robot) with the goal position
     driver = test_driver.Driver(scene, viewer, goal_position)  
@@ -88,9 +88,9 @@ def main():
         lidar_sensor.simulate()
         lidar_points = lidar_sensor.get_point_cloud()
         driver.update(lidar_points)
-        image = points_to_image(lidar_points, scale=30)
-        cv2.imshow('LIDAR Points', image)
-        cv2.waitKey(1)
+        # image = points_to_image(lidar_points, scale=30)
+        # cv2.imshow('LIDAR Points', image)
+        # cv2.waitKey(1)
         
         # Update the driver with lidar points for obstacle avoidance or navigation
         

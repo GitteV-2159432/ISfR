@@ -32,6 +32,7 @@ def main():
     travel_distance = 0.0
     anderDing = np.eye(4)
     test.create(slam.graph)
+    lock = False
     while not viewer.closed:
         lidar_sensor.simulate()
         driver.update()
@@ -44,6 +45,12 @@ def main():
             test.update(slam.last_pose_vertex)
             travel_distance = 0
             anderDing = np.eye(4)
+
+        if int(viewer.window.key_down('r')) == 0 and lock: lock = False
+        if int(viewer.window.key_down('r')) == 1 and not lock:
+            lock = True
+            slam.graph.optimize()
+            test.recreate_all(slam.graph)
 
         scene.step()
         scene.update_render()

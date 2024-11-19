@@ -1,0 +1,9 @@
+@prefix detection: <http://example.org/detection/> .
+@prefix ns: <http://example.org/ontology/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+detection:object_0 a ns:Object ;
+    ns:confidence 7.171576e-01 ;
+    ns:coordinates "x1:149,y1:106,x2:608,y2:480" ;
+    ns:label "person" .
+

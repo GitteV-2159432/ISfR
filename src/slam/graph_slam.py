@@ -3,7 +3,7 @@ from scipy.spatial.transform import Rotation
 from scipy.sparse.linalg import spsolve
 from scipy.sparse import csr_matrix
 from collections import deque
-from typing import Dict, List, Set
+from typing import Dict, List, Set, Tuple
 
 from slam.icp import icp
 
@@ -15,8 +15,8 @@ References:
 
 
 class PoseVertex():
-    def __init__(self, matrix4x4, point_cloud) -> None:         
-        self._matrix = matrix4x4
+    def __init__(self, transformation_matrix, point_cloud) -> None:         
+        self._matrix = transformation_matrix
         self.point_cloud = np.array(point_cloud)
     
     def get_position(self): return _matrix2translation(self._matrix)
@@ -40,9 +40,9 @@ class PoseGraph():
         self.voxel_grid = {}
         self.voxel_size = voxel_size
 
-    def add_pose(self, matrix4x4, point_cloud) -> PoseVertex:
-        voxel_key = self._get_voxel_key(_matrix2translation(matrix4x4))
-        pose_vertex = PoseVertex(matrix4x4, point_cloud)
+    def add_pose(self, transformation_matrix, point_cloud) -> PoseVertex:
+        voxel_key = self._get_voxel_key(_matrix2translation(transformation_matrix))
+        pose_vertex = PoseVertex(transformation_matrix, point_cloud)
         self.adjacency_list[pose_vertex] = []
         if voxel_key not in self.voxel_grid:
             self.voxel_grid[voxel_key] = []
@@ -109,7 +109,7 @@ class PoseGraph():
         voxel_z = int(np.floor(z / self.voxel_size))
         return (voxel_x, voxel_y, voxel_z)  
 
-    def optimize(self, max_iterations: int = 1, convergence_threshold: float = 1e-4):
+    def optimize(self, iterations = 5):
         def compute_error(transformation_from, transformation_to, expected_transformation):
             transformation_error = np.linalg.inv(expected_transformation) @ np.linalg.inv(transformation_from) @ transformation_to # TODO: Check if this is correct!!
             return _matrix2state(transformation_error)
@@ -133,7 +133,7 @@ class PoseGraph():
 
             return jacobian_from, jacobian_to
 
-        for i in range(max_iterations):
+        for i in range(iterations):
             # Todo: Use csr or csc to represent the hessian
             # Todo:   row_indices = np.array([0, 1, 2, 2])
             # Todo:   col_indices = np.array([0, 2, 0, 1])
@@ -191,25 +191,59 @@ class PoseGraph():
                 vertex._matrix = new_pose
 
 class GraphSlam():
-    def __init__(self) -> None:
+    def __init__(self, travel_distance_threshold: float = 0.1, loop_closure_error_threshold: float = 0.6) -> None:
         self.graph = PoseGraph()
         self.last_pose_vertex = None
+        self.travel_distance = 0.0
+        self.combined_transformation = np.eye(4)
 
+        self.travel_distance_threshold = travel_distance_threshold
+        self.loop_closure_error_threshold = loop_closure_error_threshold
+
+        self.on_pose_added_callbacks = []
+        self.on_optimized_callbacks = []
+ 
     def update(self, transformation_matrix, point_cloud):
-        new_pose_vertex = self.graph.add_pose((self.last_pose_vertex.get_homogeneous_matrix() if self.last_pose_vertex else np.eye(4)) @ transformation_matrix, point_cloud)
-        if self.last_pose_vertex is not None: self.graph.add_constraint(self.last_pose_vertex, new_pose_vertex, transformation_matrix, np.eye(6))
-        self.detect_loop_closures(new_pose_vertex, 1, 10)
-        self.last_pose_vertex = new_pose_vertex
+        self.combined_transformation = self.combined_transformation @ transformation_matrix
+        self.travel_distance += np.linalg.norm(_matrix2translation(transformation_matrix))
+        if self.travel_distance < self.travel_distance_threshold:
+            return
 
-    def detect_loop_closures(self, pose_vertex: PoseVertex, voxel_range, min_steps_separation):
-        # TODO: Not very efficient
+        new_pose_vertex = self.graph.add_pose((self.last_pose_vertex.get_homogeneous_matrix() if self.last_pose_vertex else np.eye(4)) @ self.combined_transformation, point_cloud)
+        if self.last_pose_vertex is not None: self.graph.add_constraint(self.last_pose_vertex, new_pose_vertex, self.combined_transformation, np.eye(6))
+        closure = self._detect_loop_closures(new_pose_vertex, 1, 10)
+        if closure: 
+            self.graph.optimize()
+            for func in self.on_optimized_callbacks: func(self.last_pose_vertex, new_pose_vertex, self.combined_transformation)
+
+        for func in self.on_pose_added_callbacks: func(self.last_pose_vertex, new_pose_vertex, self.combined_transformation)
+
+        self.last_pose_vertex = new_pose_vertex
+        self.travel_distance = 0.0
+        self.combined_transformation = np.eye(4)
+
+    def register_on_pose_added(self, func):
+        if callable(func): self.on_pose_added_callbacks.append(func)
+
+    def register_on_optimized_added(self, func):
+        if callable(func): self.on_optimized_callbacks.append(func)
+
+    def _detect_loop_closures(self, pose_vertex: PoseVertex, voxel_range, min_steps_separation) -> Tuple[float, PoseVertex, PoseVertex, np.ndarray, np.ndarray] | None:
         nearby_poses = self.graph.get_nearby_poses(pose_vertex.get_position(), voxel_range)
         poses_within_steps = self.graph.get_vertices_within_steps(pose_vertex, min_steps_separation)
         nearby_poses = [nearby_pose for nearby_pose in nearby_poses if nearby_pose not in poses_within_steps]
 
+        loop_closures = [] # [(error, from, to, transformation_matrix, information_matrix)]
         for pose in nearby_poses:
             point_cloud_transformed, transformation_matrix, mean_error = icp(pose_vertex.point_cloud, pose.point_cloud, 20, 1e-4)
-            if mean_error < 0.9: self.graph.add_constraint(pose, pose_vertex, transformation_matrix, np.eye(6))
+            if mean_error < self.loop_closure_error_threshold: 
+                loop_closures.append((mean_error, pose, pose_vertex, transformation_matrix, np.eye(6)))
+
+        if len(loop_closures) > 0:
+            min_error_closure = min(loop_closures, key=lambda x: x[0])
+            self.graph.add_constraint(min_error_closure[1], min_error_closure[2], min_error_closure[3], min_error_closure[4])
+            return min_error_closure
+        return None
 
 def _matrix2translation(transformation_matrix): return transformation_matrix[:3, 3]
 def _matrix2rotation(transformation_matrix): return Rotation.from_matrix(transformation_matrix[:3, :3]).as_euler("xyz")

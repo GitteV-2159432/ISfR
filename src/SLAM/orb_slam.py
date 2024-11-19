@@ -7,7 +7,7 @@ class OrbSlam():
         self.flann_matcher = _init_flann()
         self.camera_matrix = camera_matrix
         self.dist_coeffs = dist_coeffs
-        self.prev_kp, self.prev_des = None
+        self.prev_kp, self.prev_des = None, None
 
     def run(self, image):
         current_kp, current_des = _detect_orb(image, self.orb_detector)
@@ -33,7 +33,7 @@ def _init_orb():
     return orb_detector
 
 def _detect_orb(img, orb_detector):
-    gray_img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+    gray_img = cv.cvtColor(img, cv.COLOR_RGBA2GRAY)
     kp = orb_detector.detect(gray_img, None)
     kp, des = orb_detector.compute(gray_img, kp)
 

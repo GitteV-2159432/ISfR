@@ -19,7 +19,6 @@ class driver:
         self.turn_speed = 1
         self.eye_left_offset = np.array([size / 2 - .06, size / 2 - .06, size / 2 - .06])
         self.eye_right_offset = np.array([size / 2 - .06, -size / 2 + .06, size / 2 - .06])
-        self.camera_offset = np.array([0, 0, size])
 
         self.velocity = 0.0
         self.angular_velocity = 0.0
@@ -49,16 +48,6 @@ class driver:
             color=[0.0, 0.0, 1.0],
             name="driver eye right",
             is_kinematic=True,
-        )
-
-        # Voeg een camera toe aan de robot
-        self.camera = scene.add_camera(
-            name="driver_camera",
-            width=640,   # Cameraresolutie breedte
-            height=480,  # Cameraresolutie hoogte
-            fovy=1.0,    # Verticale kijkhoek in radianen
-            near=0.1,    # Dichterbij snijvlak
-            far=100.0    # Veraf snijvlak
         )
 
         self.previous_pose = self.body.get_pose()
@@ -92,7 +81,6 @@ class driver:
         body_pose = self.body.get_pose()
         self.eye_right.set_pose(body_pose * Pose(p=self.eye_right_offset))
         self.eye_left.set_pose(body_pose * Pose(p=self.eye_left_offset))
-        self.camera.set_pose(body_pose * Pose(p=self.camera_offset))
         
     def get_odometry_transformation_matrix(self, noise_position=0.0, noise_rotation=0.0):
         """

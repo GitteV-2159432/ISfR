@@ -28,6 +28,7 @@ class driver:
         self.turn_speed = 1
         self.eye_left_offset = np.array([size / 2 - .06, size / 2 - .06, size / 2 - .06])
         self.eye_right_offset = np.array([size / 2 - .06, -size / 2 + .06, size / 2 - .06])
+        self.camera_offset = np.array([0, 0, size])
 
         self.body = box(
             scene,
@@ -56,6 +57,16 @@ class driver:
             is_kinematic=True,
         )
 
+        # Voeg een camera toe aan de robot
+        self.camera = scene.add_camera(
+            name="driver_camera",
+            width=640,   # Cameraresolutie breedte
+            height=480,  # Cameraresolutie hoogte
+            fovy=1.0,    # Verticale kijkhoek in radianen
+            near=0.1,    # Dichterbij snijvlak
+            far=100.0    # Veraf snijvlak
+        )
+
     def update(self) -> None:
         move_direction_local = np.array([
             int(self._viewer.window.key_down('i')) - int(self._viewer.window.key_down('k')), 
@@ -79,4 +90,5 @@ class driver:
         body_pose = self.body.get_pose()
         self.eye_right.set_pose(body_pose * Pose(p=self.eye_right_offset))
         self.eye_left.set_pose(body_pose * Pose(p=self.eye_left_offset))
+        self.camera.set_pose(body_pose * Pose(p=self.camera_offset))
         

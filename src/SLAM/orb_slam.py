@@ -95,6 +95,7 @@ def main():
     prev_kp, prev_des = None
     camera_position = [.0, .0, .0]
 
+    # TODO change to camera on robot in simulation!
     cap = cv.VideoCapture(0)
 
     while (True):

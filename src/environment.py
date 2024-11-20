@@ -1,6 +1,7 @@
 import sapien.core as sapien
 import create_primitive
 from scipy.spatial.transform import Rotation
+import numpy as np
 
 class Environment:
     def __init__(self, scene: sapien.Scene, grid_size: int = 20, spacing: float = 3.0, wall_height: float = 2.0, wall_thickness: float = 0.2):
@@ -74,7 +75,7 @@ class Environment:
             self.scene,
             sapien.Pose(p=[x, y, self.wall_height / 2]),
             half_size=[length, width, height],
-            color=[0.7, 0.7, 0.7],
+            color=[np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1)],
             name="wall",
             is_kinematic=True,
         )

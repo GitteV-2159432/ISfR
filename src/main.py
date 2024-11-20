@@ -55,7 +55,7 @@ def main():
 
         # TODO split odometry and points in 2 different functions
         camera_sensor.take_picture()
-        odometry_transformation_matrix, points_3d = orb_slam.run(np.array(np.array(camera_sensor.get_picture("Color"))[:, :, :3]))
+        odometry_transformation_matrix, points_3d = orb_slam.run(camera_sensor.get_picture("Color"))
 
         # ! TEMP TEST CODE
 

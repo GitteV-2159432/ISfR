@@ -9,11 +9,6 @@ import test_driver
 import lidar
 
 def main():
-    # Load wall data using RDFManager
-    rdf_file = "environment.ttl"  # Specify your RDF file path
-    rdf_manager = RDFManager(rdf_file)
-    wall_data = rdf_manager.get_all_walls()
-
     # Initialize SAPIEN scene
     scene = sapien.Scene()
     scene.set_timestep(1 / 100.0)
@@ -25,7 +20,7 @@ def main():
     viewer.window.set_camera_parameters(near=0.05, far=100, fovy=1)
 
     # Initialize Environment with wall_data from RDFManager
-    environment = Environment(scene, wall_data)
+    environment = Environment(scene, grid_size=20, spacing=1, wall_height=2.0, wall_thickness=0.2)
     environment.load_scene()
 
     # Set up driver (assuming `test_driver.driver` is a valid function returning a driver object)

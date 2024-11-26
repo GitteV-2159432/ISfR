@@ -3,7 +3,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 detection:object_0 a ns:Object ;
-    ns:confidence 7.171576e-01 ;
-    ns:coordinates "x1:149,y1:106,x2:608,y2:480" ;
+    ns:confidence 9.100774e-01 ;
+    ns:coordinates "x1:46,y1:38,x2:622,y2:480" ;
     ns:label "person" .
 

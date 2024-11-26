@@ -1,12 +1,14 @@
 import sapien.core as sapien
 from sapien import Pose
 import numpy as np
-import cv2
 
 from environment import Environment
 from rdf_manager import RDFManager
 import test_driver
 import lidar
+import slam.graph_slam as graph_slam
+
+import visualization.test as test
 
 def main():
     # Initialize SAPIEN scene
@@ -26,36 +28,43 @@ def main():
     # Set up driver (assuming `test_driver.driver` is a valid function returning a driver object)
     driver = test_driver.driver(scene, viewer)
 
-    # Configure Lidar
-    lidar_config = lidar.LidarSensorConfig()
-    lidar_config.detection_range = 10
-    lidar_config.field_of_view = 360
-    lidar_config.samples = 200
-    lidar_config.noise_standard_deviation_distance = 0.05
-    lidar_config.noise_standard_deviation_angle_horizontal = 0
-    lidar_config.noise_standard_deviation_angle_vertical = 0
-    lidar_config.noise_outlier_chance = 0
-    lidar_config.randomize_start_angle = False
-
-    # Initialize lidar sensor
-    lidar_sensor = lidar.LidarSensor(
-        "lidar",
-        scene,
-        lidar_config,
-        mount_entity=driver.body,
-        pose=Pose(p=np.array([0, 0, 0.5]))
+    lidar_config = lidar.LidarSensorConfig('src/sensor_configs/Default.json')
+    lidar_sensor = lidar.LidarSensor("lidar", scene, lidar_config, mount_entity=driver.body, pose=Pose(p=np.array([0, 0, 0.5])))
+    
+    camera_sensor = scene.add_mounted_camera(
+        name= "Camera",
+        mount=driver.body,
+        pose=Pose(p=np.array([0, 0, .75])),
+        width = 640,
+        height = 480,
+        fovy = 1,
+        near = 0.5,
+        far = 100
     )
 
-    # Main simulation loop
+    slam = graph_slam.GraphSlam()
+
+    travel_distance = 0.0
+    anderDing = np.eye(4)
+    test.create(slam.graph)
     while not viewer.closed:
         lidar_sensor.simulate()
         driver.update()
 
+        camera_sensor.take_picture()
+
+        ding = driver.get_odometry_transformation_matrix(0.001, 0.01)
+        anderDing = anderDing @ ding
+        travel_distance += np.linalg.norm(graph_slam._matrix2translation(ding))
+        if travel_distance > 0.1:
+            slam.update(anderDing, lidar_sensor.get_point_cloud())
+            test.update(slam.last_pose_vertex)
+            travel_distance = 0
+            anderDing = np.eye(4)
+
         scene.step()
         scene.update_render()
         viewer.render()
-
-        lidar_sensor.visualize()
 
 if __name__ == "__main__":
     main()

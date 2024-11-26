@@ -7,7 +7,7 @@ import cv2 as cv
 from environment import Environment
 import test_driver
 import lidar
-from slam.graph_slam import GraphSlam, _matrix2rotation
+from slam.graph_slam import GraphSlam, _matrix2translation
 from slam.orb_slam import OrbSlam
 
 import visualization.test as test
@@ -57,21 +57,22 @@ def main():
         camera_sensor.take_picture()
         odometry_transformation_matrix, points_3d = orb_slam.run(camera_sensor.get_picture("Color"))
 
+        print(odometry_transformation_matrix)
+
         # ! TEMP TEST CODE
+        anderDing = anderDing @ odometry_transformation_matrix
+        travel_distance += np.linalg.norm(_matrix2translation(odometry_transformation_matrix))
+        if travel_distance > 0.1:
+            graph_slam.update(anderDing, points_3d)
+            test.update(graph_slam.last_pose_vertex)
+            travel_distance = 0
+            anderDing = np.eye(4)
 
-        # anderDing = anderDing @ odemetry_transformation_matrix
-        # travel_distance += np.linalg.norm(graph_slam._matrix2translation(odometry_transformation_matrix))
-        # if travel_distance > 0.1:
-        #     graph_slam.update(anderDing, points_3d)
-        #     test.update(graph_slam.last_pose_vertex)
-        #     travel_distance = 0
-        #     anderDing = np.eye(4)
-
-        # if int(viewer.window.key_down('r')) == 0 and lock: lock = False
-        # if int(viewer.window.key_down('r')) == 1 and not lock:
-        #     lock = True
-        #     graph_slam.graph.optimize()
-        #     test.recreate_all(graph_slam.graph)
+        if int(viewer.window.key_down('r')) == 0 and lock: lock = False
+        if int(viewer.window.key_down('r')) == 1 and not lock:
+            lock = True
+            graph_slam.graph.optimize()
+            test.recreate_all(graph_slam.graph)
         # ! TEMP TEST CODE END
 
         scene.step()

@@ -15,16 +15,15 @@ class OrbSlam():
         points_relative_3d = []
 
         # When first time loop is running -> set prev kp, des and skip to next iteration
-        if (self.prev_kp is not None or self.prev_des is not None):
+        if (self.prev_kp is not None or self.prev_des is not None) and (current_kp is not None or current_des is not None):
             matches = _match_descriptors(self.flann_matcher, self.prev_des, current_des)
 
-            # TODO is dit hier nog nodig -> lost niet alle errors op
-            if len(matches) < 5: return transformation_matrix, points_relative_3d
+            if len(matches) >= 5:
+                prev_points, current_points = _get_points_from_matches(self.prev_kp, current_kp, matches)
 
-            prev_points, current_points = _get_points_from_matches(self.prev_kp, current_kp, matches)
-
-            transformation_matrix, _, _ = _calculate_transformation_matrix(prev_points, current_points, self.camera_matrix, self.dist_coeffs)
-            points_relative_3d = _calculate_3D_points(prev_points, current_points, transformation_matrix, self.camera_matrix)
+                transformation_matrix, _, _ = _calculate_transformation_matrix(prev_points, current_points, self.camera_matrix, self.dist_coeffs)
+                if _ is not None: # ! TODO check if this check is needed 
+                    points_relative_3d = _calculate_3D_points(prev_points, current_points, transformation_matrix, self.camera_matrix)
 
         # Set prev to current for next loop
         self.prev_kp = current_kp
@@ -57,11 +56,9 @@ def _init_flann():
     flann_matcher = cv.FlannBasedMatcher.create()
     return flann_matcher
 
-def _match_descriptors(flann_matcher, prev_des, current_des, threshold: float = 30):
-    # print("prev_des: ", prev_des, "\ncurrent_des: ", current_des)
-
+def _match_descriptors(flann_matcher, prev_des, current_des, threshold: float = 100):
     matches = flann_matcher.knnMatch(prev_des, current_des, 1)
-    # matches = [m for m in matches if m.distance < threshold] # 30 is a threshold value to filter out really bad matches
+    matches = [m[0] for m in matches if m[0].distance < threshold] # 30 is a threshold value to filter out really bad matches
     return np.array(matches).flatten()
 
 def _get_points_from_matches(prev_kp, current_kp, matches):
@@ -77,12 +74,12 @@ def _calculate_3D_points(prev_points, current_points, transformation_matrix, cam
 
     points_3D = cv.convertPointsFromHomogeneous(points_4D.T)
 
-    return points_3D
+    return points_3D.squeeze()
 
 def _calculate_transformation_matrix(prev_points, current_points, camera_matrix=np.eye(3), dist_coeffs=np.zeros(5)):
-    print("prev_points: ", prev_points.shape, "\ncurrent_points: ", current_points.shape, "\n-------------------------------")
-
     E, _ = cv.findEssentialMat(prev_points, current_points, camera_matrix)
+    if E.shape != (3, 3): return np.eye(4), None, None
+
     _, R, t, _ = cv.recoverPose(E, prev_points, current_points, camera_matrix)
 
     transformation_matrix = np.eye(4)

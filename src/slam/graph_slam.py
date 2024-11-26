@@ -317,6 +317,8 @@ class GraphSlam():
             transformation_matrix (np.ndarray): The transformation matrix representing the motion from the previous pose.
             point_cloud (np.ndarray): The point cloud data associated with the new pose.
         """
+        if len(point_cloud) <= 0: return
+
         self.combined_transformation = self.combined_transformation @ transformation_matrix
         self.travel_distance += np.linalg.norm(_matrix2translation(transformation_matrix))
         if self.travel_distance < self.travel_distance_threshold:

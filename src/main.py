@@ -23,7 +23,6 @@ def main():
     viewer.set_camera_rpy(r=0, p=-np.arctan2(2, 2), y=0)
     viewer.window.set_camera_parameters(near=0.05, far=100, fovy=1)
 
-    # Initialize Environment with wall_data from RDFManager
     environment = Environment(scene, grid_size=20, spacing=1, wall_height=2.0, wall_thickness=0.2)
     environment.load_scene()
 
@@ -46,7 +45,6 @@ def main():
 
     slam = GraphSlam()
     slam_plot = SlamPlot(slam)
-
     while not viewer.closed:
         lidar_sensor.simulate()
         driver.update()

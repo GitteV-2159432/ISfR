@@ -1,12 +1,14 @@
 import sapien.core as sapien
 from sapien import Pose
 import numpy as np
-import cv2
 
 from environment import Environment
 from rdf_manager import RDFManager
 import test_driver
 import lidar
+
+from slam.graph_slam import GraphSlam
+from visualization.slam_visualization import SlamPlot
 
 def main():
     # Load wall data using RDFManager
@@ -31,36 +33,21 @@ def main():
     # Set up driver (assuming `test_driver.driver` is a valid function returning a driver object)
     driver = test_driver.driver(scene, viewer)
 
-    # Configure Lidar
-    lidar_config = lidar.LidarSensorConfig()
-    lidar_config.detection_range = 10
-    lidar_config.field_of_view = 360
-    lidar_config.samples = 200
-    lidar_config.noise_standard_deviation_distance = 0.05
-    lidar_config.noise_standard_deviation_angle_horizontal = 0
-    lidar_config.noise_standard_deviation_angle_vertical = 0
-    lidar_config.noise_outlier_chance = 0
-    lidar_config.randomize_start_angle = False
+    lidar_config = lidar.LidarSensorConfig('src/sensor_configs/Default.json')
+    lidar_sensor = lidar.LidarSensor("lidar", scene, lidar_config, mount_entity=driver.body, pose=Pose(p=np.array([0, 0, 0.5])))
 
-    # Initialize lidar sensor
-    lidar_sensor = lidar.LidarSensor(
-        "lidar",
-        scene,
-        lidar_config,
-        mount_entity=driver.body,
-        pose=Pose(p=np.array([0, 0, 0.5]))
-    )
-
-    # Main simulation loop
+    slam = GraphSlam()
+    slam_plot = SlamPlot(slam)
     while not viewer.closed:
         lidar_sensor.simulate()
         driver.update()
 
+        odometry = driver.get_odometry_transformation_matrix(0.001, 0.01)
+        slam.update(odometry, lidar_sensor.get_point_cloud())
+
         scene.step()
         scene.update_render()
         viewer.render()
-
-        lidar_sensor.visualize()
 
 if __name__ == "__main__":
     main()

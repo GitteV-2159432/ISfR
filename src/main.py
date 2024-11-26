@@ -1,6 +1,7 @@
 import sapien.core as sapien
 from sapien import Pose
 import numpy as np
+import cv2
 
 from environment import Environment
 from rdf_manager import RDFManager
@@ -9,6 +10,7 @@ import lidar
 
 from slam.graph_slam import GraphSlam
 from visualization.slam_visualization import SlamPlot
+from RDF_generation.yolo_processing import frame_to_rdf
 
 def main():
     # Initialize SAPIEN scene
@@ -31,6 +33,17 @@ def main():
     lidar_config = lidar.LidarSensorConfig('src/sensor_configs/Default.json')
     lidar_sensor = lidar.LidarSensor("lidar", scene, lidar_config, mount_entity=driver.body, pose=Pose(p=np.array([0, 0, 0.5])))
 
+    camera_sensor = scene.add_mounted_camera(
+        name= "Camera",
+        mount=driver.body,
+        pose=Pose(p=np.array([0, 0, .75])),
+        width = 640,
+        height = 480,
+        fovy = 1,
+        near = 0.5,
+        far = 100
+    )
+
     slam = GraphSlam()
     slam_plot = SlamPlot(slam)
 
@@ -38,8 +51,14 @@ def main():
         lidar_sensor.simulate()
         driver.update()
 
+        camera_sensor.take_picture()
+        image = (camera_sensor.get_picture('Color') * 255).clip(0, 255).astype(np.uint8)
+        cv2.waitKey(1)
+        processed_frame = frame_to_rdf(image)
+        cv2.imshow("Live Detection", processed_frame)
+
         odometry = driver.get_odometry_transformation_matrix(0.001, 0.01)
-        slam.update(odometry, lidar_sensor.get_point_cloud())
+        #slam.update(odometry, lidar_sensor.get_point_cloud())
 
         scene.step()
         scene.update_render()

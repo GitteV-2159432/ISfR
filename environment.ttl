@@ -1,0 +1,2019 @@
+@prefix ex: <http://example.org/walls#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:Wall_1 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_10 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "17.0"^^xsd:float .
+
+ex:Wall_100 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "8.0"^^xsd:float .
+
+ex:Wall_101 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "11.0"^^xsd:float .
+
+ex:Wall_102 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "14.0"^^xsd:float .
+
+ex:Wall_103 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "17.0"^^xsd:float .
+
+ex:Wall_104 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "20.0"^^xsd:float .
+
+ex:Wall_105 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "23.0"^^xsd:float .
+
+ex:Wall_106 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "29.0"^^xsd:float .
+
+ex:Wall_107 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "32.0"^^xsd:float .
+
+ex:Wall_108 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "35.0"^^xsd:float .
+
+ex:Wall_109 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "41.0"^^xsd:float .
+
+ex:Wall_11 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "20.0"^^xsd:float .
+
+ex:Wall_110 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "44.0"^^xsd:float .
+
+ex:Wall_111 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_112 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "35.0"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_113 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "35.0"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_114 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "35.0"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_115 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "38.0"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_116 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "38.0"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_117 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "38.0"^^xsd:float ;
+    ex:y "17.0"^^xsd:float .
+
+ex:Wall_118 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "38.0"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_119 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "41.0"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_12 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "23.0"^^xsd:float .
+
+ex:Wall_120 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "41.0"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_121 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "41.0"^^xsd:float ;
+    ex:y "17.0"^^xsd:float .
+
+ex:Wall_122 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "41.0"^^xsd:float ;
+    ex:y "32.0"^^xsd:float .
+
+ex:Wall_123 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "41.0"^^xsd:float ;
+    ex:y "41.0"^^xsd:float .
+
+ex:Wall_124 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "41.0"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_125 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "44.0"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_126 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "44.0"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_127 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "44.0"^^xsd:float ;
+    ex:y "17.0"^^xsd:float .
+
+ex:Wall_128 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "44.0"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_129 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_13 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "26.0"^^xsd:float .
+
+ex:Wall_130 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "-7.0"^^xsd:float .
+
+ex:Wall_131 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "-4.0"^^xsd:float .
+
+ex:Wall_132 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "-1.0"^^xsd:float .
+
+ex:Wall_133 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "2.0"^^xsd:float .
+
+ex:Wall_134 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_135 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "8.0"^^xsd:float .
+
+ex:Wall_136 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "11.0"^^xsd:float .
+
+ex:Wall_137 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "14.0"^^xsd:float .
+
+ex:Wall_138 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "17.0"^^xsd:float .
+
+ex:Wall_139 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "20.0"^^xsd:float .
+
+ex:Wall_14 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "29.0"^^xsd:float .
+
+ex:Wall_140 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "23.0"^^xsd:float .
+
+ex:Wall_141 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "26.0"^^xsd:float .
+
+ex:Wall_142 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "29.0"^^xsd:float .
+
+ex:Wall_143 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "32.0"^^xsd:float .
+
+ex:Wall_144 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "35.0"^^xsd:float .
+
+ex:Wall_145 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "38.0"^^xsd:float .
+
+ex:Wall_146 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "41.0"^^xsd:float .
+
+ex:Wall_147 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "44.0"^^xsd:float .
+
+ex:Wall_148 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_149 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-8.5"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_15 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "32.0"^^xsd:float .
+
+ex:Wall_150 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-8.5"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_151 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-8.5"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_152 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-5.5"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_153 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-5.5"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_154 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-2.5"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_155 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-2.5"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_156 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "0.5"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_157 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "0.5"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_158 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "0.5"^^xsd:float ;
+    ex:y "23.0"^^xsd:float .
+
+ex:Wall_159 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "0.5"^^xsd:float ;
+    ex:y "29.0"^^xsd:float .
+
+ex:Wall_16 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "35.0"^^xsd:float .
+
+ex:Wall_160 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "0.5"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_161 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "3.5"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_162 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "3.5"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_163 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "3.5"^^xsd:float ;
+    ex:y "23.0"^^xsd:float .
+
+ex:Wall_164 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "3.5"^^xsd:float ;
+    ex:y "29.0"^^xsd:float .
+
+ex:Wall_165 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "3.5"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_166 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "6.5"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_167 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "6.5"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_168 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "6.5"^^xsd:float ;
+    ex:y "23.0"^^xsd:float .
+
+ex:Wall_169 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "6.5"^^xsd:float ;
+    ex:y "29.0"^^xsd:float .
+
+ex:Wall_17 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "38.0"^^xsd:float .
+
+ex:Wall_170 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "6.5"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_171 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "9.5"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_172 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "9.5"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_173 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "9.5"^^xsd:float ;
+    ex:y "23.0"^^xsd:float .
+
+ex:Wall_174 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "9.5"^^xsd:float ;
+    ex:y "29.0"^^xsd:float .
+
+ex:Wall_175 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "9.5"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_176 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "12.5"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_177 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "12.5"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_178 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "12.5"^^xsd:float ;
+    ex:y "23.0"^^xsd:float .
+
+ex:Wall_179 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "12.5"^^xsd:float ;
+    ex:y "29.0"^^xsd:float .
+
+ex:Wall_18 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "41.0"^^xsd:float .
+
+ex:Wall_180 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "12.5"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_181 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "15.5"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_182 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "15.5"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_183 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "15.5"^^xsd:float ;
+    ex:y "23.0"^^xsd:float .
+
+ex:Wall_184 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "15.5"^^xsd:float ;
+    ex:y "29.0"^^xsd:float .
+
+ex:Wall_185 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "15.5"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_186 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "18.5"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_187 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "18.5"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_188 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "18.5"^^xsd:float ;
+    ex:y "29.0"^^xsd:float .
+
+ex:Wall_189 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "18.5"^^xsd:float ;
+    ex:y "38.0"^^xsd:float .
+
+ex:Wall_19 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "44.0"^^xsd:float .
+
+ex:Wall_190 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "18.5"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_191 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "21.5"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_192 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "21.5"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_193 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "21.5"^^xsd:float ;
+    ex:y "29.0"^^xsd:float .
+
+ex:Wall_194 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "21.5"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_195 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "24.5"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_196 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "24.5"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_197 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "24.5"^^xsd:float ;
+    ex:y "29.0"^^xsd:float .
+
+ex:Wall_198 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "24.5"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_199 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "27.5"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_2 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "-7.0"^^xsd:float .
+
+ex:Wall_20 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_200 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "27.5"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_201 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "27.5"^^xsd:float ;
+    ex:y "29.0"^^xsd:float .
+
+ex:Wall_202 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "27.5"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_203 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "30.5"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_204 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "30.5"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_205 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "30.5"^^xsd:float ;
+    ex:y "29.0"^^xsd:float .
+
+ex:Wall_206 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "30.5"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_207 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "33.5"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_208 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "33.5"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_209 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "33.5"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_21 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-7.0"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_210 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "36.5"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_211 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "36.5"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_212 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "36.5"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_213 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "39.5"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_214 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "39.5"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_215 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "39.5"^^xsd:float ;
+    ex:y "17.0"^^xsd:float .
+
+ex:Wall_216 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "39.5"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_217 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "42.5"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_218 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "42.5"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_219 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "42.5"^^xsd:float ;
+    ex:y "17.0"^^xsd:float .
+
+ex:Wall_22 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-7.0"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_220 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "42.5"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_221 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "45.5"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_222 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "45.5"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_223 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "45.5"^^xsd:float ;
+    ex:y "17.0"^^xsd:float .
+
+ex:Wall_224 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "1.3"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "45.5"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_225 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "-8.5"^^xsd:float .
+
+ex:Wall_226 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "-5.5"^^xsd:float .
+
+ex:Wall_227 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "-2.5"^^xsd:float .
+
+ex:Wall_228 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "0.5"^^xsd:float .
+
+ex:Wall_229 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "3.5"^^xsd:float .
+
+ex:Wall_23 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-7.0"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_230 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "6.5"^^xsd:float .
+
+ex:Wall_231 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "9.5"^^xsd:float .
+
+ex:Wall_232 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "12.5"^^xsd:float .
+
+ex:Wall_233 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "15.5"^^xsd:float .
+
+ex:Wall_234 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "18.5"^^xsd:float .
+
+ex:Wall_235 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "21.5"^^xsd:float .
+
+ex:Wall_236 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "24.5"^^xsd:float .
+
+ex:Wall_237 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "27.5"^^xsd:float .
+
+ex:Wall_238 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "30.5"^^xsd:float .
+
+ex:Wall_239 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "33.5"^^xsd:float .
+
+ex:Wall_24 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-4.0"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_240 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "36.5"^^xsd:float .
+
+ex:Wall_241 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "39.5"^^xsd:float .
+
+ex:Wall_242 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "42.5"^^xsd:float .
+
+ex:Wall_243 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "45.5"^^xsd:float .
+
+ex:Wall_244 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "-1.0"^^xsd:float ;
+    ex:y "6.5"^^xsd:float .
+
+ex:Wall_245 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "-1.0"^^xsd:float ;
+    ex:y "9.5"^^xsd:float .
+
+ex:Wall_246 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "-1.0"^^xsd:float ;
+    ex:y "12.5"^^xsd:float .
+
+ex:Wall_247 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "-1.0"^^xsd:float ;
+    ex:y "15.5"^^xsd:float .
+
+ex:Wall_248 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "-1.0"^^xsd:float ;
+    ex:y "18.5"^^xsd:float .
+
+ex:Wall_249 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "-1.0"^^xsd:float ;
+    ex:y "21.5"^^xsd:float .
+
+ex:Wall_25 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-4.0"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_250 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "8.0"^^xsd:float ;
+    ex:y "36.5"^^xsd:float .
+
+ex:Wall_251 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "8.0"^^xsd:float ;
+    ex:y "39.5"^^xsd:float .
+
+ex:Wall_252 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "8.0"^^xsd:float ;
+    ex:y "42.5"^^xsd:float .
+
+ex:Wall_253 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "8.0"^^xsd:float ;
+    ex:y "45.5"^^xsd:float .
+
+ex:Wall_254 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "23.0"^^xsd:float ;
+    ex:y "6.5"^^xsd:float .
+
+ex:Wall_255 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "23.0"^^xsd:float ;
+    ex:y "9.5"^^xsd:float .
+
+ex:Wall_256 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "23.0"^^xsd:float ;
+    ex:y "12.5"^^xsd:float .
+
+ex:Wall_257 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "23.0"^^xsd:float ;
+    ex:y "15.5"^^xsd:float .
+
+ex:Wall_258 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "-8.5"^^xsd:float .
+
+ex:Wall_259 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "3.5"^^xsd:float .
+
+ex:Wall_26 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-1.0"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_260 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "6.5"^^xsd:float .
+
+ex:Wall_261 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "9.5"^^xsd:float .
+
+ex:Wall_262 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "12.5"^^xsd:float .
+
+ex:Wall_263 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "15.5"^^xsd:float .
+
+ex:Wall_264 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "18.5"^^xsd:float .
+
+ex:Wall_265 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "21.5"^^xsd:float .
+
+ex:Wall_266 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "30.5"^^xsd:float .
+
+ex:Wall_267 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "33.5"^^xsd:float .
+
+ex:Wall_268 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "42.5"^^xsd:float .
+
+ex:Wall_269 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "45.5"^^xsd:float .
+
+ex:Wall_27 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-1.0"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_270 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "-8.5"^^xsd:float .
+
+ex:Wall_271 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "-5.5"^^xsd:float .
+
+ex:Wall_272 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "-2.5"^^xsd:float .
+
+ex:Wall_273 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "0.5"^^xsd:float .
+
+ex:Wall_274 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "3.5"^^xsd:float .
+
+ex:Wall_275 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "6.5"^^xsd:float .
+
+ex:Wall_276 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "9.5"^^xsd:float .
+
+ex:Wall_277 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "12.5"^^xsd:float .
+
+ex:Wall_278 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "15.5"^^xsd:float .
+
+ex:Wall_279 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "18.5"^^xsd:float .
+
+ex:Wall_28 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-1.0"^^xsd:float ;
+    ex:y "8.0"^^xsd:float .
+
+ex:Wall_280 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "21.5"^^xsd:float .
+
+ex:Wall_281 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "24.5"^^xsd:float .
+
+ex:Wall_282 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "27.5"^^xsd:float .
+
+ex:Wall_283 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "30.5"^^xsd:float .
+
+ex:Wall_284 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "33.5"^^xsd:float .
+
+ex:Wall_285 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "36.5"^^xsd:float .
+
+ex:Wall_286 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "39.5"^^xsd:float .
+
+ex:Wall_287 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "42.5"^^xsd:float .
+
+ex:Wall_288 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "1.3"^^xsd:float ;
+    ex:x "47.0"^^xsd:float ;
+    ex:y "45.5"^^xsd:float .
+
+ex:Wall_29 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-1.0"^^xsd:float ;
+    ex:y "11.0"^^xsd:float .
+
+ex:Wall_3 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "-4.0"^^xsd:float .
+
+ex:Wall_30 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-1.0"^^xsd:float ;
+    ex:y "14.0"^^xsd:float .
+
+ex:Wall_31 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-1.0"^^xsd:float ;
+    ex:y "17.0"^^xsd:float .
+
+ex:Wall_32 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-1.0"^^xsd:float ;
+    ex:y "20.0"^^xsd:float .
+
+ex:Wall_33 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-1.0"^^xsd:float ;
+    ex:y "23.0"^^xsd:float .
+
+ex:Wall_34 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-1.0"^^xsd:float ;
+    ex:y "29.0"^^xsd:float .
+
+ex:Wall_35 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-1.0"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_36 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "2.0"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_37 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "2.0"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_38 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "2.0"^^xsd:float ;
+    ex:y "23.0"^^xsd:float .
+
+ex:Wall_39 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "2.0"^^xsd:float ;
+    ex:y "29.0"^^xsd:float .
+
+ex:Wall_4 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "-1.0"^^xsd:float .
+
+ex:Wall_40 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "2.0"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_41 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "5.0"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_42 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "5.0"^^xsd:float ;
+    ex:y "-4.0"^^xsd:float .
+
+ex:Wall_43 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "5.0"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_44 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "5.0"^^xsd:float ;
+    ex:y "23.0"^^xsd:float .
+
+ex:Wall_45 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "5.0"^^xsd:float ;
+    ex:y "29.0"^^xsd:float .
+
+ex:Wall_46 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "5.0"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_47 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "8.0"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_48 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "8.0"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_49 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "8.0"^^xsd:float ;
+    ex:y "23.0"^^xsd:float .
+
+ex:Wall_5 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "2.0"^^xsd:float .
+
+ex:Wall_50 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "8.0"^^xsd:float ;
+    ex:y "29.0"^^xsd:float .
+
+ex:Wall_51 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "8.0"^^xsd:float ;
+    ex:y "35.0"^^xsd:float .
+
+ex:Wall_52 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "8.0"^^xsd:float ;
+    ex:y "38.0"^^xsd:float .
+
+ex:Wall_53 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "8.0"^^xsd:float ;
+    ex:y "41.0"^^xsd:float .
+
+ex:Wall_54 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "8.0"^^xsd:float ;
+    ex:y "44.0"^^xsd:float .
+
+ex:Wall_55 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "8.0"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_56 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "11.0"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_57 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "11.0"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_58 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "11.0"^^xsd:float ;
+    ex:y "14.0"^^xsd:float .
+
+ex:Wall_59 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "11.0"^^xsd:float ;
+    ex:y "23.0"^^xsd:float .
+
+ex:Wall_6 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_60 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "11.0"^^xsd:float ;
+    ex:y "29.0"^^xsd:float .
+
+ex:Wall_61 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "11.0"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_62 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "14.0"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_63 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "14.0"^^xsd:float ;
+    ex:y "-1.0"^^xsd:float .
+
+ex:Wall_64 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "14.0"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_65 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "14.0"^^xsd:float ;
+    ex:y "23.0"^^xsd:float .
+
+ex:Wall_66 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "14.0"^^xsd:float ;
+    ex:y "29.0"^^xsd:float .
+
+ex:Wall_67 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "14.0"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_68 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "17.0"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_69 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "17.0"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_7 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "8.0"^^xsd:float .
+
+ex:Wall_70 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "17.0"^^xsd:float ;
+    ex:y "23.0"^^xsd:float .
+
+ex:Wall_71 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "17.0"^^xsd:float ;
+    ex:y "29.0"^^xsd:float .
+
+ex:Wall_72 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "17.0"^^xsd:float ;
+    ex:y "38.0"^^xsd:float .
+
+ex:Wall_73 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "17.0"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_74 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "20.0"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_75 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "20.0"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_76 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "20.0"^^xsd:float ;
+    ex:y "29.0"^^xsd:float .
+
+ex:Wall_77 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "20.0"^^xsd:float ;
+    ex:y "38.0"^^xsd:float .
+
+ex:Wall_78 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "20.0"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_79 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "23.0"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_8 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "11.0"^^xsd:float .
+
+ex:Wall_80 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "23.0"^^xsd:float ;
+    ex:y "-4.0"^^xsd:float .
+
+ex:Wall_81 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "23.0"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_82 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "23.0"^^xsd:float ;
+    ex:y "8.0"^^xsd:float .
+
+ex:Wall_83 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "23.0"^^xsd:float ;
+    ex:y "11.0"^^xsd:float .
+
+ex:Wall_84 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "23.0"^^xsd:float ;
+    ex:y "14.0"^^xsd:float .
+
+ex:Wall_85 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "23.0"^^xsd:float ;
+    ex:y "17.0"^^xsd:float .
+
+ex:Wall_86 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "23.0"^^xsd:float ;
+    ex:y "29.0"^^xsd:float .
+
+ex:Wall_87 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "23.0"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_88 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "26.0"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_89 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "26.0"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_9 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "-10.0"^^xsd:float ;
+    ex:y "14.0"^^xsd:float .
+
+ex:Wall_90 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "26.0"^^xsd:float ;
+    ex:y "29.0"^^xsd:float .
+
+ex:Wall_91 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "26.0"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_92 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "29.0"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_93 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "29.0"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+
+ex:Wall_94 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "29.0"^^xsd:float ;
+    ex:y "29.0"^^xsd:float .
+
+ex:Wall_95 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "29.0"^^xsd:float ;
+    ex:y "47.0"^^xsd:float .
+
+ex:Wall_96 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "-10.0"^^xsd:float .
+
+ex:Wall_97 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "-7.0"^^xsd:float .
+
+ex:Wall_98 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "2.0"^^xsd:float .
+
+ex:Wall_99 a ex:Wall ;
+    ex:height "2.0"^^xsd:float ;
+    ex:length "0.2"^^xsd:float ;
+    ex:width "0.2"^^xsd:float ;
+    ex:x "32.0"^^xsd:float ;
+    ex:y "5.0"^^xsd:float .
+

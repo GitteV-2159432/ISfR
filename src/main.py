@@ -8,7 +8,7 @@ import test_driver
 import lidar
 
 from slam.graph_slam import GraphSlam
-from visualization.slam_visualization import SlamPlot
+from visualization.slam_visualization import SlamPlot, OccupancyGrid
 
 def main():
     scene = sapien.Scene()
@@ -30,12 +30,21 @@ def main():
     slam = GraphSlam()
     slam_plot = SlamPlot(slam)
 
+    grid = OccupancyGrid(grid_size=400, cell_size=0.1)
+    grid.plotter.show(interactive_update=True)
+
     while not viewer.closed:
         lidar_sensor.simulate()
         driver.update()
 
         odometry = driver.get_odometry_transformation_matrix(0.001, 0.01)
         slam.update(odometry, lidar_sensor.get_point_cloud())
+
+        if slam.last_pose_vertex is not None:
+            pose = slam.last_pose_vertex.get_position()
+            point_cloud = lidar_sensor.get_point_cloud()
+            grid.update_grid(pose, point_cloud)
+            grid.render()
 
         scene.step()
         scene.update_render()

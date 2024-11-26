@@ -1,6 +1,7 @@
 import sapien.core as sapien
 from sapien import Pose
 import numpy as np
+import cv2
 
 from environment import Environment
 from rdf_manager import RDFManager
@@ -9,13 +10,9 @@ import lidar
 
 from slam.graph_slam import GraphSlam
 from visualization.slam_visualization import SlamPlot
+from RDF_generation.yolo_processing import frame_to_rdf
 
 def main():
-    # Load wall data using RDFManager
-    rdf_file = "environment.ttl"  # Specify your RDF file path
-    rdf_manager = RDFManager(rdf_file)
-    wall_data = rdf_manager.get_all_walls()
-
     # Initialize SAPIEN scene
     scene = sapien.Scene()
     scene.set_timestep(1 / 100.0)
@@ -26,8 +23,7 @@ def main():
     viewer.set_camera_rpy(r=0, p=-np.arctan2(2, 2), y=0)
     viewer.window.set_camera_parameters(near=0.05, far=100, fovy=1)
 
-    # Initialize Environment with wall_data from RDFManager
-    environment = Environment(scene, wall_data)
+    environment = Environment(scene, grid_size=20, spacing=1, wall_height=2.0, wall_thickness=0.2)
     environment.load_scene()
 
     # Set up driver (assuming `test_driver.driver` is a valid function returning a driver object)
@@ -36,14 +32,31 @@ def main():
     lidar_config = lidar.LidarSensorConfig('src/sensor_configs/Default.json')
     lidar_sensor = lidar.LidarSensor("lidar", scene, lidar_config, mount_entity=driver.body, pose=Pose(p=np.array([0, 0, 0.5])))
 
+    camera_sensor = scene.add_mounted_camera(
+        name= "Camera",
+        mount=driver.body,
+        pose=Pose(p=np.array([0, 0, .75])),
+        width = 640,
+        height = 480,
+        fovy = 1,
+        near = 0.5,
+        far = 100
+    )
+
     slam = GraphSlam()
     slam_plot = SlamPlot(slam)
     while not viewer.closed:
         lidar_sensor.simulate()
         driver.update()
 
+        camera_sensor.take_picture()
+        image = (camera_sensor.get_picture('Color') * 255).clip(0, 255).astype(np.uint8)
+        cv2.waitKey(1)
+        processed_frame = frame_to_rdf(image)
+        cv2.imshow("Live Detection", processed_frame)
+
         odometry = driver.get_odometry_transformation_matrix(0.001, 0.01)
-        slam.update(odometry, lidar_sensor.get_point_cloud())
+        #slam.update(odometry, lidar_sensor.get_point_cloud())
 
         scene.step()
         scene.update_render()

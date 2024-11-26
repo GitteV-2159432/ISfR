@@ -1,5 +1,7 @@
 import sapien.core as sapien
 import create_primitive
+from scipy.spatial.transform import Rotation
+import numpy as np
 import json
 from rdf_manager import RDFManager
 
@@ -24,7 +26,7 @@ class Environment:
             self.scene,
             sapien.Pose(p=[x, y, height / 2]),
             half_size=[length, width, height],
-            color=[0.7, 0.7, 0.7],
+            color=[np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1)],
             name="wall",
             is_kinematic=True,
         )

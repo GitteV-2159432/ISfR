@@ -41,7 +41,7 @@ class infraCommunication:
     def set_2d_context(self):
         self.context = {
             "@context":{
-                "sensor" : "http://example.org/vinz",
+                "sensor" : "http://example.org/s",
                 "x" : "sensor:x",
                 "y" : "sensor:y"
             }
@@ -74,7 +74,7 @@ class infraCommunication:
         cborEncodedData = self.encode_data(dataToEncode)
         self.client.publish(self.topic, cborEncodedData)
         
-        #publish points for vinz
+        #publish points for 
     def publish_2d_points(self, twoD_points: list):
         points_to_encode = [{"x" : twoD_points[0],"y" : point[1]} for point in twoD_points]
         cborEncodedPoints = self.encode_data(points_to_encode)

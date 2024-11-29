@@ -21,8 +21,8 @@ class infraCommunication:
         self.password: str = password
         self.topic: str = topic
         self.client = mqtt.Client(client_id="robotData", transport= 'tcp', protocol=mqtt.MQTTv5)
-        self.client.tls_set(tls_version= mqtt.ssl.PROTOCOL_TLS) 
-        
+        self.client.tls_set(tls_version= mqtt.ssl.PROTOCOL_TLS)
+
     def set_lidar_context(self):
         self.context = {
             "@context":{
@@ -36,7 +36,16 @@ class infraCommunication:
                 "y": "sensor:y",
                 "z": "sensor:z"
             }
-        }    
+        }
+    #don't forget to change name when clear what it should do
+    def set_2d_context(self):
+        self.context = {
+            "@context":{
+                "sensor" : "http://example.org/vinz",
+                "x" : "sensor:x",
+                "y" : "sensor:y"
+            }
+        }
     #establish a connection with connect
     def connect(self) ->None:
         self.client.username_pw_set(self.username, self.password)
@@ -47,18 +56,27 @@ class infraCommunication:
     def disconnect(self):
         self.client.loop_stop()
         self.client.disconnect()
-       
+        
     def encode_data(self, data):
         return cbor.dumps(data)
         
     def decode_data(self, encoded_data):
         return cbor.loads(encoded_data)
     
-    def publish_message(self,lidar_points : list):
-        dataToEncode = {
+    def publish_lidar_points(self,lidar_points : list):
+        """dataToEncode = {
             "@context": self.context,
             "lidar_coordinates": [{"x": point[0], "y": point[1], "z": point[2]} for point in lidar_points]
-        }
+        }"""
+        #voorlopig zonder de context, indien met context enkel de array eruit halen
+        dataToEncode= [{"x": point[0], "y": point[1], "z": point[2]} for point in lidar_points]
+        #print(dataToEncode)
         cborEncodedData = self.encode_data(dataToEncode)
         self.client.publish(self.topic, cborEncodedData)
+        
+        #publish points for vinz
+    def publish_2d_points(self, twoD_points: list):
+        points_to_encode = [{"x" : twoD_points[0],"y" : point[1]} for point in twoD_points]
+        cborEncodedPoints = self.encode_data(points_to_encode)
+        self.client.publish(self.topic, cborEncodedPoints)
         ""

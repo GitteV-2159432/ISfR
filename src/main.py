@@ -35,8 +35,7 @@ def main():
     lidar_config.noise_outlier_chance = 0
     lidar_config.randomize_start_angle = False
     
-    
-    infra_communication = infraCommunication("broker/cluster url", 8883, "username", "password", "topic")
+    infra_communication = infraCommunication("5cf46dc34dda4e04ab76ff9310e2804c.s2.eu.hivemq.cloud", 8883, "username", "password", "robotData")
     infra_communication.connect()
     infra_communication.set_lidar_context()
     

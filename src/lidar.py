@@ -135,6 +135,9 @@ class LidarSensor(SensorEntity):
 
         ray_directions = self._compute_ray_directions(np.radians(angles_horizontal), np.radians(angles_vertical))
         local_hit_positions = ray_directions * distances[:, np.newaxis]
+        
+        #publishing here will probably be better
+        self.infra_comm.publish_lidar_points(local_hit_positions.tolist())
         return local_hit_positions.tolist()
 
     def _compute_ray_direction(self, angle_horizontal: float, angle_vertical: float) -> np.ndarray:
@@ -185,7 +188,7 @@ class LidarSensor(SensorEntity):
         img = np.zeros(img_size + (3,), dtype=np.uint8)
         points = self.get_point_cloud()
         
-        self.infra_comm.publish_message(points)
+        #self.infra_comm.publish_message(points)
         #print(points)
 
         for point in points:

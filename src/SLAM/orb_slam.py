@@ -7,7 +7,7 @@ class OrbSlam():
         self.flann_matcher = _init_flann()
         self.camera_matrix = camera_matrix
         self.dist_coeffs = dist_coeffs
-        self.prev_kp, self.prev_des = None, None
+        self.prev_kp, self.prev_des= None, None
 
     def run(self, image):
         current_kp, current_des = _detect_orb(image, self.orb_detector)
@@ -21,18 +21,37 @@ class OrbSlam():
 
             transformation_matrix, _ = _calculate_transformation_matrix(prev_points, current_points, self.camera_matrix, self.dist_coeffs)
             points_relative_3d = _calculate_3D_points(self.prev_kp, current_kp, transformation_matrix, self.camera_matrix)
-
+            
         # Set prev to current for next loop
         self.prev_kp = current_kp
         self.prev_des = current_des
-
+            
         return transformation_matrix, points_relative_3d
+
+def _generate_depthmap(points_3d, image_shape, camera_matrix):
+    h,w = image_shape[:2]
+    depthmap = np.full((h,w), np.inf)
+    
+    for point in points_3d:
+        x,y,z = point.ravel()
+        if z <=0:
+            continue
+        pixel_coords = (camera_matrix @ np.array([x,y,z,1])[:3])
+        pixel_coords /= pixel_coords[2]
+        u,v= int(pixel_coords[0]), int(pixel_coords[1])
+        if 0 <=u < w and 0 <= v<h:
+            depthmap[v,u] = min(depthmap[v,u],z)
+    print(depthmap)
+    return depthmap
 
 def _init_orb():
     orb_detector = cv.ORB.create(nfeatures=50)
     return orb_detector
 
 def _detect_orb(img, orb_detector):
+    #gray_img = img
+#    img = cv.cvtColor(image, cv.COLOR_RGBA2GRAY)
+
     gray_img = cv.cvtColor(img, cv.COLOR_RGBA2GRAY)
     kp = orb_detector.detect(gray_img, None)
     kp, des = orb_detector.compute(gray_img, kp)
@@ -51,7 +70,7 @@ def _match_descriptors(flann_matcher, prev_des, current_des, threshold: float = 
 def _get_points_from_matches(prev_kp, current_kp, matches):
     prev_points = [prev_kp[m.queryIdx].pt for m in matches]
     current_points = [current_kp[m.trainIdx].pt for m in matches]
-    return prev_points, current_points
+    return np.array(prev_points), np.array(current_points)
 
 def _calculate_3D_points(prev_points, current_points, transformation_matrix, camera_matrix=np.eye(3)):
     projMatr1 = np.hstack((camera_matrix, np.zeros((3, 1))))  # Identiteitsmatrix voor vorige frame

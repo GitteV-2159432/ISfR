@@ -60,7 +60,7 @@ def main():
         print(f"Afbeeldingsvorm: {image.shape}")
 
         odometry_transformation_matrix, points_3d = orb_slam.run(np.array(np.array(camera_sensor.get_picture("Color"))[:, :, :3]))
-    
+        
         # ! TEMP TEST CODE
 
         # anderDing = anderDing @ odemetry_transformation_matrix

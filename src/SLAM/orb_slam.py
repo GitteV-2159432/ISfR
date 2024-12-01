@@ -25,23 +25,38 @@ class OrbSlam():
         # Set prev to current for next loop
         self.prev_kp = current_kp
         self.prev_des = current_des
-            
         return transformation_matrix, points_relative_3d
 
 def _generate_depthmap(points_3d, image_shape, camera_matrix):
+    """
+    Generate depthmap with 3d points
+    points_3d: points coming from observation of environment
+    image_shape: shape of image
+    camera_matrix = 3x3 matrix of the camera to project from 3d to 2d
+    
+    Returns 2D array with same shape as image. 
+    Contains closest z-val or np.inf
+    z of depthmap can be asked by: z=depthmap[x,y]
+    """
+    #:2 because colored img, height&width van image
     h,w = image_shape[:2]
+    #vul depthmap met inf
     depthmap = np.full((h,w), np.inf)
     
     for point in points_3d:
-        x,y,z = point.ravel()
+        x,y,z = point[0], point[1],point[2]
+        #ignore negative values for z => behind camera
         if z <=0:
             continue
-        pixel_coords = (camera_matrix @ np.array([x,y,z,1])[:3])
+        #project punt naar 2d vlak met cam matrix
+        pixel_coords = camera_matrix @ np.array([x,y,z])[:3]
         pixel_coords /= pixel_coords[2]
         u,v= int(pixel_coords[0]), int(pixel_coords[1])
+        #check of punt binnen de grenzen ligt
         if 0 <=u < w and 0 <= v<h:
+            #select closest
             depthmap[v,u] = min(depthmap[v,u],z)
-    print(depthmap)
+            print("min is", min(depthmap[v,u],z))
     return depthmap
 
 def _init_orb():
@@ -51,11 +66,11 @@ def _init_orb():
 def _detect_orb(img, orb_detector):
     #gray_img = img
 #    img = cv.cvtColor(image, cv.COLOR_RGBA2GRAY)
-
+    if img.dtype != np.uint8:
+        img = (img * 255).astype(np.uint8)
     gray_img = cv.cvtColor(img, cv.COLOR_RGBA2GRAY)
     kp = orb_detector.detect(gray_img, None)
     kp, des = orb_detector.compute(gray_img, kp)
-
     return kp, des
 
 def _init_flann():
@@ -63,7 +78,7 @@ def _init_flann():
     return flann_matcher
 
 def _match_descriptors(flann_matcher, prev_des, current_des, threshold: float = 30):
-    matches = flann_matcher.knnMatch(prev_des, current_des)
+    matches = flann_matcher.knnMatch(prev_des, current_des,k=2)
     matches = [m for m in matches if m.distance < threshold] # 30 is a threshold value to filter out really bad matches
     return matches
 

@@ -19,10 +19,16 @@ class LidarSensorConfig:
         self.detection_range_min: float = 0.1
         """Maximum range from where the lidar can detect an object in meters"""
 
-        self.field_of_view: float = 360.0
+        self.vertical_field_of_view: float = 0.0
+        """Field of view in the vertical plane in degrees"""
+
+        self.horizontal_field_of_view: float = 360.0
         """Field of view in the horizontal plane in degrees"""
 
-        self.samples: int = 150
+        self.vertical_samples: int = 1
+        """Number of rays around the vertical plane"""
+
+        self.horizontal_samples: int = 150
         """Number of rays around the horizontal plane"""
                 
         self.noise_standard_deviation_distance: float = 0.01
@@ -37,19 +43,19 @@ class LidarSensorConfig:
         self.noise_outlier_chance: float = 0.0
         """Chance for a random outlier to occur"""
 
-        self.randomize_start_angle: bool = False
-        """Chance for a random outlier to occur"""
-
         if config_file_name:
             with open(config_file_name, 'r') as file:
                 config = json.load(file)
 
             self.detection_range_max = config['specifications']['detection_range']['max']
             self.detection_range_min = config['specifications']['detection_range']['min']
-            self.field_of_view = config['specifications']['fov']
-            # TODO self.angular_resolution = config['specifications']['angular_resolution']
+            self.vertical_field_of_view = config['specifications']['fov']['vertical']
+            self.horizontal_field_of_view = config['specifications']['fov']['horizontal']
+            self.vertical_samples = config['specifications']['samples']['vertical']
+            self.horizontal_samples = config['specifications']['samples']['horizontal']
             self.noise_standard_deviation_distance = config['specifications']['accuracy']['range_0_10m_(mm)'] * 1e-3
             self.noise_standard_deviation_angle_horizontal = config['specifications']['accuracy']['range_0_10m_(mm)'] * 1e-3
+            self.noise_standard_deviation_angle_vertical = config['specifications']['accuracy']['range_0_10m_(mm)'] * 1e-3
 
 class LidarSensor(SensorEntity):
     """
@@ -72,7 +78,6 @@ class LidarSensor(SensorEntity):
         self._scene = scene
         self._config = config
         self._results: List[Tuple[float, float, float]] = []
-        self.temp = 0
 
         # self._pose is global if not mounted and local if mounted
         self._mount = mount_entity
@@ -80,6 +85,14 @@ class LidarSensor(SensorEntity):
             self._pose = Pose()
         else:
             self._pose = pose
+
+        self._angles_horizontal = []
+        self._angles_vertical = []
+        for horizontal_sample_index in range(self._config.horizontal_samples):
+            for vertical_sample_index in range(self._config.vertical_samples):
+                self._angles_horizontal.append((horizontal_sample_index / (self._config.horizontal_samples - 1) * self._config.horizontal_field_of_view) % self._config.horizontal_field_of_view - (self._config.horizontal_field_of_view / 2.0))
+                self._angles_vertical.append((vertical_sample_index / (self._config.vertical_samples - 1)) * self._config.vertical_field_of_view)
+        self._ray_directions: List[Tuple[float, float]] = self._compute_ray_directions(np.radians(self._angles_horizontal), np.radians(self._angles_vertical))
 
     def set_pose(self, pose: Pose) -> None:
         """
@@ -100,17 +113,8 @@ class LidarSensor(SensorEntity):
         """
         Simulates the LiDAR.
         """
-
-        start_angle = 0
-        if self._config.randomize_start_angle:
-            start_angle = np.random.uniform(0, self._config.field_of_view)
-
         results = []
-        for i in range(self._config.samples):
-            angle_horizontal = (i / max(self._config.samples - 1, 1) * self._config.field_of_view + start_angle) % self._config.field_of_view - (self._config.field_of_view / 2.0) + np.random.normal(0, self._config.noise_standard_deviation_angle_horizontal)
-            angle_vertical = np.random.normal(0, self._config.noise_standard_deviation_angle_vertical)
-                
-            ray_direction = self._compute_ray_direction(np.radians(angle_horizontal), np.radians(angle_vertical))
+        for ray_direction, angle_horizontal, angle_vertical in zip(self._ray_directions, self._angles_horizontal, self._angles_vertical):
             distance = self._raycast(ray_direction)
 
             if distance < self._config.detection_range_max:
@@ -119,50 +123,39 @@ class LidarSensor(SensorEntity):
             if np.random.rand() < self._config.noise_outlier_chance:
                 distance = np.random.uniform(0, self._config.detection_range_max)
 
+            angle_horizontal += np.random.normal(0, self._config.noise_standard_deviation_angle_horizontal)
+            angle_vertical += np.random.normal(0, self._config.noise_standard_deviation_angle_vertical)
             results.append((np.radians(angle_horizontal), np.radians(angle_vertical), distance))
 
         self._results = results
     
-    def get_measurements(self, in_degrees=False) -> List[Tuple[float, float, float]]:
+    def get_measurements(self, include_max=False, in_degrees=False) -> List[Tuple[float, float, float]]:
         """
         :return: A list of tuples (angle_horizontal, angle_vertical, distance)
         """
-        if len(self._results) > 0:
-            if in_degrees:
-                return [(np.rad2deg(self._results[0]), np.rad2deg(self._results[1]), self._results[3])]
-            else:
-                return self._results
-        else:
+        if len(self._results) <= 0:
             raise ValueError("run the simulate function before getting the points")
 
-    def get_point_cloud(self) -> List[Tuple[float, float, float]]:
+        results = self._results if include_max else [r for r in self._results if r[2] < self._config.detection_range_max]
+        if in_degrees: return [(np.rad2deg(results[0]), np.rad2deg(results[1]), results[2])]
+        else: return results
+
+    def get_point_cloud(self, include_max=False) -> List[Tuple[float, float, float]]:
         """
         :return: A list of tuples (position_x, position_y, position_z)
         """
-        if len(self._results) == 0:
+        if len(self._results) <= 0:
             raise ValueError("run the simulate function before getting the points")
 
-        results_array = np.array(self._results)
-        angles_horizontal = results_array[:, 0]
-        angles_vertical = results_array[:, 1]
-        distances = results_array[:, 2]
+        results = self._results if include_max else [r for r in self._results if r[2] < self._config.detection_range_max]
+        results = np.array(results)
+        angles_horizontal = results[:, 0]
+        angles_vertical = results[:, 1]
+        distances = results[:, 2]
 
         ray_directions = self._compute_ray_directions(angles_horizontal, angles_vertical)
         local_hit_positions = ray_directions * distances[:, np.newaxis]
         return local_hit_positions.tolist()
-
-    def _compute_ray_direction(self, angle_horizontal: float, angle_vertical: float) -> np.ndarray:
-        """
-        Compute the ray direction based on horizontal and vertical angles.
-
-        :param angle_horizontal: Horizontal angle in radians.
-        :param angle_vertical: Vertical angle in radians.
-        :return: A unit vector representing the ray direction in world coordinates.
-        """
-        x = np.cos(angle_vertical) * np.cos(angle_horizontal)
-        y = np.cos(angle_vertical) * np.sin(angle_horizontal)
-        z = np.sin(angle_vertical)
-        return np.array([x, y, z])
 
     def _compute_ray_directions(self, angle_horizontal: np.ndarray, angle_vertical: np.ndarray) -> np.ndarray:
         """

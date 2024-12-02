@@ -22,9 +22,9 @@ def _draw_polar_coordinate_system(plotter: pv.Plotter):
 
 class PolarCoordinatesPlot():
     def __init__(self, title: str="Polar Plotter", color=[0.0, 1.0, 0.0]) -> None:
-        self.pd_lidar = pv.PolyData(np.zeros((150, 3)))
+        self.pd_lidar = None
+        self._color = color
         self.plotter = pv.Plotter()
-        self.plotter.add_points(self.pd_lidar, color=color)
         self.plotter.show(auto_close=False, interactive_update=True, interactive=True)
 
         _draw_polar_coordinate_system(self.plotter)
@@ -35,5 +35,9 @@ class PolarCoordinatesPlot():
 
     def update(self, points_polar: List[Tuple[float, float, float]]) -> None:
         points_cartesian = _polar2cartesian(points_polar)
+        if (self.pd_lidar == None): 
+            self.pd_lidar = pv.PolyData(np.zeros((len(points_cartesian), 3)))
+            self.plotter.add_points(self.pd_lidar, color=self._color)
+            
         self.pd_lidar.points = points_cartesian
         self.plotter.update()

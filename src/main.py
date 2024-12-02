@@ -4,13 +4,14 @@ import numpy as np
 import cv2
 
 from environment import Environment
-from rdf_manager import RDFManager
 import test_driver
 import lidar
 
+# from rdf_manager import RDFManager
+# from RDF_generation.yolo_processing import frame_to_rdf
 from slam.graph_slam import GraphSlam
 from visualization.slam_visualization import SlamPlot
-from RDF_generation.yolo_processing import frame_to_rdf
+from visualization.polar_coordinates_plot import PolarCoordinatesPlot
 
 def main():
     # Initialize SAPIEN scene
@@ -44,19 +45,20 @@ def main():
     )
 
     slam = GraphSlam()
-    slam_plot = SlamPlot(slam)
+    SlamPlot(slam)
+
     while not viewer.closed:
         lidar_sensor.simulate()
         driver.update()
 
-        camera_sensor.take_picture()
-        image = (camera_sensor.get_picture('Color') * 255).clip(0, 255).astype(np.uint8)
-        cv2.waitKey(1)
-        processed_frame = frame_to_rdf(image)
-        cv2.imshow("Live Detection", processed_frame)
+        # camera_sensor.take_picture()
+        # image = (camera_sensor.get_picture('Color') * 255).clip(0, 255).astype(np.uint8)
+        # cv2.waitKey(1)
+        # processed_frame = frame_to_rdf(image)
+        # cv2.imshow("Live Detection", processed_frame)
 
-        odometry = driver.get_odometry_transformation_matrix(0.001, 0.01)
-        #slam.update(odometry, lidar_sensor.get_point_cloud())
+        odometry = driver.get_odometry_transformation_matrix(0.001, 0.001)
+        slam.update(odometry, lidar_sensor.get_point_cloud())
 
         scene.step()
         scene.update_render()

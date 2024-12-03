@@ -81,8 +81,27 @@ class Environment:
         )
         self.walls.append(wall)
 
+    def add_chair(self, position: tuple, rotation: tuple = (0, 0, 0), scale: float = 0.02) -> None:
+        """Add a chair to the environment using an OBJ file with scaling."""
+        x, y, z = position
+
+        # Load chair model from the OBJ file
+        builder = self.scene.create_actor_builder()
+        builder.add_visual_from_file(
+            filename="/home/vinzroosen/Desktop/ISfR/assets/modern_chair_11_obj.obj",
+            scale=[scale, scale, scale]  # Apply scaling
+        )
+        chair = builder.build_static(name="chair")
+
+        # Set chair pose
+        rotation_quat = Rotation.from_euler("xyz", rotation, degrees=True).as_quat()
+        chair.set_pose(sapien.Pose(p=[x, y, z], q=rotation_quat))
+
+
     def load_scene(self) -> None:
         self.scene.set_ambient_light([0.5, 0.5, 0.5])
         self.scene.add_directional_light([0, 1, -1], [0.5, 0.5, 0.5])
         self.scene.add_ground(altitude=0, render_half_size=[(self.grid_size / 2.0)] * 2)
         self.create_wall_grid()
+        self.add_chair((0, -4, 0), rotation=(0, 0, 90),scale=0.02)
+

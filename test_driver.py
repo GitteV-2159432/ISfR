@@ -13,8 +13,8 @@ class Driver:
     def __init__(self, scene: Scene, viewer: Viewer, goal_position: np.ndarray) -> None:
         self._viewer = viewer
         self.move_speed = 1.4
-        self.wheel_radius = 0.1735
-        self.wheel_base = 0.57
+        self.wheel_radius = 0.1
+        self.wheel_base = 0.4
         self.target_velocity = 0
         self.max_velocity = 5
         self.is_reset = False  
@@ -25,10 +25,7 @@ class Driver:
         loader.fix_root_link = False
         self.robot = loader.load("robot-description/urdf/rikkert.urdf")
         self.robot.set_root_pose(Pose([0, 0, 0], [1, 0, 0, 0]))
-        loader.set_link_material("caster_wheel", static_friction=0.9, dynamic_friction=0.8, restitution=0.1)
-        loader.set_link_material("left_wheel", static_friction=1.0, dynamic_friction=0.9, restitution=0.1)
-        loader.set_link_material("right_wheel", static_friction=1.0, dynamic_friction=0.9, restitution=0.1)
-        
+
         self.joints = self.get_joints_dict(self.robot)
         
         self.pid_left = PID(0, 0, 0, setpoint=self.move_speed)
@@ -37,7 +34,7 @@ class Driver:
 
         
         self.config = Config.Config()  
-        self.x = np.array([0.0, 0.0, 0.0, 0.0, 0.0])  
+        self.x = np.array([0.0, 0.0, 0, 0.0, 0.0])  
         self.dwa = DWA.DWA(config=self.config, odom=self.x, goal_pose=Pose(p=goal_position))
         
         self.lock = threading.Lock()
@@ -94,10 +91,7 @@ class Driver:
         self.target_velocity = 0
         self.joints['left_wheel_joint'].set_drive_velocity_target(0)
         self.joints['right_wheel_joint'].set_drive_velocity_target(0)
-        self.pid_left.auto_mode = False  
-        self.pid_right.auto_mode = False  
-        self.pid_left.set_auto_mode(True, last_output=0)
-        self.pid_right.set_auto_mode(True, last_output=0)
+
         self.is_reset = True
         self.is_started = False  
         print("Robot and PID controllers reset")
@@ -154,29 +148,29 @@ class Driver:
             self.dwa.x[2] = robot_orientation  
             self.dwa.x[3] = self.control_commands[0]
             self.dwa.x[4] = self.control_commands[1]
-
-
     def convert_to_wheel_velocities(self, linear_velocity: float, angular_velocity: float):
-        left_wheel_velocity = linear_velocity - (angular_velocity * self.wheel_base / 2)
-        right_wheel_velocity = linear_velocity + (angular_velocity * self.wheel_base / 2)
-        return left_wheel_velocity, right_wheel_velocity
+        L = self.wheel_base  # Wheel base
+        left_wheel_velocity = linear_velocity -(L / 2) * angular_velocity
+        right_wheel_velocity = linear_velocity + (L / 2) * angular_velocity
+        return round(left_wheel_velocity,2), round(right_wheel_velocity,2)
 
     def set_wheel_velocities(self, left_velocity_target: float, right_velocity_target: float) -> None:
-
+        
         current_left_velocity = self.calculate_total_velocity("left_wheel")
         current_right_velocity = self.calculate_total_velocity("right_wheel")
 
         left_error = left_velocity_target - current_left_velocity
         right_error = right_velocity_target - current_right_velocity
-
+        print(f"The left error: {left_error}, The right error: {right_error}")
         control_left = self.pid_left(left_error)
         control_right = self.pid_right(right_error)
         print(control_left + left_velocity_target,control_right + right_velocity_target)
+        self.client.publish("robot/wheel_velocities", f"left:{current_left_velocity}, right:{current_right_velocity}")
+
         self.joints['left_wheel_joint'].set_drive_velocity_target(left_velocity_target + control_left)
         self.joints['right_wheel_joint'].set_drive_velocity_target(right_velocity_target + control_right)
 
 
-        self.client.publish("robot/wheel_velocities", f"left:{current_left_velocity}, right:{current_right_velocity}")
 
     def calculate_total_velocity(self, link_name: str) -> float:
         velocity_vector = self.robot.find_link_by_name(link_name).get_linear_velocity()

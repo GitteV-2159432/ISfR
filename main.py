@@ -40,13 +40,13 @@ mqtt_client.loop_start()
 def main():
     # Scene setup
     scene = sapien.Scene()
-    scene.set_timestep(0.1)
+    scene.set_timestep(0.2)
     scene.set_ambient_light([0.5, 0.5, 0.5])
     scene.add_directional_light([0, 1, -1], [0.5, 0.5, 0.5], shadow=True)
 
     # Viewer setup
     viewer = scene.create_viewer()
-    ground_material = scene.create_physical_material(0.3, 0.2, 0)
+    ground_material = scene.create_physical_material(0.5, 0.4, 0.1)
     ground = scene.add_ground(0, True, ground_material)
 
     # Camera settings
@@ -55,11 +55,19 @@ def main():
     viewer.window.set_camera_parameters(near=0.05, far=100, fovy=1)
 
     # Define goal position for the robot
-    goal_position = np.array([-5.0, -5.0, 0.0])  # Example goal at (x=5, y=5, z=0)
+    goal_position = np.array([5, 0, 0])  # Example goal at (x=5, y=5, z=0)
 
     # Initialize driver (robot) with the goal position
     driver = test_driver.Driver(scene, viewer, goal_position)  
 
+
+    # Create a sphere to indicate the goal position
+    goal_radius = 0.2  # Radius of the goal sphere
+    goal_material = scene.create_physical_material(1.0, 1.0, 0.0)  # Non-physical material for visualization
+    goal_builder = scene.create_actor_builder()
+    goal_builder.add_sphere_visual(Pose(), goal_radius)  # Red sphere
+    goal_sphere = goal_builder.build_kinematic()
+    goal_sphere.set_pose(Pose(goal_position))
     # Lidar sensor setup
     lidar_config = lidar.LidarSensorConfig()
     lidar_config.detection_range = 10

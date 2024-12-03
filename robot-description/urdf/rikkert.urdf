@@ -26,7 +26,7 @@
     </collision>
     <inertial>
       <origin rpy="1.5707963267948966 0 1.5707963267948966" xyz="0 0 0"/>
-      <mass value="0.4"/>
+      <mass value="2"/>
       <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/> 
     </inertial>
   </link>
@@ -68,7 +68,7 @@
     <origin rpy="0 0 0" xyz="0.28 -0.285 0.05"/>
     <!-- <limit upper="3.1415" lower="-3.1415" effort="30" velocity="5.0"/> -->
     <axis xyz="0 1 0"/>
-    <dynamics damping="0.01" friction="0.1"/>
+    <dynamics damping="0.1" friction="0.1"/>
     <limit lower="-100000000" upper="100000000" effort="1000" velocity="100000000"/>
 
   </joint>
@@ -105,40 +105,77 @@
     <axis xyz="0 1 0"/>
     <limit lower="-100000000" upper="100000000" effort="1000" velocity="100000000"/>
 
-    <dynamics damping="0.01" friction="0.1"/>
+    <dynamics damping="0.1" friction="0.1"/>
   </joint>
   <!-- *********************** CASTER WHEEL ******************************  -->
   <!-- We add a caster wheel. It will be modeled as sphere.
        We define the wheel’s geometry, material and the joint to connect it to 
        base_link at the appropriate location. -->
-  <link name="rear_caster">
-    <visual>
-      <origin rpy="3.141592653589793 0 3.141592653589793" xyz="0 0 0"/>
-      <geometry>
-        <sphere radius="0.08"/>        </geometry>
-      <material name="Blue">
-        <color rgba="0.0 0.0 1.0 1.0"/>
-      </material>
-    </visual>
-    <collision>
-      <origin rpy="3.141592653589793 0 3.141592653589793" xyz="0 0 0"/>
-      <geometry>
-<sphere radius="0.08"/>      </geometry>
-    </collision>
-    <inertial>
-      <mass value="0.0105"/>
-      <inertia ixx="0.000003528" ixy="0.0" ixz="0.0" iyy="0.000003528" iyz="0.0" izz="0.000003528" />
-        </inertial>
-  </link>
-  <joint name="caster_joint" type="revolute">
-    <parent link="base_link"/>
-    <child link="rear_caster"/>
-    <origin rpy="0 0 0" xyz="-0.28500000000000003 0 -0.03"/>
-    <limit lower="-100000000" upper="100000000" effort="1000" velocity="100000000" />
-    <axis xyz="1 1 0"/>
-    
+<link name="caster_wheel">
+  <visual>
+    <origin rpy="1.5708  0  0 " xyz="0 0 0"/> <!-- Oriented correctly to represent a wheel -->
+    <geometry>
+      <cylinder radius="0.06" length="0.04"/> <!-- Larger wheel for better ground contact -->
+    </geometry>
+    <material name="black">
+      <color rgba="0.0 0.0 0.0 1.0"/>
+    </material>
+  </visual>
+  <collision>
+    <origin rpy="1.5708 0  0 "  xyz="0 0 0"/>
+    <geometry>
+      <cylinder radius="0.06" length="0.04"/> <!-- Collision geometry matches visual -->
+    </geometry>
+  </collision>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="0.25"/> <!-- Mass slightly increased for balance -->
+    <inertia ixx="0.0025" ixy="0.0" ixz="0.0" iyy="0.0025" iyz="0.0" izz="0.0025"/>
+  </inertial>
+</link>
 
-  </joint>
+<link name="caster_body">
+  <visual>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <geometry>
+      <cylinder radius="0.05" length="0.08"/> <!-- Caster body with larger, more balanced dimensions -->
+    </geometry>
+    <material name="gray">
+      <color rgba="0.5 0.5 0.5 1.0"/>
+    </material>
+  </visual>
+  <collision>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <geometry>
+      <cylinder radius="0.05" length="0.08"/> <!-- Collision matches visual to prevent inconsistency -->
+    </geometry>
+  </collision>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="0.4"/> <!-- Increased mass to provide stability -->
+    <inertia ixx="0.003" ixy="0.0" ixz="0.0" iyy="0.003" iyz="0.0" izz="0.003"/>
+  </inertial>
+</link>
+
+
+<joint name="caster_swivel_joint" type="continuous">
+  <parent link="base_link"/>
+  <child link="caster_body"/>
+  <origin rpy="0 0 0" xyz="-0.285 0 -0.03"/> <!-- Position of caster relative to base -->
+  <axis xyz="0 0 1"/> <!-- Allows swiveling around the vertical axis (z-axis) -->
+  <dynamics damping="0.5" friction="0.5"/> <!-- Increased damping and friction to stabilize the caster -->
+</joint>
+
+<joint name="caster_rolling_joint" type="revolute">
+  <parent link="caster_body"/>
+  <child link="caster_wheel"/>
+  <origin rpy="0 0 0" xyz="0 0 -0.06"/> <!-- Adjusted to match the new wheel size -->
+  <axis xyz="0 1 0"/> <!-- Rolling axis is horizontal, allowing the wheel to rotate around the x-axis -->
+  <dynamics damping="0.1" friction="0.1"/> <!-- Increased damping and friction to ensure smoother rolling motion -->
+  <limit lower="-100000000" upper="100000000" effort="100" velocity="10"/>
+</joint>
+
+
   <!-- ********************** SENSORS **************************** -->
   <link name="hokuyo">
     <visual>
@@ -162,6 +199,7 @@
       <inertia ixx="0.8315125000000002" ixy="0" ixz="0" iyy="0.8315125000000002" iyz="0" izz="1.5967250000000004"/>
     </inertial>
   </link>
+
   <joint name="hokuyo_joint" type="fixed">
     <parent link="base_link"/>
     <child link="hokuyo"/>

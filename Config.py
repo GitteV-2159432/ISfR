@@ -25,7 +25,7 @@ class Config:
         self.obstacle_cost_gain = 0.5
         self.robot_stuck_flag_cons = 0.001  # constant to prevent robot stuck
         self.robot_type = RobotType.circle
-        self.robot_radius = 0.25  # [m] for collision check
-        self.robot_width = 0.5  # [m] for collision check
-        self.robot_length = 0.5  # [m] for collision check
+        self.robot_radius = 0.6  # [m] for collision check
+        self.robot_width = 0.4  # [m] for collision check
+        self.robot_length = 0.6  # [m] for collision check
         self.ob = np.array([])  # Will be set dynamically

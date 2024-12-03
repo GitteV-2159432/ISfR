@@ -7,10 +7,16 @@
         "max": 30.0
       },
       "accuracy": {
-        "range_0_10m_(mm)": 0,
-        "range_10_30m_(mm)": 0
+        "range_0_10m_(mm)": 1,
+        "range_10_30m_(mm)": 1
       },
-      "angular_resolution": 0.0,
-      "fov": 360.0
+      "fov": {
+        "horizontal": 360.0,
+        "vertical": 20.0
+      },
+      "samples": {
+        "horizontal": 150,
+        "vertical": 10
+      }
     }
 }

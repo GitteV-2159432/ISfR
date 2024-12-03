@@ -10,7 +10,13 @@
         "range_0_10m_(mm)": 30,
         "range_10_30m_(mm)": 50
       },
-      "angular_resolution": 0.25,
-      "fov": 270.0
+      "fov": {
+        "horizontal": 270.0,
+        "vertical": 0.25
+      },
+      "samples": {
+        "horizontal": 150,
+        "vertical": 5
+      }
     }
 }

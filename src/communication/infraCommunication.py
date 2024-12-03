@@ -37,15 +37,6 @@ class infraCommunication:
                 "z": "sensor:z"
             }
         }
-    #don't forget to change name when clear what it should do
-    def set_2d_context(self):
-        self.context = {
-            "@context":{
-                "sensor" : "http://example.org/s",
-                "x" : "sensor:x",
-                "y" : "sensor:y"
-            }
-        }
     #establish a connection with connect
     def connect(self) ->None:
         self.client.username_pw_set(self.username, self.password)
@@ -73,10 +64,3 @@ class infraCommunication:
         #print(dataToEncode)
         cborEncodedData = self.encode_data(dataToEncode)
         self.client.publish(self.topic, cborEncodedData)
-        
-        #publish points for 
-    def publish_3d_points(self, twoD_points: list):
-        points_to_encode = [{"x" : twoD_points[0],"y" : point[1]} for point in twoD_points]
-        cborEncodedPoints = self.encode_data(points_to_encode)
-        self.client.publish(self.topic, cborEncodedPoints)
-        ""

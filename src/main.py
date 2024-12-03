@@ -7,6 +7,8 @@ from environment import Environment
 from rdf_manager import RDFManager
 import test_driver
 import lidar
+from slam.graph_slam import GraphSlam, _matrix2rotation
+from slam.orb_slam import OrbSlam
 
 from slam.graph_slam import GraphSlam
 from visualization.slam_visualization import SlamPlot
@@ -43,20 +45,40 @@ def main():
         far = 100
     )
 
-    slam = GraphSlam()
-    slam_plot = SlamPlot(slam)
+    graph_slam = GraphSlam()
+    slam_plot = SlamPlot(graph_slam)
+    orb_slam = OrbSlam()
+
     while not viewer.closed:
+
         lidar_sensor.simulate()
         driver.update()
 
+        # TODO split odometry and points in 2 different functions
         camera_sensor.take_picture()
-        image = (camera_sensor.get_picture('Color') * 255).clip(0, 255).astype(np.uint8)
+        image = np.array(camera_sensor.get_picture("Color"))[:, :, :3]
+
         cv2.waitKey(1)
         processed_frame = frame_to_rdf(image)
         cv2.imshow("Live Detection", processed_frame)
-
+        # orb_slam.run(image)
         odometry = driver.get_odometry_transformation_matrix(0.001, 0.01)
-        #slam.update(odometry, lidar_sensor.get_point_cloud())
+        # ! TEMP TEST CODE
+
+        # anderDing = anderDing @ odemetry_transformation_matrix
+        # travel_distance += np.linalg.norm(graph_slam._matrix2translation(odometry_transformation_matrix))
+        # if travel_distance > 0.1:
+        #     graph_slam.update(anderDing, points_3d)
+        #     test.update(graph_slam.last_pose_vertex)
+        #     travel_distance = 0
+        #     anderDing = np.eye(4)
+
+        # if int(viewer.window.key_down('r')) == 0 and lock: lock = False
+        # if int(viewer.window.key_down('r')) == 1 and not lock:
+        #     lock = True
+        #     graph_slam.graph.optimize()
+        #     test.recreate_all(graph_slam.graph)
+        # ! TEMP TEST CODE END
 
         scene.step()
         scene.update_render()

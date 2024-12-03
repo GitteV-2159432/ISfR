@@ -23,7 +23,7 @@ class Driver:
         
         loader = scene.create_urdf_loader()
         loader.fix_root_link = False
-        self.robot = loader.load("robot-description/urdf/rikkert.urdf")
+        self.robot = loader.load("dif_robot.urdf")
         self.robot.set_root_pose(Pose([0, 0, 0], [1, 0, 0, 0]))
 
         self.joints = self.get_joints_dict(self.robot)
@@ -89,9 +89,12 @@ class Driver:
     def reset_robot(self):
         self.robot.set_root_pose(Pose([0, 0, 0], [1, 0, 0, 0]))
         self.target_velocity = 0
-        self.joints['left_wheel_joint'].set_drive_velocity_target(0)
-        self.joints['right_wheel_joint'].set_drive_velocity_target(0)
-
+        self.joints['base_left_wheel_joint'].set_drive_velocity_target(0)
+        self.joints['base_right_wheel_joint'].set_drive_velocity_target(0)
+        self.pid_left.set_auto_mode(False)
+        self.pid_left.set_auto_mode(True, last_output=0)
+        self.pid_right.set_auto_mode(False)
+        self.pid_right.set_auto_mode(True, last_output=0)
         self.is_reset = True
         self.is_started = False  
         print("Robot and PID controllers reset")
@@ -108,8 +111,8 @@ class Driver:
         #self.update_robot_state()
 
         if self.is_reset:
-            self.joints['left_wheel_joint'].set_drive_velocity_target(0)
-            self.joints['right_wheel_joint'].set_drive_velocity_target(0)
+            self.joints['base_left_wheel_joint'].set_drive_velocity_target(0)
+            self.joints['base_right_wheel_joint'].set_drive_velocity_target(0)
             print("Robot is reset and stationary")
         elif self.is_started and not self.has_reached_goal():
             self.lidar_points = lidar_points
@@ -155,7 +158,10 @@ class Driver:
         return round(left_wheel_velocity,2), round(right_wheel_velocity,2)
 
     def set_wheel_velocities(self, left_velocity_target: float, right_velocity_target: float) -> None:
-        
+        if self.is_reset:
+            left_velocity_target = 0
+            right_velocity_target = 0
+
         current_left_velocity = self.calculate_total_velocity("left_wheel")
         current_right_velocity = self.calculate_total_velocity("right_wheel")
 
@@ -167,8 +173,8 @@ class Driver:
         print(control_left + left_velocity_target,control_right + right_velocity_target)
         self.client.publish("robot/wheel_velocities", f"left:{current_left_velocity}, right:{current_right_velocity}")
 
-        self.joints['left_wheel_joint'].set_drive_velocity_target(left_velocity_target + control_left)
-        self.joints['right_wheel_joint'].set_drive_velocity_target(right_velocity_target + control_right)
+        self.joints['base_left_wheel_joint'].set_drive_velocity_target(left_velocity_target + control_left)
+        self.joints['base_right_wheel_joint'].set_drive_velocity_target(right_velocity_target + control_right)
 
 
 

@@ -1,0 +1,328 @@
+<sdf version='1.11'>
+  <model name='rikkert'>
+    <link name='base_footprint'>
+      <inertial>
+        <pose>0.018680253059531221 0 0.190859780128604 0 0 0</pose>
+        <mass>2.4104999999999999</mass>
+        <inertia>
+          <ixx>1.724855980605684</ixx>
+          <ixy>3.1047856306507722e-16</ixy>
+          <ixz>-0.01099332892553412</ixz>
+          <iyy>3.27278904778573</iyy>
+          <iyz>-2.1676705918582271e-16</iyz>
+          <izz>1.690533067180046</izz>
+        </inertia>
+      </inertial>
+      <collision name='base_footprint_fixed_joint_lump__base_link_collision'>
+        <pose>0 0 0 0 0 1.5707963267948959</pose>
+        <geometry>
+          <mesh>
+            <scale>0.001 0.001 0.001</scale>
+            <uri>model://meshes/Base_platform.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <collision name='base_footprint_fixed_joint_lump__rs_bpearl_collision_1'>
+        <pose>0.40749999999999997 0 0.43499999999999989 3.1415926535897931 -1.5707963267948966 0</pose>
+        <geometry>
+          <mesh>
+            <scale>0.001 0.001 0.001</scale>
+            <uri>model://meshes/RS_BPearl.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <collision name='base_footprint_fixed_joint_lump__hokuyo_collision_2'>
+        <pose>0 0 0.54000000000000004 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>0.01 0.01 0.01</scale>
+            <uri>model://meshes/Hokuyo_UTM-30LX.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='base_footprint_fixed_joint_lump__base_link_visual'>
+        <pose>0 0 0 0 0 1.5707963267948959</pose>
+        <geometry>
+          <mesh>
+            <scale>0.001 0.001 0.001</scale>
+            <uri>model://meshes/Base_platform.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>0.936274529 0.936274529 0.936274529 1</diffuse>
+          <ambient>0.936274529 0.936274529 0.936274529 1</ambient>
+        </material>
+      </visual>
+      <visual name='base_footprint_fixed_joint_lump__rs_bpearl_visual_1'>
+        <pose>0.40749999999999997 0 0.43499999999999989 3.1415926535897931 -1.5707963267948966 0</pose>
+        <geometry>
+          <mesh>
+            <scale>0.001 0.001 0.001</scale>
+            <uri>model://meshes/RS_BPearl.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>0 0 0 1</diffuse>
+          <ambient>0 0 0 1</ambient>
+        </material>
+      </visual>
+      <visual name='base_footprint_fixed_joint_lump__hokuyo_visual_2'>
+        <pose>0 0 0.54000000000000004 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>0.01 0.01 0.01</scale>
+            <uri>model://meshes/Hokuyo_UTM-30LX.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>0 0 0 1</diffuse>
+          <ambient>0 0 0 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='caster_swivel_joint' type='revolute'>
+      <pose relative_to='base_footprint'>-0.28499999999999998 0 0.095000000000000001 0 0 0</pose>
+      <parent>base_footprint</parent>
+      <child>caster_body</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-inf</lower>
+          <upper>inf</upper>
+        </limit>
+        <dynamics>
+          <damping>0.5</damping>
+          <friction>0.5</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='caster_body'>
+      <pose relative_to='caster_swivel_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.40000000000000002</mass>
+        <inertia>
+          <ixx>0.0030000000000000001</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0030000000000000001</iyy>
+          <iyz>0</iyz>
+          <izz>0.0030000000000000001</izz>
+        </inertia>
+      </inertial>
+      <collision name='caster_body_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.080000000000000002</length>
+            <radius>0.050000000000000003</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <visual name='caster_body_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.080000000000000002</length>
+            <radius>0.050000000000000003</radius>
+          </cylinder>
+        </geometry>
+        <material>
+          <diffuse>0.625 0.625 0.625 1</diffuse>
+          <ambient>0.625 0.625 0.625 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='caster_rolling_joint' type='revolute'>
+      <pose relative_to='caster_body'>0 0 -0.059999999999999998 0 0 0</pose>
+      <parent>caster_body</parent>
+      <child>caster_wheel</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-100000000</lower>
+          <upper>100000000</upper>
+          <effort>100</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0.10000000000000001</damping>
+          <friction>0.10000000000000001</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='caster_wheel'>
+      <pose relative_to='caster_rolling_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.25</mass>
+        <inertia>
+          <ixx>0.0025000000000000001</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0025000000000000001</iyy>
+          <iyz>0</iyz>
+          <izz>0.0025000000000000001</izz>
+        </inertia>
+      </inertial>
+      <collision name='caster_wheel_collision'>
+        <pose>0 0 0 1.5708 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.040000000000000001</length>
+            <radius>0.059999999999999998</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <visual name='caster_wheel_visual'>
+        <pose>0 0 0 1.5708 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.040000000000000001</length>
+            <radius>0.059999999999999998</radius>
+          </cylinder>
+        </geometry>
+        <material>
+          <diffuse>0 0 0 1</diffuse>
+          <ambient>0 0 0 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='left_wheel_joint' type='revolute'>
+      <pose relative_to='base_footprint'>0.28000000000000003 0.28499999999999998 0.17499999999999999 0 0 0</pose>
+      <parent>base_footprint</parent>
+      <child>left_wheel</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <effort>1000</effort>
+          <velocity>100000000</velocity>
+          <lower>-inf</lower>
+          <upper>inf</upper>
+        </limit>
+        <dynamics>
+          <damping>0.10000000000000001</damping>
+          <friction>0.10000000000000001</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='left_wheel'>
+      <pose relative_to='left_wheel_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 1.5707963267948959 0 0</pose>
+        <mass>0.1105</mass>
+        <inertia>
+          <ixx>0.83151250000000021</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.83151250000000021</iyy>
+          <iyz>0</iyz>
+          <izz>1.5967249999999999</izz>
+        </inertia>
+      </inertial>
+      <collision name='left_wheel_collision'>
+        <pose>0 0 0 0 0 1.5707963267948959</pose>
+        <geometry>
+          <mesh>
+            <scale>0.001 0.001 0.001</scale>
+            <uri>model://meshes/Drive_Wheel.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='left_wheel_visual'>
+        <pose>0 0 0 0 0 1.5707963267948959</pose>
+        <geometry>
+          <mesh>
+            <scale>0.001 0.001 0.001</scale>
+            <uri>model://meshes/Drive_Wheel.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+          <ambient>1 1 1 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='right_wheel_joint' type='revolute'>
+      <pose relative_to='base_footprint'>0.28000000000000003 -0.28499999999999998 0.17499999999999999 0 0 0</pose>
+      <parent>base_footprint</parent>
+      <child>right_wheel</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <effort>1000</effort>
+          <velocity>100000000</velocity>
+          <lower>-inf</lower>
+          <upper>inf</upper>
+        </limit>
+        <dynamics>
+          <damping>0.10000000000000001</damping>
+          <friction>0.10000000000000001</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='right_wheel'>
+      <pose relative_to='right_wheel_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 1.5707963267948959 0 0</pose>
+        <mass>0.1105</mass>
+        <inertia>
+          <ixx>0.83151250000000021</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.83151250000000021</iyy>
+          <iyz>0</iyz>
+          <izz>1.5967249999999999</izz>
+        </inertia>
+      </inertial>
+      <collision name='right_wheel_collision'>
+        <pose>0 0 0 0 0 -1.5707963267948959</pose>
+        <geometry>
+          <mesh>
+            <scale>0.001 0.001 0.001</scale>
+            <uri>model://meshes/Drive_Wheel.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='right_wheel_visual'>
+        <pose>0 0 0 0 0 -1.5707963267948959</pose>
+        <geometry>
+          <mesh>
+            <scale>0.001 0.001 0.001</scale>
+            <uri>model://meshes/Drive_Wheel.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+          <ambient>1 1 1 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <frame name='bpearl_joint' attached_to='base_link'>
+      <pose>0.40749999999999997 0 0.30999999999999989 3.1415926535897931 -1.5707963267948966 0</pose>
+    </frame>
+    <frame name='rs_bpearl' attached_to='bpearl_joint'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='hokuyo_joint' attached_to='base_link'>
+      <pose>0 0 0.41499999999999998 0 0 0</pose>
+    </frame>
+    <frame name='hokuyo' attached_to='hokuyo_joint'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='footprint_base' attached_to='base_footprint'>
+      <pose>0 0 0.125 0 0 0</pose>
+    </frame>
+    <frame name='base_link' attached_to='footprint_base'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+  </model>
+</sdf>

@@ -41,12 +41,14 @@ def main():
     # Scene setup
     scene = sapien.Scene()
     scene.set_timestep(0.2)
-    scene.set_ambient_light([0.5, 0.5, 0.5])
-    scene.add_directional_light([0, 1, -1], [0.5, 0.5, 0.5], shadow=True)
+
 
     # Viewer setup
     viewer = scene.create_viewer()
-    ground_material = scene.create_physical_material(0.5, 0.4, 0.1)
+    ground_material = scene.create_physical_material(0.2, 0.1, 0.1)
+    scene.set_ambient_light([0.5, 0.5, 0.5])
+    scene.add_directional_light([0, 1, -1], [0.5, 0.5, 0.5], shadow=True)
+
     ground = scene.add_ground(0, True, ground_material)
 
     # Camera settings
@@ -55,7 +57,7 @@ def main():
     viewer.window.set_camera_parameters(near=0.05, far=100, fovy=1)
 
     # Define goal position for the robot
-    goal_position = np.array([5, 0, 0])  # Example goal at (x=5, y=5, z=0)
+    goal_position = np.array([5, 5, 0])  # Example goal at (x=5, y=5, z=0)
 
     # Initialize driver (robot) with the goal position
     driver = test_driver.Driver(scene, viewer, goal_position)  

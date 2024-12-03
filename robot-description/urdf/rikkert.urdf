@@ -55,8 +55,8 @@
     </collision>
     <inertial>
       <origin rpy="1.5707963267948966 0 0" xyz="0 0 0"/>
-      <mass value="0.1105"/>
-      <inertia ixx="0.8315125000000002" ixy="0" ixz="0" iyy="0.8315125000000002" iyz="0" izz="1.5967250000000004"/>
+      <mass value="5"/>
+      <inertia ixx="0.0051667" ixy="0" ixz="0" iyy="0.0051667" iyz="0" izz="0.009"/>
     </inertial>
   </link>
   <!-- Connect the wheels to the base_link at the appropriate location, and 
@@ -68,7 +68,7 @@
     <origin rpy="0 0 0" xyz="0.28 -0.285 0.05"/>
     <!-- <limit upper="3.1415" lower="-3.1415" effort="30" velocity="5.0"/> -->
     <axis xyz="0 1 0"/>
-    <dynamics damping="0.1" friction="0.1"/>
+    <dynamics damping="0.5" friction="0.5"/>
     <limit lower="-100000000" upper="100000000" effort="1000" velocity="100000000"/>
 
   </joint>
@@ -90,8 +90,8 @@
     </collision>
     <inertial>
       <origin rpy="1.5707963267948966 0 0" xyz="0 0 0"/>
-      <mass value="0.1105"/>
-      <inertia ixx="0.8315125000000002" ixy="0" ixz="0" iyy="0.8315125000000002" iyz="0" izz="1.5967250000000004"/>
+      <mass value="5"/>
+      <inertia ixx="0.0051667" ixy="0" ixz="0" iyy="0.0051667" iyz="0" izz="0.009"/>
     </inertial>
   </link>
   <!-- Connect the wheels to the base_link at the appropriate location, and 
@@ -105,7 +105,7 @@
     <axis xyz="0 1 0"/>
     <limit lower="-100000000" upper="100000000" effort="1000" velocity="100000000"/>
 
-    <dynamics damping="0.1" friction="0.1"/>
+    <dynamics damping="0.5" friction="0.5"/>
   </joint>
   <!-- *********************** CASTER WHEEL ******************************  -->
   <!-- We add a caster wheel. It will be modeled as sphere.
@@ -130,7 +130,7 @@
   <inertial>
     <origin xyz="0 0 0" rpy="0 0 0"/>
     <mass value="0.25"/> <!-- Mass slightly increased for balance -->
-    <inertia ixx="0.0025" ixy="0.0" ixz="0.0" iyy="0.0025" iyz="0.0" izz="0.0025"/>
+    <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.0005"/>
   </inertial>
 </link>
 
@@ -152,7 +152,7 @@
   </collision>
   <inertial>
     <origin xyz="0 0 0" rpy="0 0 0"/>
-    <mass value="0.4"/> <!-- Increased mass to provide stability -->
+    <mass value="0.8"/> <!-- Increased mass to provide stability -->
     <inertia ixx="0.003" ixy="0.0" ixz="0.0" iyy="0.003" iyz="0.0" izz="0.003"/>
   </inertial>
 </link>
@@ -163,7 +163,9 @@
   <child link="caster_body"/>
   <origin rpy="0 0 0" xyz="-0.285 0 -0.03"/> <!-- Position of caster relative to base -->
   <axis xyz="0 0 1"/> <!-- Allows swiveling around the vertical axis (z-axis) -->
-  <dynamics damping="0.5" friction="0.5"/> <!-- Increased damping and friction to stabilize the caster -->
+  <dynamics damping="0.1" friction="0.2"/> <!-- Increased damping and friction to stabilize the caster -->
+  <limit lower="-100000000" upper="100000000" effort="1000" velocity="10"/>
+
 </joint>
 
 <joint name="caster_rolling_joint" type="revolute">
@@ -171,8 +173,8 @@
   <child link="caster_wheel"/>
   <origin rpy="0 0 0" xyz="0 0 -0.06"/> <!-- Adjusted to match the new wheel size -->
   <axis xyz="0 1 0"/> <!-- Rolling axis is horizontal, allowing the wheel to rotate around the x-axis -->
-  <dynamics damping="0.1" friction="0.1"/> <!-- Increased damping and friction to ensure smoother rolling motion -->
-  <limit lower="-100000000" upper="100000000" effort="100" velocity="10"/>
+  <dynamics damping="0.1" friction="0.2"/> <!-- Increased damping and friction to ensure smoother rolling motion -->
+  <limit lower="-100000000" upper="100000000" effort="10000" velocity="10"/>
 </joint>
 
 

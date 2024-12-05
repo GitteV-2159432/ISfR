@@ -3,10 +3,11 @@ from sapien import Pose
 import numpy as np
 import cv2
 
+import communication.infraCommunication
 from environment import Environment
 import test_driver
 import lidar
-
+from communication import infraCommunication
 # from rdf_manager import RDFManager
 # from RDF_generation.yolo_processing import frame_to_rdf
 from slam.graph_slam import GraphSlam
@@ -33,6 +34,9 @@ def main():
     lidar_config = lidar.LidarSensorConfig('src/sensor_configs/Default.json')
     lidar_sensor = lidar.LidarSensor("lidar", scene, lidar_config, mount_entity=driver.body, pose=Pose(p=np.array([0, 0, 0.5])))
 
+    #set communication class
+    infraComms = infraCommunication.infraCommunication("broker", 8883, "username", "password", "topic")
+    infraComms.connect()
     camera_sensor = scene.add_mounted_camera(
         name= "Camera",
         mount=driver.body,
@@ -46,13 +50,18 @@ def main():
 
     slam = GraphSlam()
     SlamPlot(slam)
-
+    
     while not viewer.closed:
         lidar_sensor.simulate()
         driver.update()
+        #infraComms.publish_lidar_points(lidar_sensor.get_point_cloud())
+    
+        camera_sensor.take_picture()
+        image = (camera_sensor.get_picture('Color') * 255).clip(0, 255).astype(np.uint8)
+        depthmap_generator = lidar.GenerateDepthmap(image.shape[:2], np.eye(3))
+        #depthmap = depthmap_generator.create_depthmap(lidar_sensor.get_point_cloud())
+        #print(depthmap)
 
-        # camera_sensor.take_picture()
-        # image = (camera_sensor.get_picture('Color') * 255).clip(0, 255).astype(np.uint8)
         # cv2.waitKey(1)
         # processed_frame = frame_to_rdf(image)
         # cv2.imshow("Live Detection", processed_frame)

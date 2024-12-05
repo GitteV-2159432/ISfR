@@ -155,6 +155,7 @@ class LidarSensor(SensorEntity):
 
         ray_directions = self._compute_ray_directions(angles_horizontal, angles_vertical)
         local_hit_positions = ray_directions * distances[:, np.newaxis]
+        #publish_lidar_points(local_hit_positions.tolist())
         return local_hit_positions.tolist()
 
     def _compute_ray_directions(self, angle_horizontal: np.ndarray, angle_vertical: np.ndarray) -> np.ndarray:
@@ -190,3 +191,43 @@ class LidarSensor(SensorEntity):
             return self._config.detection_range_max
 
         return hit_info.distance
+    
+class GenerateDepthmap:
+    def __init__(self, image_shape, camera_matrix):
+        self.image_shape = image_shape
+        self.camera_matrix = camera_matrix
+        self.depthmap = None
+    def create_depthmap(self, points_3d):
+        """
+        Generate depthmap with 3d points
+        points_3d: points coming from observation of environment
+        image_shape: shape of image
+        camera_matrix = 3x3 matrix of the camera to project from 3d to 2d
+        
+        Returns 2D array with same shape as image. 
+        Contains closest z-val or np.inf
+        z of depthmap can be asked by: z=depthmap[x,y]
+        """
+        #:2 because colored img, height&width van image
+        h,w = self.image_shape[:2]
+        #vul depthmap met inf
+        self.depthmap = np.full((h,w), np.inf)
+        
+        for point in points_3d:
+            x,y,z = point[0], point[1],point[2]
+            #ignore negative values for z => behind camera
+            if z <=0:
+                continue
+            #project punt naar 2d vlak met cam matrix
+            pixel_coords = self.camera_matrix @ np.array([x,y,z])[:3]
+            pixel_coords /= pixel_coords[2]
+            u,v= int(pixel_coords[0]), int(pixel_coords[1])
+            #check of punt binnen de grenzen ligt
+            if 0 <=u < w and 0 <= v<h:
+                #select closest
+                self.depthmap[v,u] = min(self.depthmap[v,u],z)
+        return self.depthmap
+    def get_depthmap(self, x,y):
+        if self.depthmap is None:
+            raise ValueError("Depthmap is none!")
+        return self.depthmap[y,x]

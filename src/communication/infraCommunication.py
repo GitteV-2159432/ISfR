@@ -22,6 +22,7 @@ class infraCommunication:
         self.topic: str = topic
         self.client = mqtt.Client(client_id="robotData", transport= 'tcp', protocol=mqtt.MQTTv5)
         self.client.tls_set(tls_version= mqtt.ssl.PROTOCOL_TLS)
+        self.received_lidar_data = None
 
     def set_lidar_context(self):
         self.context = {
@@ -42,6 +43,7 @@ class infraCommunication:
         self.client.username_pw_set(self.username, self.password)
         self.client.connect(self.broker,port=self.port,clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY, keepalive=60)
         self.client.loop_start()
+        print("connected to broker!")
     
     #disconnect by using this function
     def disconnect(self):
@@ -54,20 +56,40 @@ class infraCommunication:
     def decode_data(self, encoded_data):
         return cbor.loads(encoded_data)
     
-    def publish_lidar_points(self,lidar_points : list):
-        """dataToEncode = {
-            "@context": self.context,
-            "lidar_coordinates": [{"x": point[0], "y": point[1], "z": point[2]} for point in lidar_points]
-        }"""
-        #voorlopig zonder de context, indien met context enkel de array eruit halen
-        dataToEncode= [{"x": point[0], "y": point[1], "z": point[2]} for point in lidar_points]
-        #print(dataToEncode)
-        cborEncodedData = self.encode_data(dataToEncode)
-        self.client.publish(self.topic, cborEncodedData)
-        
+    def subscribe(self,topic):
+        def on_message(client, userdata, msg):
+            #voor robot:
+            #received_bytes = bytes.fromhex(msg.payload)
+            #self.received_lidar_data = cbor.loads(received_bytes)
+            
+            #via simulatie:
+            self.received_lidar_data = msg.payload
+        def on_subscribe(client, userdata,mid,granted_qos, properties=None):
+            print(topic)
+        self.client.subscribe(topic)
+        self.client.on_message = on_message
+        self.client.on_subscribe = on_subscribe
+    
+    def publish_lidar_points(self, topic, lidar_points):
+    #check for type of data
+        if isinstance(lidar_points, list):
+            if isinstance(lidar_points[0], dict):
+                dataToEncode = lidar_points
+            elif isinstance(lidar_points[0], (list, tuple)):
+                dataToEncode = [{"x": point[0], "y": point[1], "z": point[2]} for point in lidar_points]
+            else:
+                raise ValueError("invalid format for lidar points")
+        else:
+            raise ValueError("lidar_points has to be a list of dicts.")
+
+        encoded_data = encoded_data(dataToEncode)
+        self.client.publish(topic, encoded_data)
+
     def publish_dwa_doubles(self, double1, double2,topicname):
-        dataToEncode = double1, double2
+        dataToEncode = {double1, double2}
         cborEncodedDoubles = self.encode_data(dataToEncode)
+        #voor simulatie:
         self.client.publish(topicname, cborEncodedDoubles)
         
-        
+    def get_lidar_data(self):
+        return self.received_lidar_data

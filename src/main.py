@@ -34,9 +34,11 @@ def main():
     lidar_config = lidar.LidarSensorConfig('src/sensor_configs/Default.json')
     lidar_sensor = lidar.LidarSensor("lidar", scene, lidar_config, mount_entity=driver.body, pose=Pose(p=np.array([0, 0, 0.5])))
 
-    #set communication class
+    #set communication
     infraComms = infraCommunication.infraCommunication("broker", 8883, "username", "password", "topic")
     infraComms.connect()
+    infraComms.subscribe("robotData")
+    infraComms.subscribe("testje")
     camera_sensor = scene.add_mounted_camera(
         name= "Camera",
         mount=driver.body,
@@ -54,8 +56,12 @@ def main():
     while not viewer.closed:
         lidar_sensor.simulate()
         driver.update()
-        #infraComms.publish_lidar_points(lidar_sensor.get_point_cloud())
-    
+        #infraComms.publish_lidar_points(infraComms.topic,lidar_sensor.get_point_cloud())
+        lidar_data = infraComms.get_lidar_data()
+        lidar_pts = infraComms.decode_data(lidar_data)
+        print(lidar_pts)
+        infraComms.publish_lidar_points("testje",lidar_pts)
+        
         camera_sensor.take_picture()
         image = (camera_sensor.get_picture('Color') * 255).clip(0, 255).astype(np.uint8)
         depthmap_generator = lidar.GenerateDepthmap(image.shape[:2], np.eye(3))
@@ -67,11 +73,12 @@ def main():
         # cv2.imshow("Live Detection", processed_frame)
 
         odometry = driver.get_odometry_transformation_matrix(0.001, 0.001)
-        slam.update(odometry, lidar_sensor.get_point_cloud())
+        #dit moet ontvangen kunnen worden, data komt van robot
+        slam.update(odometry, lidar_pts)
 
         scene.step()
         scene.update_render()
         viewer.render()
-
+        
 if __name__ == "__main__":
     main()

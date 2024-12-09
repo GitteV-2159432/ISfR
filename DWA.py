@@ -20,11 +20,11 @@ class DWA:
         for obs in filtered_lidar_points:
             global_ob = np.dot(transformation_matrix, obs[:2]) + self.x[:2]
             updated_points.append(global_ob)
-        self.config.ob = updated_points
+        self.config.ob =  updated_points
 
     def dwa_control(self) -> np.ndarray:
         u, _ = self.dwa(self.x, self.config, self.goal_pose.p, self.config.ob)
-        # self.x = self.motion(self.x, u, self.config.dt)  # Update robot state
+        #self.x = self.motion(self.x, u, self.config.dt)  # Update robot state
         return u,_
     
     
@@ -132,5 +132,9 @@ class DWA:
         goal_x = int(self.goal_pose.p[0] * scale) + offset
         goal_y = int(self.goal_pose.p[1] * scale) + offset
         cv2.circle(image, (goal_x, goal_y), 10, (255, 255, 0), -1)
+
+        image = cv2.flip(image, 1)
+
+        image = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
         cv2.imshow("Simulation", image)
         cv2.waitKey(1)

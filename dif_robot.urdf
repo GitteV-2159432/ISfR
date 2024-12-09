@@ -16,7 +16,7 @@
         <inertial>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <mass value="10.0"/> 
-            <inertia ixx="0.5" ixy="0.0" ixz="0.0" iyy="0.5" iyz="0.0" izz="0.5"/> 
+            <inertia ixx="0.1667" ixy="0.0" ixz="0.0" iyy="0.2333" iyz="0.0" izz="0.3333"/> 
         </inertial>
         <visual>
             <geometry>
@@ -38,7 +38,7 @@
         <inertial>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <mass value="0.1"/> 
-            <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/> 
+            <inertia ixx="0.000275" ixy="0.0" ixz="0.0" iyy="0.000275" iyz="0.0" izz="0.0005"/> 
         </inertial>
         <visual>
             <geometry>
@@ -53,7 +53,7 @@
         <inertial>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <mass value="5"/>
-            <inertia ixx="0.02" ixy="0.0" ixz="0.0" iyy="0.02" iyz="0.0" izz="0.02"/> 
+            <inertia ixx="0.01375" ixy="0.0" ixz="0.0" iyy="0.01375" iyz="0.0" izz="0.025"/> 
         </inertial>
         <visual>
             <geometry>
@@ -74,7 +74,7 @@
         <inertial>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <mass value="5"/> 
-            <inertia ixx="0.02" ixy="0.0" ixz="0.0" iyy="0.02" iyz="0.0" izz="0.02"/>
+            <inertia ixx="0.01375" ixy="0.0" ixz="0.0" iyy="0.01375" iyz="0.0" izz="0.025"/>
         </inertial>
         <visual>
             <geometry>
@@ -95,7 +95,7 @@
         <inertial>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <mass value="2"/> 
-            <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/> 
+            <inertia ixx="0.008" ixy="0.0" ixz="0.0" iyy="0.008" iyz="0.0" izz="0.008"/> 
         </inertial>
         <visual>
             <geometry>
@@ -108,7 +108,6 @@
             <geometry>
                 <sphere radius="0.05"/>
             </geometry>
-
             <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
         </collision>
     </link>
@@ -119,33 +118,30 @@
         <origin xyz="0 0 0.225"/>
     </joint>
 
-    <joint name="base_left_wheel_joint" type="continuous">
+    <joint name="left_wheel_joint" type="continuous">
         <parent link="base_link"/>
         <child link="left_wheel"/>
         <origin xyz="-0.15 0.225 0" rpy="0 0 0"/>
         <axis xyz="0 1 0"/>
         <limit lower="-100000000" upper="100000000" effort="500" velocity="500"/>
-        <dynamics damping="0.1" friction="0.1"/>
+        <dynamics damping="1" friction="0.1"/>
     </joint>
 
-    <joint name="base_right_wheel_joint" type="continuous">
+    <joint name="right_wheel_joint" type="continuous">
         <parent link="base_link"/>
         <child link="right_wheel"/>
         <origin xyz="-0.15 -0.225 0" rpy="0 0 0"/>
         <axis xyz="0 1 0"/>
         <limit lower="-100000000" upper="100000000" effort="500" velocity="500"/>
-        <dynamics damping="0.1" friction="0.1"/>
+        <dynamics damping="1" friction="0.1"/>
     </joint>
 
-    <joint name="base_caster_wheel_joint" type="fixed">
+    <joint name="base_caster_wheel_joint" type="revolute">
         <parent link="base_link"/>
         <child link="caster_wheel"/>
         <origin xyz="0.2 0.0 -0.05" rpy="0.0 0.0 0.0"/>
         <limit lower="-100000000" upper="100000000" effort="100" velocity="100"/>
-        <axis xyz="0 1 0"/>
-        <dynamics damping="0" friction="0"/>
+        <axis xyz="1 1 0"/>
+        <dynamics damping="1" friction="0.1"/>
     </joint>
-
-
-
 </robot>

@@ -55,7 +55,7 @@ def main():
     viewer.window.set_camera_parameters(near=0.05, far=100, fovy=1)
 
     # Define goal position for the robot
-    goal_position = np.array([-5.0, -5.0, 0.0])  # Example goal at (x=5, y=5, z=0)
+    goal_position = np.array([5.0, 4.0, 0.0])  # Example goal at (x=5, y=5, z=0)
 
     # Initialize driver (robot) with the goal position
     driver = test_driver.Driver(scene, viewer, goal_position)  
@@ -72,7 +72,7 @@ def main():
     lidar_config.randomize_start_angle = True
 
     # Attach lidar to the robot
-    lidar_sensor = lidar.LidarSensor("lidar", scene, lidar_config, mount_entity=driver.robot.find_link_by_name("hokuyo"), pose=Pose(p=np.array([0, 1, 0.5])))
+    lidar_sensor = lidar.LidarSensor("lidar", scene, lidar_config, mount_entity=driver.robot.find_link_by_name("lidar_link"), pose=Pose(p=np.array([0, 1, 0.5])))
     test_environment.load(scene)
     # Simulation loop
 

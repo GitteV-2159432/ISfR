@@ -8,9 +8,10 @@ from environment import Environment
 import test_driver
 import lidar
 from slam.graph_slam import GraphSlam, _matrix2translation
-from slam.orb_slam import OrbSlam
+from slam.orb_slam_v2 import OrbSlam
 
-import visualization.test as test
+from slam.graph_slam import GraphSlam
+from visualization.slam_visualization import SlamPlot
 
 def main():
     scene = sapien.Scene()
@@ -40,44 +41,34 @@ def main():
         far = 100
     )
 
+    orb_slam = OrbSlam(camera_matrix=camera_sensor.get_intrinsic_matrix())
+    slam = GraphSlam()
+    slam_plot = SlamPlot(slam)
 
-    orb_slam = OrbSlam()
-    graph_slam = GraphSlam()
-
-    travel_distance = 0.0
-    anderDing = np.eye(4)
-    test.create(graph_slam.graph)
-    lock = False
     while not viewer.closed:
+        scene.step()
+        scene.update_render()
+        viewer.render()
 
         lidar_sensor.simulate()
         driver.update()
 
-        # TODO split odometry and points in 2 different functions
+        robot_odometry = driver.get_odometry_transformation_matrix()
+
         camera_sensor.take_picture()
-        odometry_transformation_matrix, points_3d = orb_slam.run(camera_sensor.get_picture("Color"))
+        image = (camera_sensor.get_picture('Color') * 255).clip(0, 255).astype("uint8")
 
-        print(odometry_transformation_matrix)
+        odometry, points_3d = orb_slam.run(image, robot_odometry)
 
-        # ! TEMP TEST CODE
-        anderDing = anderDing @ odometry_transformation_matrix
-        travel_distance += np.linalg.norm(_matrix2translation(odometry_transformation_matrix))
-        if travel_distance > 0.1:
-            graph_slam.update(anderDing, points_3d)
-            test.update(graph_slam.last_pose_vertex)
-            travel_distance = 0
-            anderDing = np.eye(4)
+        print("points_3d =", points_3d)
+        if len(points_3d) == 0:
+            continue
+        
+        # odometry = driver.get_odometry_transformation_matrix()
+        slam.update(robot_odometry, points_3d)
 
-        if int(viewer.window.key_down('r')) == 0 and lock: lock = False
-        if int(viewer.window.key_down('r')) == 1 and not lock:
-            lock = True
-            graph_slam.graph.optimize()
-            test.recreate_all(graph_slam.graph)
-        # ! TEMP TEST CODE END
-
-        scene.step()
-        scene.update_render()
-        viewer.render()
+        # print("points_3d:", points_3d)
+        # print("lidar:", lidar_sensor.get_point_cloud())
 
 if __name__ == "__main__":
     main()

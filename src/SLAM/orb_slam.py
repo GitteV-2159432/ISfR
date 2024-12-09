@@ -18,7 +18,7 @@ class OrbSlam():
         if (self.prev_kp is not None or self.prev_des is not None) and (current_kp is not None or current_des is not None):
             matches = _match_descriptors(self.flann_matcher, self.prev_des, current_des)
 
-            if len(matches) >= 5:
+            if len(matches) >= 8:
                 prev_points, current_points = _get_points_from_matches(self.prev_kp, current_kp, matches)
 
                 transformation_matrix, _, _ = _calculate_transformation_matrix(prev_points, current_points, self.camera_matrix, self.dist_coeffs)
@@ -57,7 +57,8 @@ def _init_flann():
     return flann_matcher
 
 def _match_descriptors(flann_matcher, prev_des, current_des, threshold: float = 100):
-    matches = flann_matcher.knnMatch(prev_des, current_des, 1)
+    bf = cv.BFMatcher.create()
+    matches = bf.knnMatch(prev_des, current_des, 1)
     matches = [m[0] for m in matches if m[0].distance < threshold] # 30 is a threshold value to filter out really bad matches
     return np.array(matches).flatten()
 
@@ -77,13 +78,34 @@ def _calculate_3D_points(prev_points, current_points, transformation_matrix, cam
     return points_3D.squeeze()
 
 def _calculate_transformation_matrix(prev_points, current_points, camera_matrix=np.eye(3), dist_coeffs=np.zeros(5)):
-    E, _ = cv.findEssentialMat(prev_points, current_points, camera_matrix)
-    if E.shape != (3, 3): return np.eye(4), None, None
+    F, _ = cv.findFundamentalMat(prev_points, current_points, cv.FM_RANSAC)
+    if F.shape != (3, 3): return np.eye(4), None, None
+
+    # E, _ = cv.findEssentialMat(prev_points, current_points, camera_matrix)
+    # if E.shape != (3, 3): return np.eye(4), None, None
+
+    E = camera_matrix.T @ F @ camera_matrix
 
     _, R, t, _ = cv.recoverPose(E, prev_points, current_points, camera_matrix)
+    # t = t/1000
 
+    # travel_distance = np.linalg.norm(t)
+    # # print(travel_distance)
+
+    # if travel_distance < 0.002:
+    #     t = np.zeros(3)
+    
     transformation_matrix = np.eye(4)
     transformation_matrix[:3, :3] = R
     transformation_matrix[:3, 3] = t.flatten()
+
+    swap_matrix = np.array([
+        [1, 0, 0, 0],
+        [0, 0, 1, 0],
+        [0, 1, 0, 0],
+        [0, 0, 0, 1]
+    ])
+
+    transformation_matrix = swap_matrix @ transformation_matrix @ swap_matrix.T
 
     return transformation_matrix, R, t   

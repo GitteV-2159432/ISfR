@@ -62,7 +62,7 @@ class RoomManager:
             return self.current_room_id
 
         # detect door using robot's left and right boundaries
-        if self._detect_door_based_on_boundaries(position):
+        if self._detect_door_based_on_slam_points(position):
             print("Robot passed through a door, creating a new room.")
             new_room_id = len(self.rooms)
             self.rooms[new_room_id] = [current_pose]
@@ -75,45 +75,78 @@ class RoomManager:
 
         return self.current_room_id
     
-    def _detect_door_based_on_boundaries(self, position):
+    def _detect_door_based_on_slam_points(self, position):
         """
-        Detects if the robot has passed through a door by checking the distance between the left and right side of the robot.
+        Detects if the robot has passed through a door by checking the distance between SLAM points 
+        on the left and right sides of the robot.
         Args:
             position (np.ndarray): Current position of the robot (x, y, z).
         Returns:
             bool: True if a door is detected, False otherwise.
         """
+        # assume the robot's width is defined (e.g., 1 meter)
         robot_width = 1.0 
 
-        # calculate the left and right side positions of the robot
+        # get the current pose and orientation 
         current_pose = self.graph_slam.last_pose_vertex
         robot_orientation = current_pose.get_rotation() 
 
-        # left and right offsets from the center (robot's LOCAL x-axis)
-        # left side has a positive offset, right side has a negative offset based on robot's width
-        left_offset = np.array([robot_width / 2, 0, 0])  
-        right_offset = np.array([-robot_width / 2, 0, 0])
+        # extract the heading angle from the robot's orientation
+        yaw = robot_orientation[2] 
 
-        # apply the robot's orientation (rotation matrix) to the left and right offsets
-        # and apply rotation using the robot's orientation (rotation matrix) to the local offsets
-        left_position = position + np.dot(robot_orientation, left_offset)  
-        right_position = position + np.dot(robot_orientation, right_offset)
+        
+        left_direction = np.array([np.cos(yaw + np.pi / 2), np.sin(yaw + np.pi / 2), 0])  
+        right_direction = np.array([np.cos(yaw - np.pi / 2), np.sin(yaw - np.pi / 2), 0])  
+
+        search_radius = 2.0  # meters
+
+        # get nearby SLAM points
+        nearby_slam_points = self.graph_slam.graph.get_nearby_poses(position, voxel_range=int(search_radius))
+
+        # filter SLAM points into left and right zones
+        left_slam_points = []
+        right_slam_points = []
+
+        for point in nearby_slam_points:
+            slam_point_position = point.get_position()[:2]  
+            relative_position = slam_point_position - position[:2]  # vector from robot to SLAM point
+
+            # project relative_position onto the directional vectors
+            left_projection = np.dot(relative_position, left_direction[:2])
+            right_projection = np.dot(relative_position, right_direction[:2])
+
+            # classify points based on projections
+            if left_projection > 0:  # positive projection means it's on the left
+                left_slam_points.append(point)
+            elif right_projection > 0: 
+                right_slam_points.append(point)
+
+        # if there are no points on either side, return false
+        if not left_slam_points or not right_slam_points:
+            print("No SLAM points found on one or both sides of the robot.")
+            return False
+
+        # dind the closest SLAM point in each zone
+        closest_left_point = min(left_slam_points, key=lambda p: np.linalg.norm(p.get_position()[:2] - position[:2]))
+        closest_right_point = min(right_slam_points, key=lambda p: np.linalg.norm(p.get_position()[:2] - position[:2]))
+
+        # calculate the distance between the closest left and right SLAM points
+        left_point_position = closest_left_point.get_position()[:2]
+        right_point_position = closest_right_point.get_position()[:2]
+        distance_between_sides = np.linalg.norm(left_point_position - right_point_position)
 
         # debug
-        print(f"Left position: {left_position}, Right position: {right_position}")
+        print(f"Closest Left SLAM Point: {left_point_position}, Closest Right SLAM Point: {right_point_position}")
+        print(f"Distance Between Sides: {distance_between_sides:.2f}m")
 
-        # calculate the distance between the left and right side of the robot in the x-y plane
-        distance_between_sides = np.linalg.norm(left_position[:2] - right_position[:2])
-
-        # check if distance between left and right side is less than or equal to the threshold
-        door_threshold = 1.5  # size of the door
+        # check if the distance is less than or equal to the door threshold
+        door_threshold = 1.5  # meters
         if distance_between_sides <= door_threshold:
-            print(f"Detected door: Left position: {left_position}, Right position: {right_position}, Distance: {distance_between_sides:.2f}m")
+            print(f"Detected door: Distance: {distance_between_sides:.2f}m")
             return True
 
-        print(f"No door detected: Left position: {left_position}, Right position: {right_position}, Distance: {distance_between_sides:.2f}m")
+        print(f"No door detected: Distance: {distance_between_sides:.2f}m")
         return False
-    
 
 class PoseVertex():
     """Represents a pose in the :py:class:`PoseGraph` with a transformation matrix and an associated point cloud"""

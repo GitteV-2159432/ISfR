@@ -84,8 +84,6 @@ class RoomManager:
         Returns:
             bool: True if a door is detected, False otherwise.
         """
-        # assume the robot's width is defined (e.g., 1 meter)
-        robot_width = 1.0 
 
         # get the current pose and orientation 
         current_pose = self.graph_slam.last_pose_vertex

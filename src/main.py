@@ -7,7 +7,7 @@ from rdf_manager import RDFManager
 import test_driver
 import lidar
 
-from slam.graph_slam import GraphSlam
+from slam.graph_slam import GraphSlam, RoomManager
 from visualization.slam_visualization import SlamPlot
 
 def main():
@@ -38,12 +38,19 @@ def main():
 
     slam = GraphSlam()
     slam_plot = SlamPlot(slam)
+
+    room_manager = RoomManager(slam)
+
     while not viewer.closed:
         lidar_sensor.simulate()
         driver.update()
 
         odometry = driver.get_odometry_transformation_matrix(0.001, 0.01)
         slam.update(odometry, lidar_sensor.get_point_cloud())
+
+        # Detect rooms
+        current_room_id = room_manager.detect_new_room(odometry)
+        #print(f"Current Room ID: {current_room_id}")
 
         scene.step()
         scene.update_render()

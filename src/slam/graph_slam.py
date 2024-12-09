@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.spatial import ConvexHull
 from scipy.spatial.transform import Rotation
 from scipy.sparse.linalg import spsolve
 from scipy.sparse import csr_matrix
@@ -13,6 +14,106 @@ References:
     - https://www.youtube.com/watch?v=saVZtgPyyJQ
 """
 
+class Room:
+    def __init__(self, room_id, boundary_points, doors):
+        self.room_id = room_id
+        self.boundary_points = boundary_points
+        self.doors = doors  # List of detected door positions
+
+class RoomManager:
+    def __init__(self, graph_slam, threshold=0.5):
+        self.graph_slam = graph_slam
+        self.rooms = {}  # Room ID -> List of PoseVertex objects
+        self.threshold = threshold  # Distance threshold to check room transitions
+        self.current_room_id = None
+
+    def detect_new_room(self, odometry_matrix):
+        """
+        Detects whether the robot has entered a new room by checking movement and potential doors.
+        Returns:
+            int: Room ID of the current room.
+        """
+        current_pose = self.graph_slam.last_pose_vertex
+        if current_pose is None:
+            return self.current_room_id or 0
+
+        position = current_pose.get_position()
+
+        # debug: ensure `self.total_distance` and `self.last_position` are initialized
+        if not hasattr(self, "total_distance"):
+            self.total_distance = 0.0
+            self.last_position = position  # Initialize `last_position` as 3D
+            print("Initialized total_distance and last_position.")
+
+        # calculate traveled distance from last position
+        incremental_distance = np.linalg.norm(position - self.last_position)
+        self.total_distance += incremental_distance
+        movement_threshold = 0.5  # minimum total distance to start detecting doors
+
+        # Debug output
+        #print(f"Current Position (3D): {position}, Last Position (3D): {self.last_position}")
+        #print(f"Incremental Distance: {incremental_distance:.2f}m, Total Distance Traveled: {self.total_distance:.2f}m")
+        print(f"Total rooms created: {len(self.rooms)}")
+        # update `last_position` for the next step
+        self.last_position = position
+
+        # check if total traveled distance exceeds the threshold
+        if self.total_distance < movement_threshold:
+            return self.current_room_id
+
+        # detect door using robot's left and right boundaries
+        if self._detect_door_based_on_boundaries(position):
+            print("Robot passed through a door, creating a new room.")
+            new_room_id = len(self.rooms)
+            self.rooms[new_room_id] = [current_pose]
+            self.current_room_id = new_room_id
+
+            # Reset total distance after detecting a door
+            self.total_distance = 0.0
+        else:
+            print("No door detected.")
+
+        return self.current_room_id
+    
+    def _detect_door_based_on_boundaries(self, position):
+        """
+        Detects if the robot has passed through a door by checking the distance between the left and right side of the robot.
+        Args:
+            position (np.ndarray): Current position of the robot (x, y, z).
+        Returns:
+            bool: True if a door is detected, False otherwise.
+        """
+        robot_width = 1.0 
+
+        # calculate the left and right side positions of the robot
+        current_pose = self.graph_slam.last_pose_vertex
+        robot_orientation = current_pose.get_rotation() 
+
+        # left and right offsets from the center (robot's LOCAL x-axis)
+        # left side has a positive offset, right side has a negative offset based on robot's width
+        left_offset = np.array([robot_width / 2, 0, 0])  
+        right_offset = np.array([-robot_width / 2, 0, 0])
+
+        # apply the robot's orientation (rotation matrix) to the left and right offsets
+        # and apply rotation using the robot's orientation (rotation matrix) to the local offsets
+        left_position = position + np.dot(robot_orientation, left_offset)  
+        right_position = position + np.dot(robot_orientation, right_offset)
+
+        # debug
+        print(f"Left position: {left_position}, Right position: {right_position}")
+
+        # calculate the distance between the left and right side of the robot in the x-y plane
+        distance_between_sides = np.linalg.norm(left_position[:2] - right_position[:2])
+
+        # check if distance between left and right side is less than or equal to the threshold
+        door_threshold = 1.5  # size of the door
+        if distance_between_sides <= door_threshold:
+            print(f"Detected door: Left position: {left_position}, Right position: {right_position}, Distance: {distance_between_sides:.2f}m")
+            return True
+
+        print(f"No door detected: Left position: {left_position}, Right position: {right_position}, Distance: {distance_between_sides:.2f}m")
+        return False
+    
 
 class PoseVertex():
     """Represents a pose in the :py:class:`PoseGraph` with a transformation matrix and an associated point cloud"""

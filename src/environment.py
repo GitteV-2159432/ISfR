@@ -103,5 +103,5 @@ class Environment:
         self.scene.add_directional_light([0, 1, -1], [0.5, 0.5, 0.5])
         self.scene.add_ground(altitude=0, render_half_size=[(self.grid_size / 2.0)] * 2)
         self.create_wall_grid()
-        self.add_chair((0, -4, 0), rotation=(0, 0, 90),scale=0.02)
+        self.add_chair((0, -3, 0), rotation=(0, 0, 90),scale=0.02)
 

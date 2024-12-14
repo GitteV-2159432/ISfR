@@ -23,14 +23,11 @@ class infraCommunication:
         self.client = mqtt.Client(client_id="robotData", transport= 'tcp', protocol=mqtt.MQTTv5)
         self.client.tls_set(tls_version= mqtt.ssl.PROTOCOL_TLS)
         self.received_lidar_data = None
-
+        
+    #not used now but can be used later
     def set_lidar_context(self):
         self.context = {
             "@context":{
-                #ask this next time, for more info about the usage of it
-                #maybe ssn can be used
-                ###ALSO:https://github.com/digitalbazaar/cborld/blob/main/lib/Converter.js
-                #Link can be useful to understand cbor-ld
                 "sensor": "http://example.org/lidar-data",
                 "lidar_coordinates" : "sensor:lidar_coordinates",
                 "x": "sensor:x",
@@ -38,6 +35,7 @@ class infraCommunication:
                 "z": "sensor:z"
             }
         }
+        
     #establish a connection with connect
     def connect(self) ->None:
         self.client.username_pw_set(self.username, self.password)
@@ -50,12 +48,15 @@ class infraCommunication:
         self.client.loop_stop()
         self.client.disconnect()
         
+    #encode the data with the dumps function
     def encode_data(self, data):
         return cbor.dumps(data)
         
+    #decode the received data
     def decode_data(self, encoded_data):
         return cbor.loads(encoded_data)
     
+    #subscribe to a topic
     def subscribe(self,topic):
         def on_message(client, userdata, msg):
             #voor robot:
@@ -70,6 +71,7 @@ class infraCommunication:
         self.client.on_message = on_message
         self.client.on_subscribe = on_subscribe
     
+    #publishing the lidar points to the right topic
     def publish_lidar_points(self, topic, lidar_points):
     #check for type of data
         if isinstance(lidar_points, list):
@@ -85,11 +87,13 @@ class infraCommunication:
         encoded_data = encoded_data(dataToEncode)
         self.client.publish(topic, encoded_data)
 
+    #not used: function to publish the doubles for the dwa
     def publish_dwa_doubles(self, double1, double2,topicname):
         dataToEncode = {double1, double2}
         cborEncodedDoubles = self.encode_data(dataToEncode)
         #voor simulatie:
         self.client.publish(topicname, cborEncodedDoubles)
         
+    #getter for the lidar data
     def get_lidar_data(self):
         return self.received_lidar_data

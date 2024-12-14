@@ -1,9 +1,1 @@
-@prefix detection: <http://example.org/detection/> .
-@prefix ns: <http://example.org/ontology/> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-
-detection:object_0 a ns:Object ;
-    ns:confidence 2.895826e-01 ;
-    ns:coordinates "x1:174,y1:159,x2:377,y2:467" ;
-    ns:label "chair" .
 

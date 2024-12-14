@@ -38,7 +38,7 @@ def main():
     infraComms = infraCommunication.infraCommunication("broker", 8883, "username", "password", "topic")
     infraComms.connect()
     infraComms.subscribe("robotData")
-    infraComms.subscribe("testje")
+    
     camera_sensor = scene.add_mounted_camera(
         name= "Camera",
         mount=driver.body,
@@ -56,15 +56,15 @@ def main():
     while not viewer.closed:
         lidar_sensor.simulate()
         driver.update()
-        #infraComms.publish_lidar_points(infraComms.topic,lidar_sensor.get_point_cloud())
+        
+        #handle the publishing of lidar data 
+        infraComms.publish_lidar_points(infraComms.topic,lidar_sensor.get_point_cloud())
         lidar_data = infraComms.get_lidar_data()
         lidar_pts = infraComms.decode_data(lidar_data)
-        print(lidar_pts)
-        infraComms.publish_lidar_points("testje",lidar_pts)
         
         camera_sensor.take_picture()
         image = (camera_sensor.get_picture('Color') * 255).clip(0, 255).astype(np.uint8)
-        depthmap_generator = lidar.GenerateDepthmap(image.shape[:2], np.eye(3))
+        #depthmap_generator = lidar.GenerateDepthmap(image.shape[:2], np.eye(3))
         #depthmap = depthmap_generator.create_depthmap(lidar_sensor.get_point_cloud())
         #print(depthmap)
 

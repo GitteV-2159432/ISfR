@@ -7,7 +7,7 @@ import statistics
 def frame_to_rdf(frame):
     # Load YOLOv5 model
     model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
-    rgb_frame = cv2.cvtColor(frame, cv2.COLOR_RGBA2RGB)
+    rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     # Perform detection
     results = model(rgb_frame)

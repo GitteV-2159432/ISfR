@@ -88,7 +88,7 @@ class Environment:
         # Load chair model from the OBJ file
         builder = self.scene.create_actor_builder()
         builder.add_visual_from_file(
-            filename="/home/vinzroosen/Desktop/ISfR/assets/modern_chair_11_obj.obj",
+            filename="assets/modern_chair_11_obj.obj",
             scale=[scale, scale, scale]  # Apply scaling
         )
         chair = builder.build_static(name="chair")

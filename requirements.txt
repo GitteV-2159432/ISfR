@@ -42,6 +42,7 @@ nest-asyncio==1.6.0
 networkx==3.3
 numpy==2.1.1
 opencv-python==4.10.0.84
+opencv-contrib-python==4.10.0.84  
 packaging==24.1
 pandas==2.2.3
 parso==0.8.4
@@ -69,6 +70,7 @@ rpds-py==0.20.0
 sapien==3.0.0b1
 scikit-learn==1.5.2
 scipy==1.14.1
+simple-pid==1.0.1  # PID control library
 scooby==0.10.0
 six==1.16.0
 stack-data==0.6.3
@@ -85,6 +87,7 @@ wcwidth==0.2.13
 Werkzeug==3.0.4
 widgetsnbextension==4.0.13
 zipp==3.20.2
+paho-mqtt==1.6.1  # MQTT communication
 addict==2.4.0
 asttokens==2.4.1
 attrs==24.2.0
@@ -172,3 +175,4 @@ wcwidth==0.2.13
 Werkzeug==3.0.4
 widgetsnbextension==4.0.13
 zipp==3.20.2
+

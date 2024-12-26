@@ -12,7 +12,7 @@
     <visual>
       <origin rpy="0 0 1.5707963267948966" xyz="0 0 -0.125"/>
       <geometry>
-        <mesh filename="package://rikkert_description/meshes/Base_platform.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://meshes/Base_platform.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="Grey">
         <color rgba="0.7490196078431373 0.7490196078431373 0.7490196078431373 1.0"/>
@@ -21,7 +21,7 @@
     <collision>
       <origin rpy="0 0 1.5707963267948966" xyz="0 0 -0.125"/>
       <geometry>
-        <mesh filename="package://rikkert_description/meshes/Base_platform.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://meshes/Base_platform.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -41,7 +41,7 @@
     <visual>
       <origin rpy="0 0 -1.5707963267948966" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://rikkert_description/meshes/Drive_Wheel.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://meshes/Drive_Wheel.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="White">
         <color rgba="1.0 1.0 1.0 1.0"/>
@@ -50,7 +50,7 @@
     <collision>
       <origin rpy="0 0 -1.5707963267948966" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://rikkert_description/meshes/Drive_Wheel.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://meshes/Drive_Wheel.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -62,18 +62,21 @@
   <!-- Connect the wheels to the base_link at the appropriate location, and 
         define a continuous joint to allow the wheels to freely rotate about
         an axis -->
-  <joint name="right_wheel_joint" type="continuous">
+  <joint name="right_wheel_joint" type="revolute">
     <parent link="base_link"/>
     <child link="right_wheel"/>
     <origin rpy="0 0 0" xyz="0.28 -0.285 0.05"/>
     <!-- <limit upper="3.1415" lower="-3.1415" effort="30" velocity="5.0"/> -->
     <axis xyz="0 1 0"/>
+        <limit lower="-inf" upper="inf" effort="100000000" velocity="10"/>
+
+
   </joint>
   <link name="left_wheel">
     <visual>
       <origin rpy="0 0 1.5707963267948966" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://rikkert_description/meshes/Drive_Wheel.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://meshes/Drive_Wheel.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="White">
         <color rgba="1.0 1.0 1.0 1.0"/>
@@ -82,7 +85,7 @@
     <collision>
       <origin rpy="0 0 1.5707963267948966" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://rikkert_description/meshes/Drive_Wheel.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://meshes/Drive_Wheel.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -94,49 +97,93 @@
   <!-- Connect the wheels to the base_link at the appropriate location, and 
         define a continuous joint to allow the wheels to freely rotate about
         an axis -->
-  <joint name="left_wheel_joint" type="continuous">
+  <joint name="left_wheel_joint" type="revolute">
     <parent link="base_link"/>
     <child link="left_wheel"/>
     <origin rpy="0 0 0" xyz="0.28 0.285 0.05"/>
+
+    
     <!-- <limit upper="3.1415" lower="-3.1415" effort="30" velocity="5.0"/> -->
+        <limit lower="-inf" upper="inf" effort="100000000" velocity="10"/>
+
     <axis xyz="0 1 0"/>
   </joint>
   <!-- *********************** CASTER WHEEL ******************************  -->
   <!-- We add a caster wheel. It will be modeled as sphere.
        We define the wheel’s geometry, material and the joint to connect it to 
        base_link at the appropriate location. -->
-  <link name="rear_caster">
-    <visual>
-      <origin rpy="3.141592653589793 0 3.141592653589793" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://rikkert_description/meshes/Castor_Wheel.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="Blue">
-        <color rgba="0.0 0.0 1.0 1.0"/>
-      </material>
-    </visual>
-    <collision>
-      <origin rpy="3.141592653589793 0 3.141592653589793" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://rikkert_description/meshes/Castor_Wheel.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-    <inertial>
-      <mass value="10.05"/>
-      <inertia ixx="0.11617800000000003" ixy="0.0" ixz="0.0" iyy="0.11617800000000003" iyz="0.0" izz="0.11617800000000003"/>
-    </inertial>
-  </link>
-  <joint name="caster_joint" type="fixed">
-    <parent link="base_link"/>
-    <child link="rear_caster"/>
-    <origin rpy="0 0 0" xyz="-0.28500000000000003 0 0"/>
-  </joint>
+<link name="caster_wheel">
+  <visual>
+    <origin rpy="1.5708 0 0" xyz="0 0 0"/> <!-- Oriented correctly to represent a wheel -->
+    <geometry>
+      <cylinder radius="0.06" length="0.04"/> <!-- Larger wheel for better ground contact -->
+    </geometry>
+    <material name="black">
+      <color rgba="0.0 0.0 0.0 1.0"/>
+    </material>
+  </visual>
+  <collision>
+    <origin rpy="1.5708 0 0" xyz="0 0 0"/>
+    <geometry>
+      <cylinder radius="0.06" length="0.04"/> <!-- Collision geometry matches visual -->
+    </geometry>
+  </collision>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="50"/> <!-- Mass slightly increased for balance -->
+    <inertia ixx="0.025833" ixy="0.0" ixz="0.0" iyy="0.025833" iyz="0.0" izz="0.045"/>
+  </inertial>
+</link>
+
+<link name="caster_body">
+  <visual>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <geometry>
+      <cylinder radius="0.05" length="0.08"/> <!-- Caster body with larger, more balanced dimensions -->
+    </geometry>
+    <material name="gray">
+      <color rgba="0.5 0.5 0.5 1.0"/>
+    </material>
+  </visual>
+  <collision>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <geometry>
+      <cylinder radius="0.05" length="0.08"/> <!-- Collision matches visual to prevent inconsistency -->
+    </geometry>
+  </collision>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="80"/> <!-- Increased mass to provide stability -->
+    <inertia ixx="0.092667" ixy="0.0" ixz="0.0" iyy="0.092667" iyz="0.0" izz="0.1"/>
+  </inertial>
+</link>
+
+
+
+<joint name="caster_swivel_joint" type="continuous">
+  <parent link="base_link"/>
+  <child link="caster_body"/>
+  <origin rpy="0 0 0" xyz="-0.285 0 -0.03"/> <!-- Position of caster relative to base -->
+  <axis xyz="0 0 1"/> <!-- Allows swiveling around the vertical axis (z-axis) -->
+  <limit effort="100" velocity="10"/>
+
+</joint>
+
+<joint name="caster_rolling_joint" type="revolute">
+  <parent link="caster_body"/>
+  <child link="caster_wheel"/>
+  <origin rpy="0 0 0" xyz="0 0 -0.06"/> <!-- Adjusted to match the new wheel size -->
+  <axis xyz="0 1 0"/> <!-- Rolling axis is horizontal, allowing the wheel to rotate around the x-axis -->
+    <limit lower="-inf" upper="inf" effort="100000000" velocity="10"/>
+
+</joint>
+
   <!-- ********************** SENSORS **************************** -->
   <link name="hokuyo">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://rikkert_description/meshes/Hokuyo_UTM-30LX.stl" scale="0.01 0.01 0.01"/>
+        <mesh filename="package://meshes/Hokuyo_UTM-30LX.stl" scale="0.01 0.01 0.01"/>
       </geometry>
       <material name="black">
         <color rgba="0.0 0.0 0.0 0.9"/>
@@ -145,7 +192,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://rikkert_description/meshes/Hokuyo_UTM-30LX.stl" scale="0.01 0.01 0.01"/>
+        <mesh filename="package://meshes/Hokuyo_UTM-30LX.stl" scale="0.01 0.01 0.01"/>
       </geometry>
     </collision>
     <inertial>
@@ -163,7 +210,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://rikkert_description/meshes/RS_BPearl.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://meshes/RS_BPearl.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="black">
         <color rgba="0.0 0.0 0.0 0.9"/>
@@ -172,7 +219,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://rikkert_description/meshes/RS_BPearl.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://meshes/RS_BPearl.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
